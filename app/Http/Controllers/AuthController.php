@@ -45,7 +45,35 @@ class AuthController extends Controller
             $user->token = $token;
             return $this->formatApiResponse(200, 'Login successful', $user);
         } catch (Exception $e) {
-            return $this->formatApiResponse(500, 'Error Occured', [], $e);
+            return $this->formatApiResponse(500, 'Error Occured', [], $e->getMessage());
+        }
+    }
+
+    public function register(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string',
+                'email' => 'required|email',
+                'password' => 'required|confirmed',
+            ]);
+
+            if($validator->fails()){
+                return $this->formatApiResponse(422, 'Validation failed', [], $validator->errors());
+            }
+            if(User::exists($request->email)){
+                return $this->formatApiResponse(400, 'User already exists');
+            }
+
+            $user = User::createNew();
+            if(!$user){
+                return $this->formatApiResponse(500, 'Error occured');
+            }
+            $user->token = $user->createToken(User::TOKEN_NAME)->plainTextToken;
+            return $this->formatApiResponse(201, 'Registration Successful', $user);
+
+        }catch(Exception $e) {
+            return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
         }
     }
 }

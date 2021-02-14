@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,8 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/subscriptions', '\Http\Controllers\SubscriptionController@saveSubscription');
-});
+Route::post('/login', 'App\Http\Controllers\AuthController@login')->name('login');
 
-Route::post('/login', '\Http\Controllers\AuthController@login');
+Route::post('/register', 'App\Http\Controllers\AuthController@register');
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/subscriptions', 'App\Http\Controllers\SubscriptionController@saveSubscription');
+});
