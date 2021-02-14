@@ -19,4 +19,5 @@ Route::post('/register', 'App\Http\Controllers\AuthController@register');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/subscriptions', 'App\Http\Controllers\SubscriptionController@saveSubscription');
+    Route::get('/subscriptions', 'App\Http\Controllers\SubscriptionController@getSubscriptions');
 });

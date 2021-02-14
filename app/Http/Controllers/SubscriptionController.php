@@ -17,8 +17,8 @@ class SubscriptionController extends Controller
         $validator = Validator::make($request->all(),
         [
             'name' => 'string|required',
-            'description' => 'text|nullable',
-            'expiry_date' => 'datetime|required',
+            'description' => 'string|nullable',
+            'expiry_date' => 'date|required',
             'reminder_frequency' => 'integer|nullable'
         ]);
 
@@ -33,5 +33,16 @@ class SubscriptionController extends Controller
         }
 
         return $this->formatApiResponse(201, 'Subscription saved successfully', $subscription);
+    }
+
+    public function getSubscriptions(Request $request){
+        $user = auth()->user();
+        if(!$user){
+            return $this->formatApiResponse(403, 'Authorized access');
+        }
+        
+        $subscriptions = $user->subscriptions()->get();
+
+        return $this->formatApiResponse(200, 'All user subscriptions generated successfully', $subscriptions);
     }
 }

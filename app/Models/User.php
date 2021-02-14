@@ -44,6 +44,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function subscriptions(){
+        return $this->hasMany('App\Models\Subscription');
+    }
+
     public static function exists($email){
         return static::where('email', $email)->exists();
     }
@@ -55,4 +59,6 @@ class User extends Authenticatable
             'password' => request()->password
         ]);
     }
+
+
 }
