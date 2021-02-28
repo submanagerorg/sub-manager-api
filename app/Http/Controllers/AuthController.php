@@ -49,6 +49,21 @@ class AuthController extends Controller
         }
     }
 
+    public function logout()
+    {
+        try {
+            $user = auth()->user();
+            if($user){
+                Auth::logout();
+                $user->currentAccessToken()->delete();
+            }
+            return $this->formatApiResponse(200, 'Logout sucessful');
+
+        }catch(Exception $e){
+            return $this->formatApiResponse($e->getCode(), 'Error Occured', [], $e->getMessage());
+        }
+    }
+
     public function register(Request $request)
     {
         try {
