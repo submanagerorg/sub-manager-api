@@ -14,5 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return response('We good!', 200);
+    return response('Welcome To Subscription Manager!', 200);
+});
+
+Route::get('/verified', function () {
+    return "<h1>Email verified successfully!</h1>";
 });
