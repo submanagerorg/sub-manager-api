@@ -23,5 +23,14 @@ class VerificationController extends Controller
 
         return redirect('/verified');
     }
+
+    public function resendEmailVerification(Request $request)
+    {
+        $user = auth()->user();
+
+        $user->sendEmailVerificationNotification();
+
+        return $this->formatApiResponse(200, 'Email verification link has been sent');
+    }
     
 }

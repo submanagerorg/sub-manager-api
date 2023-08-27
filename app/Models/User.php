@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -50,10 +51,21 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
      /**
+     * returns user subscriptions
+     *
+     * @return HasMany
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class, 'user_id');
+    }
+    
+
+     /**
      * @param array $data
      * @return self
      */
-    public static function createNew($data): self
+    public static function createNew(array $data): self
     {
         return self::create([
             'uid' => Str::orderedUuid(),
@@ -63,11 +75,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ]);
     }
 
-     /**
+    /**
      * @param string $email
      * @return bool
      */
-    public static function exists($email): bool
+    public static function exists(string $email): bool
     {
         return self::where('email', $email)->exists();
     }

@@ -25,7 +25,7 @@ class RegisterController extends Controller
     
             $user->sendEmailVerificationNotification();
     
-            return $this->formatApiResponse(201, 'Registration Successful', $user);
+            return $this->formatApiResponse(201, 'Registration Successful. Proceed to verify your email', $user);
 
         }catch(Exception $e) {
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());

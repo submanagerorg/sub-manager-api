@@ -15,11 +15,19 @@ class CreateSubscriptionsTable extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uid');
+            $table->unsignedBigInteger('user_id');
             $table->string('name');
+            $table->string('url');
+            $table->double('amount');
+            $table->string('status');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->string('description')->nullable();
-            $table->bigInteger('reminder_frequency')->nullable();
-            $table->datetime('expiry_date')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
