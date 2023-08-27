@@ -34,6 +34,7 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware(['auth:sanctum']);
 Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
+Route::get('resend-email/verify', [VerificationController::class, 'resendEmailVerification'])->name('resend-email-verification')->middleware(['auth:sanctum']);
 
 Route::prefix('password')->group(function () {
     Route::post('forgot', [PasswordController::class, 'forgotPassword'])->name('forgot-password');
@@ -41,3 +42,10 @@ Route::prefix('password')->group(function () {
     Route::post('change', [PasswordController::class, 'changePassword'])->name('change-password')->middleware(['auth:sanctum', 'verified']);
 });
 
+Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum', 'verified']], function () {
+    Route::post('', [SubscriptionController::class, 'addSubscription'])->name('add-subscription');
+    Route::get('', [SubscriptionController::class, 'getSubscriptions'])->name('get-subscriptions');
+    Route::get('{id}', [SubscriptionController::class, 'getSubscription'])->name('get-subscription');
+    Route::post('remove/{id}', [SubscriptionController::class, 'removeSubscription'])->name('remove-subscription');
+    Route::post('edit/{id}', [SubscriptionController::class, 'editSubscription'])->name('edit-subscription');
+});
