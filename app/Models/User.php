@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     const TOKEN_NAME = 'auth_token';
 
@@ -59,7 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Subscription::class, 'user_id');
     }
-    
+
 
      /**
      * @param array $data

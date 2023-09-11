@@ -42,7 +42,7 @@ Route::prefix('password')->group(function () {
     Route::post('change', [PasswordController::class, 'changePassword'])->name('change-password')->middleware(['auth:sanctum', 'verified']);
 });
 
-Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum', 'verified']], function () {
+Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum']], function () {
     Route::post('', [SubscriptionController::class, 'addSubscription'])->name('add-subscription');
     Route::get('', [SubscriptionController::class, 'getSubscriptions'])->name('get-subscriptions');
     Route::get('{id}', [SubscriptionController::class, 'getSubscription'])->name('get-subscription');

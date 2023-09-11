@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class LoginController extends Controller
 {
     public function login(LoginRequest $request)
-    {  
+    {
         $user = User::where('email', $request->email)->first();
 
         if(!$user){
@@ -26,11 +26,11 @@ class LoginController extends Controller
         $user->token = $user->createToken(User::TOKEN_NAME)->plainTextToken;
         $user->token_expiry = Carbon::now()->addMinutes(30);
 
-        return $this->formatApiResponse(200, 'Login successful', $user);
+        return $this->formatApiResponse(200, 'Login successful', ['user' => $user]);
     }
 
     public function logout(Request $request)
-    {  
+    {
         if(!auth()->user()){
             return $this->formatApiResponse(400, 'Bad request');
         }
