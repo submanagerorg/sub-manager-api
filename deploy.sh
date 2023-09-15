@@ -19,3 +19,5 @@ php artisan cache:clear
 
 # Restart your web server (e.g., Nginx)
 sudo systemctl restart nginx
+
+echo "Done ✅"
