@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Running deployment script"
+
 # Navigate to your Laravel project directory
 cd /var/www/subsync
 
@@ -17,3 +19,5 @@ php artisan cache:clear
 
 # Restart your web server (e.g., Nginx)
 sudo systemctl restart nginx
+
+echo "Done ✅"
