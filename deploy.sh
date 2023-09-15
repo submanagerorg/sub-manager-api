@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "starting deply script"
+echo "Running deployment script"
 
 # Navigate to your Laravel project directory
 cd /var/www/subsync
