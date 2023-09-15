@@ -28,6 +28,7 @@ class AddSubscriptionRequest extends FormRequest
         return [
             'name' => ['required','string', 'max:30', 'unique:subscriptions,name'],
             'url' => ['required', 'string', 'url'],
+            'currency' => ['required', 'string', 'exists:currencies,symbol'],
             'amount' => ['required', 'numeric', 'min:1', 'max:100000'],
             'start_date' => ['required', 'date', 'date_format:Y-m-d'],
             'end_date' => ['required', 'date', 'date_format:Y-m-d', 'after:start_date',  "after_or_equal:{$currentDate}"],

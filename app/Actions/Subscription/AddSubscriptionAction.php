@@ -1,6 +1,7 @@
 <?php
 namespace App\Actions\Subscription;
 
+use App\Models\Currency;
 use App\Models\Subscription;
 use App\Traits\FormatApiResponse;
 
@@ -17,6 +18,7 @@ class AddSubscriptionAction
     {
          $user = auth()->user();
          $data['user_id'] = $user->id;
+         $data['currency_id'] = Currency::where('symbol', $data['currency'])->first()->id;
 
         if(Subscription::exists($data)){
             return $this->formatApiResponse(400, 'Subscription already exists');

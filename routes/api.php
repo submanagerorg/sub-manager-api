@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\CurrencyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,3 +50,5 @@ Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum']], fu
     Route::post('remove/{id}', [SubscriptionController::class, 'removeSubscription'])->name('remove-subscription');
     Route::post('edit/{id}', [SubscriptionController::class, 'editSubscription'])->name('edit-subscription');
 });
+
+Route::get('currencies', [CurrencyController::class, 'getCurrencies'])->name('get-currencies');
