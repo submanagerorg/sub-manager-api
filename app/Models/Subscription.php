@@ -24,8 +24,10 @@ class Subscription extends Model
      * @var array
      */
     protected $hidden = [
-        'id'
+        'id', 'currency_id'
     ];
+
+    protected $appends = ['currency'];
 
     /**
      * Returns the user of the subscription.
@@ -37,8 +39,19 @@ class Subscription extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+     /**
+     * Returns the currency of the subscription.
+     *
+     * @return BelongsTo
+     */
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'currency_id');
+    }
+    
+
     /**
-     * Tranform user id to user uid.
+     * Transform user id to user uid.
      *
      * @param $value
      * @return string
@@ -46,6 +59,17 @@ class Subscription extends Model
     public function getUserIdAttribute($value): string
     {
         return User::where('id', $value)->first()->uid;
+    }
+
+    /**
+     * Get Currency Attribute.
+     *
+     * @param $value
+     * @return string
+     */
+    public function getCurrencyAttribute()
+    {
+       return Currency::where('id', $this->currency_id)->first()->symbol;
     }
 
     /**
@@ -59,6 +83,7 @@ class Subscription extends Model
             'user_id' => $data['user_id'],
             'name' => $data['name'],
             'url' => $data['url'],
+            'currency_id' => $data['currency_id'],
             'amount' => $data['amount'],
             'status' => self::STATUS['ONGOING'],
             'start_date' => $data['start_date'],
@@ -77,6 +102,7 @@ class Subscription extends Model
             'user_id' => $data['user_id'],
             'name' => $data['name'],
             'url' => $data['url'],
+            'currency_id' => $data['currency_id'],
             'amount' => $data['amount'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],

@@ -28,6 +28,7 @@ class EditSubscriptionRequest extends FormRequest
         return [
             'name' => ['nullable','string', 'max:30','unique:subscriptions,name'],
             'url' => ['nullable', 'string', 'url'],
+            'currency' => ['nullable', 'string', 'exists:currencies,symbol'],
             'amount' => ['nullable', 'numeric', 'min:1', 'max:100000'],
             'start_date' => ['nullable', 'date', 'date_format:Y-m-d'],
             'end_date' => ['nullable', 'date', 'date_format:Y-m-d', 'after:start_date',  "after_or_equal:{$currentDate}"],
