@@ -36,6 +36,16 @@ class CurrencySeeder extends Seeder
                 'sign' => '£',
                 'symbol' => 'GBP'
             ],
+            [
+                'name' => 'Kenyan shilling',
+                'sign' => 'KSh',
+                'symbol' => 'KES'
+            ],
+            [
+                'name' => 'Ghanaian cedi',
+                'sign' => 'GH₵',
+                'symbol' => 'GHS'
+            ]
         ];
 
 
