@@ -2,47 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Subscription;
+use App\Actions\Subscription\AddSubscriptionAction;
+use App\Actions\Subscription\EditSubscriptionAction;
+use App\Actions\Subscription\GetSubscriptionAction;
+use App\Actions\Subscription\GetSubscriptionsAction;
+use App\Actions\Subscription\RemoveSubscriptionAction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Subscription\AddSubscriptionRequest;
+use App\Http\Requests\Subscription\EditSubscriptionRequest;
 
 class SubscriptionController extends Controller
 {
-    public function __construct()
+      
+    public function addSubscription(AddSubscriptionRequest $request)
     {
-        
+        return (new AddSubscriptionAction())->execute($request->validated());
     }
 
-    public function saveSubscription(Request $request){
-        $validator = Validator::make($request->all(),
-        [
-            'name' => 'string|required',
-            'description' => 'string|nullable',
-            'expiry_date' => 'date|required',
-            'reminder_frequency' => 'integer|nullable'
-        ]);
-
-        if($validator->fails()){
-            return $this->formatApiResponse(422, 'validator failed', [], $validator->errors());
-        }
-
-        $subscription = Subscription::createSubscription();
-
-        if(!$subscription){
-            return $this->formatApiResponse(500, 'Subscription not saved');
-        }
-
-        return $this->formatApiResponse(201, 'Subscription saved successfully', $subscription);
+    public function getSubscription($subscriptionId)
+    {
+        return (new GetSubscriptionAction())->execute($subscriptionId);
     }
 
-    public function getSubscriptions(Request $request){
-        $user = auth()->user();
-        if(!$user){
-            return $this->formatApiResponse(403, 'Authorized access');
-        }
-        
-        $subscriptions = $user->subscriptions()->get();
-
-        return $this->formatApiResponse(200, 'All user subscriptions generated successfully', $subscriptions);
+    public function getSubscriptions(Request $request)
+    {
+        return (new GetSubscriptionsAction())->execute($request->all());
     }
+
+    public function removeSubscription($subscriptionId)
+    {
+        return (new RemoveSubscriptionAction())->execute($subscriptionId);
+    }
+
+    public function editSubscription($subscriptionId, EditSubscriptionRequest $request)
+    {
+        return (new EditSubscriptionAction())->execute($subscriptionId, $request->validated());
+    }
+    
 }
