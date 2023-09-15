@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ech "starting deply script"
+
 # Navigate to your Laravel project directory
 cd /var/www/subsync
 
