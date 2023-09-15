@@ -19,5 +19,5 @@ jobs:
           host: ${{ secrets.DROPLET_IP }}
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
+          run: |
             ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} 'bash -s' < /var/www/subsync/deploy.sh
