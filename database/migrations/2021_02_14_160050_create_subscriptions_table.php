@@ -18,7 +18,7 @@ class CreateSubscriptionsTable extends Migration
             $table->uuid('uid');
             $table->unsignedBigInteger('user_id');
             $table->string('name');
-            $table->string('url');
+            $table->string('url')->nullable();
             $table->unsignedBigInteger('currency_id');
             $table->double('amount');
             $table->string('status');
