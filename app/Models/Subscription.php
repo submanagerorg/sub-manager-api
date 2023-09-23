@@ -48,7 +48,7 @@ class Subscription extends Model
     {
         return $this->belongsTo(User::class, 'currency_id');
     }
-    
+
 
     /**
      * Transform user id to user uid.
@@ -82,7 +82,7 @@ class Subscription extends Model
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
             'name' => $data['name'],
-            'url' => $data['url'],
+            'url' => $data['url'] ?? null,
             'currency_id' => $data['currency_id'],
             'amount' => $data['amount'],
             'status' => self::STATUS['ONGOING'],
@@ -101,7 +101,7 @@ class Subscription extends Model
         return self::where([
             'user_id' => $data['user_id'],
             'name' => $data['name'],
-            'url' => $data['url'],
+            'url' => $data['url'] ?? null,
             'currency_id' => $data['currency_id'],
             'amount' => $data['amount'],
             'start_date' => $data['start_date'],
