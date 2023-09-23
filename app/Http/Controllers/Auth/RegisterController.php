@@ -23,7 +23,7 @@ class RegisterController extends Controller
                 return $this->formatApiResponse(500, 'Error occured');
             }
 
-            // $user->sendEmailVerificationNotification();
+            $user->sendEmailVerificationNotification();
 
             return $this->formatApiResponse(201, 'Registration Successful. Proceed to verify your email', $user);
 
