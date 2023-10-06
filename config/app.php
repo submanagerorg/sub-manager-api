@@ -58,6 +58,8 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'welcome_form_url' => env('WELCOME_FORM_URL', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
