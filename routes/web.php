@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +15,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return response('Welcome To Subscription Manager!', 200);
+    $formUrl = config('app.welcome_form_url');
+
+    if(!$formUrl){
+        return response('Welcome To Subscription Manager!', 200);
+    }
+
+    return Redirect::away($formUrl);
 });
 
 Route::get('/verified', function () {
