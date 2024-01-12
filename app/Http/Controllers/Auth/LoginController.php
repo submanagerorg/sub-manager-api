@@ -24,7 +24,7 @@ class LoginController extends Controller
         }
 
         $user->token = $user->createToken(User::TOKEN_NAME)->plainTextToken;
-        $user->token_expiry = Carbon::now()->addMinutes(30);
+        $user->token_expiry = Carbon::now()->addMinutes(config('sanctum.expiration'));
 
         return $this->formatApiResponse(200, 'Login successful', ['user' => $user]);
     }
