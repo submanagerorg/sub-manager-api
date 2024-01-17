@@ -82,7 +82,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'uid' => Str::orderedUuid(),
             'email' => $data['email'],
             'password' =>  bcrypt($data['password']),
-            'username' => $username,
+            'username' => $username
         ]);
     }
 
