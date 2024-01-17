@@ -76,11 +76,13 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public static function createNew(array $data): self
     {
+        $username = explode("@", $data['email'])[0];
+
         return self::create([
             'uid' => Str::orderedUuid(),
             'email' => $data['email'],
             'password' =>  bcrypt($data['password']),
-            'username' => $data['username'] ?? null
+            'username' => $username,
         ]);
     }
 
