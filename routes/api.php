@@ -7,6 +7,8 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\TimezoneController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,4 +53,11 @@ Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum']], fu
     Route::post('edit/{id}', [SubscriptionController::class, 'editSubscription'])->name('edit-subscription');
 });
 
+Route::group(['prefix' => 'users', 'middleware' => ['auth:sanctum']], function () {
+    Route::post('profile', [UserController::class, 'editProfile'])->name('edit-profile');
+});
+
+
 Route::get('currencies', [CurrencyController::class, 'getCurrencies'])->name('get-currencies');
+Route::get('timezones', [TimezoneController::class, 'getTimezones'])->name('get-timezones');
+

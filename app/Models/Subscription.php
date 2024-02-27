@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,13 +10,13 @@ use Illuminate\Support\Str;
 
 class Subscription extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     protected $guarded = ['id'];
 
     public const STATUS = [
-        'ONGOING' => 'ongoing',
-        'EXPIRED' => 'expired',
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
     ];
 
     /**
@@ -49,18 +50,6 @@ class Subscription extends Model
         return $this->belongsTo(User::class, 'currency_id');
     }
 
-
-    /**
-     * Transform user id to user uid.
-     *
-     * @param $value
-     * @return string
-     */
-    public function getUserIdAttribute($value): string
-    {
-        return User::where('id', $value)->first()->uid;
-    }
-
     /**
      * Get Currency Attribute.
      *
@@ -85,7 +74,7 @@ class Subscription extends Model
             'url' => $data['url'] ?? null,
             'currency_id' => $data['currency_id'],
             'amount' => $data['amount'],
-            'status' => self::STATUS['ONGOING'],
+            'status' => self::STATUS['ACTIVE'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'description' => $data['description'] ?? null,
