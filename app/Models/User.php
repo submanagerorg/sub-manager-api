@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -28,7 +29,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'uid',
         'email',
         'password',
-        'username'
+        'username',
+        'timezone_id',
     ];
 
     /**
@@ -40,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'id',
         'password',
         'remember_token',
+        'timezone_id'
     ];
 
     /**
@@ -51,6 +54,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = ['timezone'];
+
     /** 
      * Override sendEmailVerificationNotification implementation
      */
@@ -58,6 +63,17 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->notify(new VerifyEmailQueued);
     }
+
+    /**
+     * returns user timezone
+     *
+     * @return HasOne
+     */
+    public function timezone(): HasOne
+    {
+        return $this->hasOne(Timezone::class, 'id');
+    }
+
 
      /**
      * returns user subscriptions
@@ -69,21 +85,48 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Subscription::class, 'user_id');
     }
 
+    /**
+     * Get Timezone Attribute.
+     *
+     * @param $value
+     * @return string
+     */
+    public function getTimezoneAttribute()
+    {
+       return Timezone::where('id', $this->timezone_id)->first();
+    }
+
 
      /**
      * @param array $data
-     * @return self
+     * @return self | null
+     * 
      */
-    public static function createNew(array $data): self
+    public static function createNew(array $data): self | null
     {
-        $username = explode("@", $data['email'])[0];
+        $timezone = Timezone::where('zone_name', Timezone::DEFAULT_TIMEZONE)->first();
 
-        return self::create([
+        if(!$timezone){
+            return null;
+        }
+
+        $name = explode("@", $data['email'])[0];
+        $username = $name . random_int(1000, 9999);
+
+        while(self::where('username', $username)->exists()){
+            $username = $name . random_int(1000, 9999);
+        }
+
+        $user = self::create([
             'uid' => Str::orderedUuid(),
             'email' => $data['email'],
             'password' =>  bcrypt($data['password']),
-            'username' => $username
+            'username' => $username,
+            'timezone_id' => $timezone->id,
         ]);
+
+        return $user;
+
     }
 
     /**
