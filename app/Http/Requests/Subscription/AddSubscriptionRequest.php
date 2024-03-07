@@ -27,7 +27,7 @@ class AddSubscriptionRequest extends FormRequest
 
         return [
             'service_uid' => ['required_without:name','string', 'exists:services,uid'],
-            'name' => ['required_without:service_uid','string', 'max:30', 'unique:services,name'],
+            'name' => ['required_without:service_uid','string', 'max:30'],
             'url' => ['required_without:service_uid','string', 'url'],
             'currency' => ['required', 'string', 'exists:currencies,code'],
             'amount' => ['required', 'numeric', 'min:1', 'max:100000'],

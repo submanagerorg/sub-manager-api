@@ -92,13 +92,17 @@ class Subscription extends Model
         }else{
             $category = Category::where('name', 'others')->first();
 
-            $service = new Service();
-            $service->uid = Str::orderedUuid();
-            $service->name = $data['name'];
-            $service->url =  $data['url'];
-            $service->category_id = $category->id;
-            $service->status = Service::STATUS['PENDING'];
-            $service->save();
+            $service = Service::where('name', $data['name'])->first();
+
+            if (!$service) {
+                $service = new Service();
+                $service->uid = Str::orderedUuid();
+                $service->name = $data['name'];
+                $service->url =  $data['url'];
+                $service->category_id = $category->id;
+                $service->status = Service::STATUS['PENDING'];
+                $service->save();
+            }
         }
 
         return self::create([

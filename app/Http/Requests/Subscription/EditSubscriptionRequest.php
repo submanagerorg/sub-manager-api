@@ -27,7 +27,7 @@ class EditSubscriptionRequest extends FormRequest
 
         return [
             'service_uid' => ['nullable','string', 'exists:services,uid'],
-            'name' => ['required_with:url','string', 'max:30', 'unique:services,name'],
+            'name' => ['required_with:url','string', 'max:30'],
             'url' => ['required_with:name','string', 'url'],
             'currency' => ['nullable', 'string', 'exists:currencies,code'],
             'amount' => ['nullable', 'numeric', 'min:1', 'max:100000'],
