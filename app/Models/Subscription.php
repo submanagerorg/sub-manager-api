@@ -25,10 +25,10 @@ class Subscription extends Model
      * @var array
      */
     protected $hidden = [
-        'id', 'currency_id'
+        'id', 'currency_id', 'service_id', 'user_id'
     ];
 
-    protected $appends = ['currency'];
+    protected $appends = ['user_uid', 'currency', 'service'];
 
     /**
      * Returns the user of the subscription.
@@ -53,12 +53,31 @@ class Subscription extends Model
     /**
      * Get Currency Attribute.
      *
-     * @param $value
      * @return string
      */
     public function getCurrencyAttribute()
     {
-       return Currency::where('id', $this->currency_id)->first()->symbol;
+       return Currency::where('id', $this->currency_id)->first()->code;
+    }
+
+    /**
+     * Get Service Attribute.
+     * 
+     * @return string
+     */
+    public function getServiceAttribute()
+    {
+       return Service::where('id', $this->service_id)->first();
+    }
+
+    /**
+     * Get User Attribute.
+     *
+     * @return string
+     */
+    public function getUserUidAttribute()
+    {
+       return User::where('id', $this->user_id)->first()->uid;
     }
 
     /**
@@ -67,11 +86,29 @@ class Subscription extends Model
      */
     public static function createNew(array $data): self
     {
+        if(isset($data['service_uid'])){
+            $service = Service::where('uid', $data['service_uid'])->first();
+
+        }else{
+            $category = Category::where('name', 'others')->first();
+
+            $service = Service::where('name', $data['name'])->first();
+
+            if (!$service) {
+                $service = new Service();
+                $service->uid = Str::orderedUuid();
+                $service->name = $data['name'];
+                $service->url =  $data['url'];
+                $service->category_id = $category->id;
+                $service->status = Service::STATUS['PENDING'];
+                $service->save();
+            }
+        }
+
         return self::create([
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
-            'name' => $data['name'],
-            'url' => $data['url'] ?? null,
+            'service_id' => $service->id,
             'currency_id' => $data['currency_id'],
             'amount' => $data['amount'],
             'status' => self::STATUS['ACTIVE'],
@@ -87,10 +124,13 @@ class Subscription extends Model
      */
     public static function exists(array $data): bool
     {
+        if(isset($data['service_uid'])){
+            $service = Service::where('uid', $data['service_uid'])->first();
+        }
+        
         return self::where([
             'user_id' => $data['user_id'],
-            'name' => $data['name'],
-            'url' => $data['url'] ?? null,
+            'service_id' => isset($data['service_uid']) ? $service->id : null,
             'currency_id' => $data['currency_id'],
             'amount' => $data['amount'],
             'start_date' => $data['start_date'],

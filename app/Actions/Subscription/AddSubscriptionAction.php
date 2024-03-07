@@ -18,7 +18,7 @@ class AddSubscriptionAction
     {
          $user = auth()->user();
          $data['user_id'] = $user->id;
-         $data['currency_id'] = Currency::where('symbol', $data['currency'])->first()->id;
+         $data['currency_id'] = Currency::where('code', $data['currency'])->first()->id;
 
         if(Subscription::exists($data)){
             return $this->formatApiResponse(400, 'Subscription already exists');

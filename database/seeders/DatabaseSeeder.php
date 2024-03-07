@@ -16,5 +16,7 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         $this->call(CurrencySeeder::class);
         $this->call(TimezoneSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(ServiceSeeder::class);
     }
 }

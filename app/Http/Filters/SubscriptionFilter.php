@@ -60,7 +60,7 @@ class SubscriptionFilter extends Filter
     public function currency(string $value = null): Builder
     {
         if (isset($value)) {
-            $currency = Currency::where('symbol', $value)->first();
+            $currency = Currency::where('code', $value)->first();
 
             return $this->builder->where('currency_id', $currency ? $currency->id : null);
         }
