@@ -17,8 +17,7 @@ class CreateSubscriptionsTable extends Migration
             $table->id();
             $table->uuid('uid');
             $table->unsignedBigInteger('user_id');
-            $table->string('name');
-            $table->string('url')->nullable();
+            $table->unsignedBigInteger('service_id');
             $table->unsignedBigInteger('currency_id');
             $table->double('amount');
             $table->string('status');
@@ -29,6 +28,7 @@ class CreateSubscriptionsTable extends Migration
             $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('service_id')->references('id')->on('services');
             $table->foreign('currency_id')->references('id')->on('currencies');
         });
     }

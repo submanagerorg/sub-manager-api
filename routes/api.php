@@ -5,8 +5,10 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\UserController;
 
@@ -60,4 +62,6 @@ Route::group(['prefix' => 'users', 'middleware' => ['auth:sanctum']], function (
 
 Route::get('currencies', [CurrencyController::class, 'getCurrencies'])->name('get-currencies');
 Route::get('timezones', [TimezoneController::class, 'getTimezones'])->name('get-timezones');
+Route::get('services', [ServiceController::class, 'getServices'])->name('get-services');
+Route::get('categories', [CategoryController::class, 'getCategories'])->name('get-categories');
 

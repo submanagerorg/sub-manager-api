@@ -1,0 +1,77 @@
+[
+    {
+        "name":"SubSync",
+        "url":"https://subsync.app",
+        "category":"Management"
+    },
+    {
+        "name":"Netflix",
+        "url":"https://www.netflix.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"Hulu",
+        "url":"https://www.hulu.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"Prime Video",
+        "url":"https://www.primevideo.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"Disney+",
+        "url":"https://www.disneyplus.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"Showmax",
+        "url":"https://www.showmax.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"Dstv",
+        "url":"https://www.dstv.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"GOtv",
+        "url":"https://www.gotvafrica.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"Spotify",
+        "url":"https://open.spotify.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"YouTube Music",
+        "url":"https://music.youtube.com/",
+        "category":"Entertainment"
+    },
+    {
+        "name":"Figma",
+        "url":"https://www.figma.com/",
+        "category":"Work Tools"
+    },
+    {
+        "name":"Postman",
+        "url":"https://www.figma.com/",
+        "category":"Work Tools"
+    },
+    {
+        "name":"ChatGPT",
+        "url":"https://chat.openai.com/",
+        "category":"AI Tools"
+    },
+    {
+        "name":"Lucidchart",
+        "url":"https://www.lucidchart.com/",
+        "category":"Work Tools"
+    },
+    {
+        "name":"DanceFitMe",
+        "url":"",
+        "category":"Fitness"
+    }
+]
