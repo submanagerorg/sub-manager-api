@@ -18,5 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(TimezoneSeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(ServiceSeeder::class);
+        $this->call(PricingPlanSeeder::class);
+        $this->call(FeatureSeeder::class);
+        $this->call(PricingPlanFeatureSeeder::class);
     }
 }

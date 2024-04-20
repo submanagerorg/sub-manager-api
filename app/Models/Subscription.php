@@ -28,7 +28,9 @@ class Subscription extends Model
         'id', 'currency_id', 'service_id', 'user_id'
     ];
 
-    protected $appends = ['user_uid', 'currency', 'service'];
+    protected $with = ['service'];
+
+    protected $appends = ['user_uid', 'currency'];
 
     /**
      * Returns the user of the subscription.
@@ -50,6 +52,16 @@ class Subscription extends Model
         return $this->belongsTo(User::class, 'currency_id');
     }
 
+     /**
+     * Returns the service of the subscription.
+     *
+     * @return BelongsTo
+     */
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
     /**
      * Get Currency Attribute.
      *
@@ -58,16 +70,6 @@ class Subscription extends Model
     public function getCurrencyAttribute()
     {
        return Currency::where('id', $this->currency_id)->first()->code;
-    }
-
-    /**
-     * Get Service Attribute.
-     * 
-     * @return string
-     */
-    public function getServiceAttribute()
-    {
-       return Service::where('id', $this->service_id)->first();
     }
 
     /**
@@ -82,9 +84,9 @@ class Subscription extends Model
 
     /**
      * @param array $data
-     * @return self
+     * @return self|null
      */
-    public static function createNew(array $data): self
+    public static function createNew(array $data): self | null
     {
         if(isset($data['service_uid'])){
             $service = Service::where('uid', $data['service_uid'])->first();
@@ -103,9 +105,15 @@ class Subscription extends Model
                 $service->status = Service::STATUS['PENDING'];
                 $service->save();
             }
+
+            $data['service_uid'] = $service->uid;
         }
 
-        return self::create([
+        if(self::exists($data)){
+            return null;
+        }
+
+        $subscription = self::create([
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
             'service_id' => $service->id,
@@ -116,6 +124,8 @@ class Subscription extends Model
             'end_date' => $data['end_date'],
             'description' => $data['description'] ?? null,
         ]);
+
+        return $subscription->load('service');
     }
 
      /**

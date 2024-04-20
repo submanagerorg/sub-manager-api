@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\PricingPlanController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\UserController;
@@ -64,4 +65,5 @@ Route::get('currencies', [CurrencyController::class, 'getCurrencies'])->name('ge
 Route::get('timezones', [TimezoneController::class, 'getTimezones'])->name('get-timezones');
 Route::get('services', [ServiceController::class, 'getServices'])->name('get-services');
 Route::get('categories', [CategoryController::class, 'getCategories'])->name('get-categories');
+Route::get('pricing-plans', [PricingPlanController::class, 'getPricingPlans'])->name('get-pricing-plans');
 

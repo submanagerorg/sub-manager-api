@@ -1,0 +1,17 @@
+[
+    {
+        "name":"view basic report"
+    },
+    {
+        "name":"view detailed report"
+    },
+    {
+        "name":"access chrome extension"
+    },
+    {
+        "name":"access web application"
+    },
+    {
+        "name":"access mobile application"
+    }
+]
