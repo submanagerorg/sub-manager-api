@@ -1,50 +1,50 @@
 [
     {
         "plan":"Basic",
-        "feature": "View basic report"
+        "feature": "view basic report"
     },
     {
         "plan":"Basic",
-        "feature": "Access chrome extension"
+        "feature": "access chrome extension"
     },
     {
         "plan":"Basic",
-        "feature": "Access web application"
+        "feature": "access web application"
     },
     {
         "plan":"Basic",
-        "feature": "Access mobile application"
+        "feature": "access mobile application"
     },
     {
         "plan":"Standard",
-        "feature": "View basic report"
+        "feature": "view basic report"
     },
     {
         "plan":"Standard",
-        "feature": "Access chrome extension"
+        "feature": "access chrome extension"
     },
     {
         "plan":"Standard",
-        "feature": "Access web application"
+        "feature": "access web application"
     },
     {
         "plan":"Standard",
-        "feature": "Access mobile application"
+        "feature": "access mobile application"
     },
     {
         "plan":"Premium",
-        "feature": "View detailed report"
+        "feature": "view detailed report"
     },
     {
         "plan":"Premium",
-        "feature": "Access chrome extension"
+        "feature": "access chrome extension"
     },
     {
         "plan":"Premium",
-        "feature": "Access web application"
+        "feature": "access web application"
     },
     {
         "plan":"Premium",
-        "feature": "Access mobile application"
+        "feature": "access mobile application"
     }
 ]
