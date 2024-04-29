@@ -19,7 +19,7 @@ class VerificationController extends Controller
     public function verify($userId, Request $request)
     {
         if (!$request->hasValidSignature()) {
-            return $this->formatApiResponse('403', 'Invalid or Expired url provided.');
+            return view('emails.forbidden-error');
         }
 
         $user = User::findOrFail($userId);

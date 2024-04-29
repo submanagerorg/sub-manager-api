@@ -1,19 +1,18 @@
 @extends('emails.template')
 
 @section('subject')
-    <h3 class=" ">Account Verified</h3>
+    <h3 class=" ">Forbidden Error</h3>
 @endsection
 
 @section('image')
     <div class="text-center mb-3 content-image">
-        <img src="{{ asset('images/verified-account.png') }}" alt="Verified image" height="100%">
+        <img src="{{ asset('images/forbidden-error.png') }}" alt="Forbidden Error image" height="100%">
     </div>
 @endsection
 
 @section('content')
     <div class="content-container">
-        Your email has been verified. <br>
-        Thank you for choosing SubSync.
+        Invalid or expired url provided.
     </div>
 @endsection
 
