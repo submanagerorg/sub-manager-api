@@ -5,10 +5,17 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\VerificationMail;
+use Illuminate\Support\Facades\Mail;
 
 class VerificationController extends Controller
 {
       
+    public function index()
+    {
+        return view('emails.verified-account');
+    }
+
     public function verify($userId, Request $request)
     {
         if (!$request->hasValidSignature()) {
@@ -21,14 +28,14 @@ class VerificationController extends Controller
             $user->markEmailAsVerified();
         }
 
-        return redirect('/verified');
+        return redirect('/email/verified');
     }
 
     public function resendEmailVerification(Request $request)
     {
         $user = auth()->user();
 
-        $user->sendEmailVerificationNotification();
+        Mail::to($user)->send(new VerificationMail(['user' => $user]));
 
         return $this->formatApiResponse(200, 'Email verification link has been sent');
     }

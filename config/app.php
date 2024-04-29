@@ -54,7 +54,11 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'frontend_url' => env('APP_FRONTEND_URL', 'http://localhost:8081'),
+    'website_url' =>  env('APP_URL', 'http://localhost'),
+
+    'web_app_url' => env('WEB_APP_URL', 'http://localhost:8081'),
+
+    'chrome_extension_url' =>  env('CHROME_EXTENSION_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL', null),
 
