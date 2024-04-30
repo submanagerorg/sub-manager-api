@@ -26,9 +26,8 @@ class AddSubscriptionRequest extends FormRequest
         $currentDate =  now()->format('Y-m-d');
 
         return [
-            'service_uid' => ['required_without:name','string', 'exists:services,uid'],
-            'name' => ['required_without:service_uid','string', 'max:30'],
-            'url' => ['required_without:service_uid','string', 'url'],
+            'name' => ['required','string', 'max:30'],
+            'url' => ['nullable','string', 'url'],
             'currency' => ['required', 'string', 'exists:currencies,code'],
             'amount' => ['required', 'numeric', 'min:1', 'max:100000'],
             'start_date' => ['required', 'date', 'date_format:Y-m-d'],

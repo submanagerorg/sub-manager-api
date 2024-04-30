@@ -11,6 +11,8 @@ class PricingPlan extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
      /**
      * The attributes that should be hidden for arrays.
      *

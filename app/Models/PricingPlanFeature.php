@@ -10,6 +10,8 @@ class PricingPlanFeature extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
      /**
      * Returns the pricing plan.
      *

@@ -39,7 +39,6 @@ class ServiceSeeder extends Seeder
             $service->name = $datum->name;
             $service->url = $datum->url;
             $service->category_id = $category->id;
-            $service->status = Service::STATUS['APPROVED'];
             $service->save();
         }
        
