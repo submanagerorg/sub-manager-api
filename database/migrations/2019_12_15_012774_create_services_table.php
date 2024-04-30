@@ -19,7 +19,6 @@ class CreateServicesTable extends Migration
             $table->string('name')->unique();
             $table->unsignedBigInteger('category_id');
             $table->string('url')->nullable();
-            $table->string('status');
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories');

@@ -206,6 +206,10 @@ class User extends Authenticatable implements MustVerifyEmail
             
             $subscriptionCount = $this->subscriptions()->where('status', 'active')->count();
 
+            if(is_null($this->pricingPlan->subscription_limit)) {
+                return false;
+            }
+
             if ($subscriptionCount >= $this->pricingPlan->subscription_limit){
                 return true;
             }

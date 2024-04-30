@@ -29,28 +29,7 @@ class EditSubscriptionAction
             return $this->formatApiResponse(400, 'Subscription does not exist for user');
         }
 
-        if(isset($data['service_uid'])){
-            $service = Service::where('uid', $data['service_uid'])->first();
-        }
-
-        if (!isset($data['service_uid']) && isset($data['name'])){
-            $category = Category::where('name', 'others')->first();
-
-            $service = Service::where('name', $data['name'])->first();
-
-            if (!$service) {
-                $service = new Service();
-                $service->uid = Str::orderedUuid();
-                $service->name = $data['name'];
-                $service->url =  $data['url'];
-                $service->category_id = $category->id;
-                $service->status = Service::STATUS['PENDING'];
-                $service->save();
-            }
-        }
-
         $data = [
-            'service_id' => isset($data['service_uid']) || isset($data['name']) ? $service->id :$subscription->service_id,
             'currency_id' =>  isset($data['currency']) ? Currency::where('code', $data['currency'])->first()->id : $subscription->currency_id,
             'amount' =>  isset($data['amount']) ? $data['amount'] : $subscription->amount,
             'start_date' =>  isset($data['start_date']) ? $data['start_date'] : $subscription->start_date,

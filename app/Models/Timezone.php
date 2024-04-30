@@ -12,6 +12,8 @@ class Timezone extends Model
 
     const DEFAULT_TIMEZONE = 'Africa/Lagos';
 
+    protected $guarded = ['id'];
+    
     /**
      * The attributes that should be hidden for arrays.
      *
