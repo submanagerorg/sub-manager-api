@@ -1,12 +1,12 @@
 @extends('emails.template')
 
 @section('subject')
-    <h2 class=" ">Password Reset</h2>
+    <h2 class=" ">Password Change</h2>
 @endsection
 
 @section('image')
     <div class="text-center mb-3 content-image">
-        <img src="{{ asset('images/password-change.png') }}" alt="Password reset image" height="85%">
+        <img src="{{ asset('images/password-change.png') }}" alt="Password Change image" height="85%">
     </div>
 @endsection
 
