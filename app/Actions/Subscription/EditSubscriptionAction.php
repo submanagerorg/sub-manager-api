@@ -60,6 +60,8 @@ class EditSubscriptionAction
 
         $subscription->update($data);
 
+        $subscription->refresh();
+
         return $this->formatApiResponse(200, 'Subscription has been updated', $subscription);
     }
 }

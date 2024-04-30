@@ -1,0 +1,37 @@
+[
+    {
+        "name":"Basic",
+        "details":["Track 3 subscriptions at a time", "View basic report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "subscription_limit": 3,
+        "amount":0,
+        "period": "lifetime"
+    },
+    {
+        "name":"Standard",
+        "details":["Track 10 subscriptions at a time", "View basic report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "subscription_limit": 10,
+        "amount":750,
+        "period": "monthly"
+    },
+    {
+        "name":"Standard",
+        "details":["Track 10 subscriptions at a time", "View basic report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "subscription_limit": 10,
+        "amount":7800,
+        "period": "yearly"
+    },
+    {
+        "name":"Premium",
+        "details":["Track unlimited subscriptions at a time", "View detailed report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "subscription_limit": null,
+        "amount":1500,
+        "period": "monthly"
+    },
+    {
+        "name":"Premium",
+        "details":["Track unlimited subscriptions at a time", "View detailed report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "subscription_limit": null,
+        "amount":15600,
+        "period": "yearly"
+    }
+]

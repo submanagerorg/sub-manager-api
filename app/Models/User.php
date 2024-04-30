@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -20,18 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     const TOKEN_NAME = 'auth_token';
 
-     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'uid',
-        'email',
-        'password',
-        'username',
-        'timezone_id',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -54,7 +45,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['timezone'];
+    protected $with = ['timezone', 'pricingPlan'];
 
     /** 
      * Override sendEmailVerificationNotification implementation
@@ -67,13 +58,12 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * returns user timezone
      *
-     * @return HasOne
+     * @return BelongsTo
      */
-    public function timezone(): HasOne
+    public function timezone(): BelongsTo
     {
-        return $this->hasOne(Timezone::class, 'id');
+        return $this->belongsTo(Timezone::class, 'timezone_id');
     }
-
 
      /**
      * returns user subscriptions
@@ -86,20 +76,28 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Get Timezone Attribute.
+     * returns user pricing plan
      *
-     * @param $value
-     * @return string
+     * @return HasOne
      */
-    public function getTimezoneAttribute()
+    public function userPricingPlan(): HasOne
     {
-       return Timezone::where('id', $this->timezone_id)->first();
+        return $this->hasOne(UserPricingPlan::class, 'user_id');
     }
 
+     /**
+     * returns pricing plan
+     *
+     * @return HasOneThrough
+     */
+    public function pricingPlan(): HasOneThrough
+    {
+        return $this->hasOneThrough(PricingPlan::class, UserPricingPlan::class, 'user_id', 'id', 'id', 'pricing_plan_id');
+    }
 
      /**
      * @param array $data
-     * @return self | null
+     * @return self|null
      * 
      */
     public static function createNew(array $data): self | null
@@ -125,8 +123,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'timezone_id' => $timezone->id,
         ]);
 
-        return $user;
-
+       return $user->load('timezone', 'pricingPlan');
     }
 
     /**
@@ -136,6 +133,97 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function exists(string $email): bool
     {
         return self::where('email', $email)->exists();
+    }
+
+    /**
+     * Adds pricing plan for a user and related data
+     * 
+     * @param string $pricingPlan
+     * @param string $period
+     * 
+     * @return self|null
+     */
+    public function addUserPricingPlan($pricingPlan, $period): self | null
+    {
+        $userPricingPlan = UserPricingPlan::where('id', $this->id)->first();
+        $pricingPlan = PricingPlan::where('name', $pricingPlan)->where('period', $period)->first();
+
+        if (!$pricingPlan) {
+            return null;
+        }
+
+        $data = [
+            'pricing_plan' => $pricingPlan,
+            'user_id' => $this->id
+        ];
+
+        //Add user pricing plan
+        if ($userPricingPlan) {
+
+            $userPricingPlan = $userPricingPlan::updateRecord($data);
+
+        } else {
+
+            $userPricingPlan = UserPricingPlan::createNew($data);
+        }
+
+        $data['userPricingPlan'] = $userPricingPlan;
+
+        //Add user pricing plan history
+        UserPricingPlanHistory::createNew($data);
+
+        if ($userPricingPlan->end_date) {
+
+            $service = Service::where('name', 'SubSync')->first();
+            $currency = Currency::where('code', "NGN")->first();
+
+            $data = [
+                'service_uid' => $service->uid,
+                'user_id' => $this->id,
+                'currency_id' => $currency->id,
+                'amount' => $userPricingPlan->amount,
+                'start_date' => now(),
+                'end_date' => $userPricingPlan->end_date,
+                'description' => "SubSync {$pricingPlan->name} Subscription",
+            ];
+
+            //Add subscription
+            Subscription::createNew($data);
+        }
+       
+        return $this;
+    }
+
+
+    /**
+     * Checks if subscription limit for a user based on their pricing plan is exceeded
+     * 
+     * @return bool
+     */
+    public function isSubscriptionLimitReached(): bool
+    {
+        if ($this->pricingPlan) {
+            
+            $subscriptionCount = $this->subscriptions()->where('status', 'active')->count();
+
+            if ($subscriptionCount >= $this->pricingPlan->subscription_limit){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     *  Checks if user can access a feature based on their pricing plan
+     * 
+     * @return bool
+     */
+    public function canAccessFeature($featureName): bool
+    {
+        $planFeatures = $this->pricingPlan->pricingPlanFeatures->pluck('feature.name')->toArray();
+        
+        return in_array(strtolower($featureName), $planFeatures);
     }
 
 }
