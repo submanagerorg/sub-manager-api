@@ -52,16 +52,6 @@ class Subscription extends Model
         return $this->belongsTo(Currency::class, 'currency_id');
     }
 
-<<<<<<< HEAD
-     /**
-     * Returns the service of the subscription.
-     *
-     * @return BelongsTo
-     */
-    public function service(): BelongsTo
-    {
-        return $this->belongsTo(Service::class, 'service_id');
-=======
     /**
      * Returns the category of the subscription.
      *
@@ -70,7 +60,6 @@ class Subscription extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
->>>>>>> 58e5d34fc6d23440274e7d18bd86ee7af442f24c
     }
 
     /**
@@ -98,49 +87,19 @@ class Subscription extends Model
      * @return self|null
      */
     public static function createNew(array $data): self | null
-<<<<<<< HEAD
-    {
-        if(isset($data['service_uid'])){
-            $service = Service::where('uid', $data['service_uid'])->first();
-=======
     { 
         if(self::exists($data)){
             return null;
         }
 
         $service = Service::where('name', 'like', '%' . $data['name'] . '%')->first();
->>>>>>> 58e5d34fc6d23440274e7d18bd86ee7af442f24c
 
         if ($service) {
             $category = $service->category;
         }else{
-<<<<<<< HEAD
-            $category = Category::where('name', 'others')->first();
-
-            $service = Service::where('name', $data['name'])->first();
-
-            if (!$service) {
-                $service = new Service();
-                $service->uid = Str::orderedUuid();
-                $service->name = $data['name'];
-                $service->url =  $data['url'];
-                $service->category_id = $category->id;
-                $service->status = Service::STATUS['PENDING'];
-                $service->save();
-            }
-
-            $data['service_uid'] = $service->uid;
-        }
-
-        if(self::exists($data)){
-            return null;
-        }
-
-=======
             $category = Service::categorize($data);
         }
         
->>>>>>> 58e5d34fc6d23440274e7d18bd86ee7af442f24c
         $subscription = self::create([
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
@@ -155,11 +114,7 @@ class Subscription extends Model
             'description' => isset($data['description']) ? $data['description'] : null,
         ]);
 
-<<<<<<< HEAD
-        return $subscription->load('service');
-=======
         return $subscription->load('category');
->>>>>>> 58e5d34fc6d23440274e7d18bd86ee7af442f24c
     }
 
      /**
