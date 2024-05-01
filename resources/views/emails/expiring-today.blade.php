@@ -33,7 +33,7 @@
             <div class="col-xs-3 text-left sub-name">
                 <p class="blue-text"><b>Spotify</b></p>
                 <br>
-                <p class="blue-text"><b>Amazon Primeeeeeeeeeeeeeeeee login Details</b></p>
+                <p class="blue-text"><b>Amazon Prime</b></p>
                 <br>
                 <p class="blue-text"><b>Hulu</b></p>
             </div>

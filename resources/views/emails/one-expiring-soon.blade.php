@@ -17,7 +17,7 @@
         </p>
         <p >
             This is a friendly reminder that your subscription to <span class="blue-text"><b>Spotify</b></span> 
-            will expire in <span class="red-text"><b>3 days></b></span>. 
+            will expire in <span class="red-text"><b>3 days</b></span>. 
         </p>
         <p>
             You can always view your account and manage your subscriptions on the app.

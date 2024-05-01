@@ -6,7 +6,7 @@
 
 @section('image')
     <div class="text-center mb-3 content-image">
-        <img src="{{ asset('images/forbidden-error.png') }}" alt="Forbidden Error image" height="100%">
+        <img src="{{ asset('images/forbidden-error.png') }}" alt="Forbidden Error image" height="85%">
     </div>
 @endsection
 
