@@ -6,11 +6,14 @@ use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Service extends Model
 {
     use HasFactory, Filterable;
 
+    protected $guarded = ['id'];
+    
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -20,13 +23,7 @@ class Service extends Model
         'id', 'category_id'
     ];
 
-    public const STATUS = [
-        'APPROVED' => 'approved',
-        'PENDING' => 'pending',
-        'REJECTED' => 'rejected',
-    ];
-
-    protected $appends = ['category'];
+    protected $with = ['category'];
 
     /**
      * Returns the category of the service.
@@ -38,14 +35,24 @@ class Service extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    /**
-     * Get Category Attribute.
-     *
-     * @param $value
-     * @return string
-     */
-    public function getCategoryAttribute()
+    public static function categorize($data)
     {
-       return Category::where('id', $this->category_id)->first()->name;
+        // Loop through each record and check if the service name is contained within the argument
+        foreach (self::all() as $service) {
+            if (stripos($data['name'], $service->name) !== false) {
+                return $service->category;
+            }
+        }
+
+        $category = Category::where('name', 'others')->first();
+
+        self::create([
+            'uid' => Str::orderedUuid(),
+            'name' => $data['name'],
+            'url' =>  isset($data['url']) ? $data['url'] : null,
+            'category_id' => $category->id
+        ]);
+
+        return $category;
     }
 }

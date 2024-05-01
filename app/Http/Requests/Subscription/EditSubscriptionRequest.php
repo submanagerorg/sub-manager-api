@@ -26,9 +26,8 @@ class EditSubscriptionRequest extends FormRequest
         $currentDate =  now()->format('Y-m-d');
 
         return [
-            'service_uid' => ['nullable','string', 'exists:services,uid'],
-            'name' => ['required_with:url','string', 'max:30'],
-            'url' => ['required_with:name','string', 'url'],
+            // 'name' => ['nullable','string', 'max:30'],
+            // 'url' => ['nullable','string', 'url'],
             'currency' => ['nullable', 'string', 'exists:currencies,code'],
             'amount' => ['nullable', 'numeric', 'min:1', 'max:100000'],
             'start_date' => ['nullable', 'date', 'date_format:Y-m-d'],
