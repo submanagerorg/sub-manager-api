@@ -9,6 +9,8 @@ class Currency extends Model
 {
     use HasFactory;
 
+    const DEFAULT_CURRENCY = 'NGN';
+
     protected $guarded = ['id'];
     
     /**

@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\PlanPaymentController;
 use App\Http\Controllers\PricingPlanController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TimezoneController;
@@ -58,6 +59,10 @@ Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum']], fu
 
 Route::group(['prefix' => 'users', 'middleware' => ['auth:sanctum']], function () {
     Route::post('profile', [UserController::class, 'editProfile'])->name('edit-profile');
+});
+
+Route::group(['prefix' => 'payment'], function () {
+    Route::post('', [PlanPaymentController::class, 'initiatePayment'])->name('payment');
 });
 
 
