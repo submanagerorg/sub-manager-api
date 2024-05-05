@@ -13,7 +13,12 @@ class DashboardController extends Controller
     {
 
     }
+
     public function getTotalSummary(DashboardTotalSummaryRequest $request) {
         return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->totalSummaryData($request->currency));
+    }
+
+    public function spendByCurrency() {
+        return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->spendByCurrencyData());
     }
 }
