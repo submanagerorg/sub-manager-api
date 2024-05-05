@@ -12,6 +12,7 @@ class DashboardRepository {
 
         return [
             'total_entries' => $subscriptions->count(),
+            'month_average' => round($subscriptions->count() / 30, 1),
             'total_amount_spent' => $subscriptions->sum('amount')
         ];
     }
