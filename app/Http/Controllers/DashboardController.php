@@ -29,4 +29,8 @@ class DashboardController extends Controller
     public function expiringSoon() {
         return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->expirySoonData());
     }
+
+    public function graphData(Request $request) {
+        return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->getGraphData($request->period));
+    }
 }

@@ -66,4 +66,32 @@ class DashboardRepository {
 
         return $subscriptions;
     }
+
+    public function getGraphData(string|null $period = null) {
+        $currentYear = now()->year;
+
+        if ($period === 'month') {
+            return Subscription::toBase()->select(
+                DB::raw('YEAR(created_at) as subscription_year'),
+                DB::raw('MONTH(created_at) as subscription_month'),
+                DB::raw('SUM(amount) as total_amount'),
+                DB::raw('MONTHNAME(created_at) as month_name')
+            )
+            ->whereYear('created_at', $currentYear)
+            ->where('user_id', auth()->id())
+            ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'))
+            ->orderBy('subscription_year')
+            ->orderBy('subscription_month')
+            ->get();
+        }
+
+        return Subscription::toBase()->select(
+            DB::raw('YEAR(created_at) as subscription_year'),
+            DB::raw('SUM(amount) as total_amount')
+        )
+        ->where('user_id', auth()->id())
+        ->groupBy(DB::raw('YEAR(created_at)'))
+        ->orderBy('subscription_year')
+        ->get();
+    }
 }
