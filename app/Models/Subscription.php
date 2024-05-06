@@ -79,7 +79,7 @@ class Subscription extends Model
      */
     public function getUserUidAttribute()
     {
-       return optional(User::where('id', $this->user_id)->first())->uid;
+       return User::where('id', $this->user_id)->first()->uid;
     }
 
     /**
