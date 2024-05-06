@@ -25,4 +25,8 @@ class DashboardController extends Controller
     public function spendByCategory() {
         return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->spendByCategoryData());
     }
+
+    public function expiringSoon() {
+        return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->expirySoonData());
+    }
 }

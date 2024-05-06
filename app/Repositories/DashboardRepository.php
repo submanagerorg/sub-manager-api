@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Currency;
 use App\Models\Subscription;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardRepository {
@@ -53,5 +54,16 @@ class DashboardRepository {
                         ->groupBy('subscriptions.category_id')
                         ->get();
         return $subcriptions;
+    }
+
+    public function expirySoonData() {
+        $today = Carbon::today();
+        $maxExpirationDay = Carbon::today()->addDays(config('subscription.number_of_days_to_warn_expiration'));
+        $subscriptions = Subscription::with(['category:id,name'])
+                            ->whereUserId(auth()->id())
+                            ->whereBetween('end_date', [$today, $maxExpirationDay])
+                            ->get();
+
+        return $subscriptions;
     }
 }
