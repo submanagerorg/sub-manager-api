@@ -21,4 +21,8 @@ class DashboardController extends Controller
     public function spendByCurrency() {
         return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->spendByCurrencyData());
     }
+
+    public function spendByCategory() {
+        return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->spendByCategoryData());
+    }
 }

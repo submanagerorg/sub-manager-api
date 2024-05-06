@@ -36,4 +36,22 @@ class DashboardRepository {
 
         return $subcriptions;
     }
+
+    public function spendByCategoryData() {
+        $userId = auth()->id();
+        $subcriptions = Subscription::toBase()
+                        ->whereUserId($userId)
+                        ->join(
+                            'categories', function($join) {
+                                $join->on('subscriptions.category_id', '=', 'categories.id');
+                            }
+                        )->select(
+                            'categories.name',
+                            DB::raw('SUM(amount) as total_amount'),
+                            DB::raw("ROUND((SUM(amount) / (SELECT SUM(amount) FROM subscriptions where user_id = $userId)) * 100, 0) as percentage")
+                        )
+                        ->groupBy('subscriptions.category_id')
+                        ->get();
+        return $subcriptions;
+    }
 }
