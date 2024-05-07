@@ -14,7 +14,8 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.9",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "openai-php/laravel": "^0.8.1"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^1.0",
@@ -27,7 +28,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "extra": {
         "laravel": {
