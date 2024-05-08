@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardRepository {
     public function totalSummaryData(string $currency): array {
-        $currency = Currency::whereSymbol($currency)->first();
+        $currency = Currency::whereCode($currency)->first();
         $subscriptions = Subscription::whereUserId(auth()->id())->whereCurrencyId($currency->id)->get();
 
         return [

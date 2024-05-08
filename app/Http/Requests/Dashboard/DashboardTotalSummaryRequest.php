@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Dashboard;
 
+use App\Models\Currency;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,7 +26,7 @@ class DashboardTotalSummaryRequest extends FormRequest
     public function rules()
     {
         return [
-            'currency' => ['required','string', Rule::in(config('currency.accepted_currencies'))]
+            'currency' => ['required','string', Rule::in($this->getAcceptedCurrencies())]
         ];
     }
 
@@ -39,5 +40,14 @@ class DashboardTotalSummaryRequest extends FormRequest
         return [
             'currency.required' => 'Please provide an accepted currency for this request.'
         ];
+    }
+
+    /**
+     * Get accepted currencies
+     *
+     * @return array
+     */
+    private function getAcceptedCurrencies(): array {
+        return Currency::pluck('code')->toArray();
     }
 }
