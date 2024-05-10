@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\VerificationController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,4 @@ Route::get('/', function () {
     return Redirect::away($formUrl);
 });
 
-Route::get('/verified', function () {
-    return "<h1>Email verified successfully!</h1>";
-});
+Route::get('email/verified', [VerificationController::class, 'index'])->name('verified');

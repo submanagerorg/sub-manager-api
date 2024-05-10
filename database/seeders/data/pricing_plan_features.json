@@ -1,0 +1,50 @@
+[
+    {
+        "plan":"Basic",
+        "feature": "view basic report"
+    },
+    {
+        "plan":"Basic",
+        "feature": "access chrome extension"
+    },
+    {
+        "plan":"Basic",
+        "feature": "access web application"
+    },
+    {
+        "plan":"Basic",
+        "feature": "access mobile application"
+    },
+    {
+        "plan":"Standard",
+        "feature": "view basic report"
+    },
+    {
+        "plan":"Standard",
+        "feature": "access chrome extension"
+    },
+    {
+        "plan":"Standard",
+        "feature": "access web application"
+    },
+    {
+        "plan":"Standard",
+        "feature": "access mobile application"
+    },
+    {
+        "plan":"Premium",
+        "feature": "view detailed report"
+    },
+    {
+        "plan":"Premium",
+        "feature": "access chrome extension"
+    },
+    {
+        "plan":"Premium",
+        "feature": "access web application"
+    },
+    {
+        "plan":"Premium",
+        "feature": "access mobile application"
+    }
+]

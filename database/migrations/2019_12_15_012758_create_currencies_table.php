@@ -18,7 +18,7 @@ class CreateCurrenciesTable extends Migration
             $table->uuid('uid');
             $table->string('name')->unique();
             $table->string('sign');
-            $table->string('symbol')->unique();
+            $table->string('code')->unique();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

@@ -6,10 +6,9 @@ use App\Http\Requests\Password\ChangePasswordRequest;
 use App\Http\Requests\Password\ForgotPasswordRequest;
 use App\Http\Requests\Password\ResetPasswordRequest;
 use App\Mail\ChangePasswordMail;
-use App\Mail\ForgotPasswordMail;
+use App\Mail\ResetPasswordMail;
 use App\Models\PasswordReset;
 use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -25,24 +24,16 @@ class PasswordController extends Controller
                 return $this->formatApiResponse(400, 'User does not exist');
             }
 
-            $token = Str::random(32);
+            $mail_data = [
+                'user' => $user,
+                'user_agent' => $request->header('User-Agent')
+            ];
 
-            PasswordReset::updateOrCreate(
-                ['email' => $user->email],
-                [
-                    'token' => $token,
-                    'created_at' => now(),
-                ]
-            );
-
-            //To do: Add activity log
-            //activityLog("request password reset", $user, request());
-
-            $resetUrl = config("app.frontend_url") . "/password/reset?token=$token";
-
-            Mail::to($user->email)->send(new ForgotPasswordMail($user, $resetUrl));
+          
+            Mail::to($user->email)->send(new ResetPasswordMail($mail_data));
 
         } catch (\Exception $exception) {
+            logger($exception);
             return $this->formatApiResponse(500, 'Error occured', [], $exception->getMessage());
         }
 
@@ -64,19 +55,19 @@ class PasswordController extends Controller
                 return $this->formatApiResponse(400, 'User does not exist');
             }
 
-            if (now()->gt(Carbon::parse($token->created_at)->addMinutes(30))) {
+            if (now()->gt(Carbon::parse($token->created_at)->addMinutes(15))) {
                 return $this->formatApiResponse(400, 'Expired Token');
             }
 
             $user->password = bcrypt($request->password);
             $user->save();
 
-            //To do: Add activity log
-            //activityLog("password reset", $user, request());
-
             $token->delete();
 
+            Mail::to($user->email)->send(new ChangePasswordMail());
+
         } catch (\Exception $exception) {
+            logger($exception);
             return $this->formatApiResponse(500, 'Error occured', [], $exception->getMessage());
         }
 
@@ -95,12 +86,10 @@ class PasswordController extends Controller
             $user->password = bcrypt($request->password);
             $user->save();
 
-            //To do: Add activity log
-            //activityLog("password change", $user, request());
-
-            Mail::to($user->email)->send(new ChangePasswordMail($user));
+            Mail::to($user->email)->send(new ChangePasswordMail());
 
         } catch (\Exception $exception) {
+            logger($exception);
             return $this->formatApiResponse(500, 'Error occured', [], $exception->getMessage());
         }
         

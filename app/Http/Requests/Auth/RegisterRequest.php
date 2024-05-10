@@ -30,7 +30,6 @@ class RegisterRequest extends FormRequest
                 'required',
                 'confirmed'
             ],
-            'username' => ['nullable','string', 'max:30'],
         ];
     }
 }

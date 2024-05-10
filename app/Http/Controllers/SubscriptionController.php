@@ -9,6 +9,7 @@ use App\Actions\Subscription\GetSubscriptionsAction;
 use App\Actions\Subscription\RemoveSubscriptionAction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Filters\SubscriptionFilter;
 use App\Http\Requests\Subscription\AddSubscriptionRequest;
 use App\Http\Requests\Subscription\EditSubscriptionRequest;
 
@@ -25,9 +26,9 @@ class SubscriptionController extends Controller
         return (new GetSubscriptionAction())->execute($subscriptionId);
     }
 
-    public function getSubscriptions(Request $request)
+    public function getSubscriptions(SubscriptionFilter $filter, Request $request)
     {
-        return (new GetSubscriptionsAction())->execute($request->all());
+        return (new GetSubscriptionsAction())->execute($filter, $request->all());
     }
 
     public function removeSubscription($subscriptionId)

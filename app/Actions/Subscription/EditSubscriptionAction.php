@@ -1,9 +1,12 @@
 <?php
 namespace App\Actions\Subscription;
 
+use App\Models\Category;
 use App\Models\Currency;
+use App\Models\Service;
 use App\Models\Subscription;
 use App\Traits\FormatApiResponse;
+use Illuminate\Support\Str;
 
 
 class EditSubscriptionAction
@@ -27,16 +30,16 @@ class EditSubscriptionAction
         }
 
         $data = [
-            'name' => $data['name'] ?? $subscription->name,
-            'url' => $data['url'] ?? $subscription->url,
-            'currency_id' => $data['currency_id'] ?? Currency::where('symbol', $data['currency'])->first()->id,
-            'amount' => $data['amount'] ?? $subscription->amount,
-            'start_date' => $data['start_date'] ?? $subscription->start_date,
-            'end_date' => $data['end_date'] ?? $subscription->end_date,
-            'description' => $data['description'] ?? $subscription->description,
+            'currency_id' =>  isset($data['currency']) ? Currency::where('code', $data['currency'])->first()->id : $subscription->currency_id,
+            'amount' =>  isset($data['amount']) ? $data['amount'] : $subscription->amount,
+            'start_date' =>  isset($data['start_date']) ? $data['start_date'] : $subscription->start_date,
+            'end_date' =>  isset($data['end_date']) ? $data['end_date'] : $subscription->end_date,
+            'description' =>  isset($data['description']) ? $data['description'] : $subscription->description,
         ];
 
         $subscription->update($data);
+
+        $subscription->refresh();
 
         return $this->formatApiResponse(200, 'Subscription has been updated', $subscription);
     }

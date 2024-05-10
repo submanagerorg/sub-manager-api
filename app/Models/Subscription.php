@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,13 +10,13 @@ use Illuminate\Support\Str;
 
 class Subscription extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     protected $guarded = ['id'];
 
     public const STATUS = [
-        'ONGOING' => 'ongoing',
-        'EXPIRED' => 'expired',
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
     ];
 
     /**
@@ -24,10 +25,12 @@ class Subscription extends Model
      * @var array
      */
     protected $hidden = [
-        'id', 'currency_id'
+        'id', 'currency_id', 'user_id', 'category_id'
     ];
 
-    protected $appends = ['currency'];
+    protected $with = ['category'];
+
+    protected $appends = ['user_uid', 'currency'];
 
     /**
      * Returns the user of the subscription.
@@ -46,50 +49,72 @@ class Subscription extends Model
      */
     public function currency(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'currency_id');
+        return $this->belongsTo(Currency::class, 'currency_id');
     }
 
-
     /**
-     * Transform user id to user uid.
+     * Returns the category of the subscription.
      *
-     * @param $value
-     * @return string
+     * @return BelongsTo
      */
-    public function getUserIdAttribute($value): string
+    public function category(): BelongsTo
     {
-        return User::where('id', $value)->first()->uid;
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     /**
      * Get Currency Attribute.
      *
-     * @param $value
      * @return string
      */
     public function getCurrencyAttribute()
     {
-       return Currency::where('id', $this->currency_id)->first()->symbol;
+       return Currency::where('id', $this->currency_id)->first()->code;
+    }
+
+    /**
+     * Get User Attribute.
+     *
+     * @return string
+     */
+    public function getUserUidAttribute()
+    {
+       return User::where('id', $this->user_id)->first()->uid;
     }
 
     /**
      * @param array $data
-     * @return self
+     * @return self|null
      */
-    public static function createNew(array $data): self
+    public static function createNew(array $data): self | null
     {
-        return self::create([
+        if(self::exists($data)){
+            return null;
+        }
+
+        $service = Service::where('name', 'like', '%' . $data['name'] . '%')->first();
+
+        if ($service) {
+            $category = $service->category;
+        }else{
+            $category = Service::categorize($data);
+        }
+
+        $subscription = self::create([
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
             'name' => $data['name'],
-            'url' => $data['url'] ?? null,
+            'url' => isset($data['url']) ? $data['url'] : null,
             'currency_id' => $data['currency_id'],
+            'category_id' => $category->id,
             'amount' => $data['amount'],
-            'status' => self::STATUS['ONGOING'],
+            'status' => self::STATUS['ACTIVE'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
-            'description' => $data['description'] ?? null,
+            'description' => isset($data['description']) ? $data['description'] : null,
         ]);
+
+        return $subscription->load('category');
     }
 
      /**
@@ -101,7 +126,6 @@ class Subscription extends Model
         return self::where([
             'user_id' => $data['user_id'],
             'name' => $data['name'],
-            'url' => $data['url'] ?? null,
             'currency_id' => $data['currency_id'],
             'amount' => $data['amount'],
             'start_date' => $data['start_date'],

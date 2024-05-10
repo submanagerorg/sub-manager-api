@@ -14,5 +14,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
+        $this->call(CurrencySeeder::class);
+        $this->call(TimezoneSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(ServiceSeeder::class);
+        $this->call(PricingPlanSeeder::class);
+        $this->call(FeatureSeeder::class);
+        $this->call(PricingPlanFeatureSeeder::class);
     }
 }
