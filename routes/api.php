@@ -63,6 +63,7 @@ Route::group(['prefix' => 'users', 'middleware' => ['auth:sanctum']], function (
 
 Route::group(['prefix' => 'payment'], function () {
     Route::post('', [PlanPaymentController::class, 'initiatePayment'])->name('payment');
+    Route::post('webhook', [PlanPaymentController::class, 'processWebhook'])->name('process-webhook');
 });
 
 

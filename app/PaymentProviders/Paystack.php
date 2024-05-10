@@ -3,7 +3,6 @@ namespace App\PaymentProviders;
  
 use App\Traits\FormatApiResponse;
 use Illuminate\Support\Facades\Http;
-use Throwable;
 
 class Paystack
 {
@@ -46,8 +45,6 @@ class Paystack
             ]
         ];
 
-        logger($requestData);
-
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'Authorization' => "Bearer {$this->secret_key}",
@@ -55,15 +52,20 @@ class Paystack
             $url, $requestData
         )->object();
 
-        logger(json_encode($response));
-        // dd($response);
-        return $response;
+        if($response->status !== true){
+            logger("Paystack Error - " . json_encode($response));
+
+            $errorMessage = isset($response->message) ? $response->message : null;
+            return PaymentProvider::errorResponse($errorMessage);
+        }
+
+        return PaymentProvider::initiatePaymentResponse($response->data->authorization_url, $response->data->reference);
     }
 
     /**
-    *Verify Payment
+    * Verify Payment
     *
-    * @param array $data
+    * @param string $reference
     * @return JsonResponse
     */
     public function verifyPayment(string $reference)
@@ -76,7 +78,34 @@ class Paystack
             $url
         )->object();
 
-        logger($response);
-        dd($response);
+        if($response->status !== true){
+            logger("Paystack Error - " . json_encode($response));
+            
+            $errorMessage = isset($response->message) ? $response->message : null;
+            return PaymentProvider::errorResponse($errorMessage);
+        }
+
+        return PaymentProvider::verifyPaymentResponse(
+            $response->data->status, $response->data->reference, $response->data->amount / 100, 
+            $response->data->customer->email, $response->data->metadata->pricing_plan_uid
+        );
+    }
+
+    /**
+    * Validate Webhook
+    *
+    * @param $request
+    * @return JsonResponse
+    */
+    public function validateWebhook($request)
+    {   
+        $data = json_encode(json_decode($request->getContent()));
+
+        if($request->header('x-paystack-signature') !== hash_hmac('sha512', $data, $this->secret_key)) {
+            $errorMessage = 'Failed to validate webhook';
+            return PaymentProvider::errorResponse($errorMessage);
+        }
+
+        return PaymentProvider::validateWebhookResponse($request['data']['reference']);
     }
 }

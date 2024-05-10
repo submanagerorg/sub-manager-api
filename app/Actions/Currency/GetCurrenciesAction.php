@@ -16,7 +16,7 @@ class GetCurrenciesAction
     */
     public function execute(array $data)
     {
-        $currencies = Currency::orderBy('name', 'asc')->get();
+        $currencies = Currency::where('is_active', 1)->orderBy('name', 'asc')->get();
 
         return $this->formatApiResponse(200, 'Currencies retrieved successfuly', $currencies);
     }

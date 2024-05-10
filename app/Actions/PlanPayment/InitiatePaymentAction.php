@@ -1,12 +1,8 @@
 <?php
 namespace App\Actions\PlanPayment;
 
-use App\Models\Currency;
 use App\Models\PricingPlan;
-use App\Models\Subscription;
 use App\Models\Transaction;
-use App\Models\User;
-use App\PaymentProviders\Paystack;
 use App\Traits\FormatApiResponse;
 use Throwable;
 
@@ -15,14 +11,16 @@ class InitiatePaymentAction
     use FormatApiResponse;
 
    /**
+    * Initiate payment
     *
     * @param array $data
     * @return JsonResponse
     */
     public function execute(array $data)
     {
+        $paymentProvider = Transaction::getPaymentProvider();
+
         try{
-            //create user after payment is successful
 
             $plan = PricingPlan::where('uid', $data['pricing_plan_uid'])->first();
 
@@ -30,21 +28,22 @@ class InitiatePaymentAction
                 'reference' => Transaction::generateReference(),
                 'plan' => $plan,
                 'email' => $data['email'],
-                'currency' => Currency::DEFAULT_CURRENCY
+                'currency' => Transaction::DEFAULT_CURRENCY['CODE']
             ];
 
-            $response = (new Paystack())->initiatePayment($paymentData); 
+            $response = (new $paymentProvider())->initiatePayment($paymentData); 
 
-            if($response->status == 'true'){
-                $data = [
-                    'payment_url' => $response->data->authorization_url,
-                    'reference' => $response->data->reference
-                ];
-        
-                return $this->formatApiResponse(200, 'Payment successfully initiated.', $data);
+            if($response['status'] !== true){
+                return $this->formatApiResponse(500, 'Unable to initiate payment.');
             }
     
-           
+            $data = [
+                'payment_url' => $response['payment_url'],
+                'reference' => $response['reference']
+            ];
+    
+            return $this->formatApiResponse(200, 'Payment successfully initiated.', $data);
+            
 
         } catch(Throwable $e) {
             logger($e);

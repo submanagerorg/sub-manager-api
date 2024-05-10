@@ -138,15 +138,13 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Adds pricing plan for a user and related data
      * 
-     * @param string $pricingPlan
-     * @param string $period
+     * @param PricingPlan $pricingPlan
      * 
      * @return self|null
      */
-    public function addUserPricingPlan($pricingPlan, $period): self | null
+    public function addUserPricingPlan($pricingPlan): self | null
     {
         $userPricingPlan = UserPricingPlan::where('id', $this->id)->first();
-        $pricingPlan = PricingPlan::where('name', $pricingPlan)->where('period', $period)->first();
 
         if (!$pricingPlan) {
             return null;
@@ -160,7 +158,7 @@ class User extends Authenticatable implements MustVerifyEmail
         //Add user pricing plan
         if ($userPricingPlan) {
 
-            $userPricingPlan = $userPricingPlan::updateRecord($data);
+            $userPricingPlan = $userPricingPlan->updateRecord($data);
 
         } else {
 
@@ -173,12 +171,10 @@ class User extends Authenticatable implements MustVerifyEmail
         UserPricingPlanHistory::createNew($data);
 
         if ($userPricingPlan->end_date) {
-
-            $service = Service::where('name', 'SubSync')->first();
             $currency = Currency::where('code', "NGN")->first();
 
             $data = [
-                'service_uid' => $service->uid,
+                'name' => 'SubSync',
                 'user_id' => $this->id,
                 'currency_id' => $currency->id,
                 'amount' => $userPricingPlan->amount,
