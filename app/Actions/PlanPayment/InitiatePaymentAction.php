@@ -42,9 +42,7 @@ class InitiatePaymentAction
                 'reference' => $response['reference']
             ];
     
-            return $this->formatApiResponse(200, 'Payment successfully initiated.', $data);
-            
-
+            return $this->formatApiResponse(200, 'Payment successfully initiated.', $data);      
         } catch(Throwable $e) {
             logger($e);
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
