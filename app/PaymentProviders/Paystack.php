@@ -2,6 +2,7 @@
 namespace App\PaymentProviders;
  
 use App\Traits\FormatApiResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class Paystack
@@ -13,9 +14,8 @@ class Paystack
     public $public_key;
 
     /**
-     * Initialize a new filter instance.
+     * Initialize a new paystack instance.
      *
-     * @param Request $request
      * @return void
      */
     public function __construct()
@@ -29,9 +29,9 @@ class Paystack
     * Initialize payment 
     *
     * @param array $data
-    * @return JsonResponse
+    * @return array
     */
-    public function initiatePayment(array $data)
+    public function initiatePayment(array $data): array
     {
         $url = "{$this->base_url}/transaction/initialize";
 
@@ -66,9 +66,9 @@ class Paystack
     * Verify Payment
     *
     * @param string $reference
-    * @return JsonResponse
+    * @return array
     */
-    public function verifyPayment(string $reference)
+    public function verifyPayment(string $reference): array
     {
         $url = "{$this->base_url}/transaction/verify/{$reference}";
 
@@ -94,10 +94,10 @@ class Paystack
     /**
     * Validate Webhook
     *
-    * @param $request
-    * @return JsonResponse
+    * @param Request $request
+    * @return array
     */
-    public function validateWebhook($request)
+    public function validateWebhook(Request $request): array
     {   
         $data = json_encode(json_decode($request->getContent()));
 

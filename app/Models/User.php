@@ -180,7 +180,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'amount' => $userPricingPlan->amount,
                 'start_date' => now(),
                 'end_date' => $userPricingPlan->end_date,
-                'description' => "SubSync {$pricingPlan->name} Subscription",
+                'description' => "SubSync {$pricingPlan->name} Plan Subscription ({$pricingPlan->period})",
             ];
 
             //Add subscription

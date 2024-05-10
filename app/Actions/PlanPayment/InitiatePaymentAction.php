@@ -4,6 +4,7 @@ namespace App\Actions\PlanPayment;
 use App\Models\PricingPlan;
 use App\Models\Transaction;
 use App\Traits\FormatApiResponse;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class InitiatePaymentAction
@@ -16,7 +17,7 @@ class InitiatePaymentAction
     * @param array $data
     * @return JsonResponse
     */
-    public function execute(array $data)
+    public function execute(array $data): JsonResponse
     {
         $paymentProvider = Transaction::getPaymentProvider();
 

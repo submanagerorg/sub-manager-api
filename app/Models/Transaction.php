@@ -23,6 +23,11 @@ class Transaction extends Model
         'PENDING' => 'pending'
     ];
 
+    /**
+    * Generate transaction reference
+    *
+    * @return string
+    */
     public static function generateReference()
     {
         return Str::upper(sprintf(
@@ -34,6 +39,11 @@ class Transaction extends Model
         ));
     }
 
+    /**
+    * Retrieve payment provider
+    *
+    * @return string
+    */
     public static function getPaymentProvider()
     {
         $paymentProvider = "App\PaymentProviders\\" . config('providers.payment_provider');
@@ -41,6 +51,11 @@ class Transaction extends Model
         return $paymentProvider;
     }
 
+    /**
+    * Create new record
+    *
+    * @return self|null
+    */
     public static function createNew(array $data): self | null
     {
         $transaction = self::create([

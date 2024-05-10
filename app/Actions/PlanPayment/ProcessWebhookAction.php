@@ -9,6 +9,8 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\WebhookLog;
 use App\Traits\FormatApiResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -21,10 +23,10 @@ class ProcessWebhookAction
    /**
     * Process Webhook
     *
-    * @param $request
+    * @param Request $request
     * @return JsonResponse
     */
-    public function execute($request)
+    public function execute(Request $request): JsonResponse
     {
         $webhookLog = WebhookLog::create([
             'request' => json_encode([
@@ -74,7 +76,7 @@ class ProcessWebhookAction
 
             $user = User::where('email', $verifyPayment['email'])->first();
 
-            $pricingPlan = PricingPlan::where('uid', $verifyPayment['pricing_plan'])->first();
+            $pricingPlan = PricingPlan::where('uid', $verifyPayment['pricing_plan_uid'])->first();
 
             if(!$user){
                 $user = $this->createUser($verifyPayment['email'], $pricingPlan, $verifyPayment['amount']);
@@ -99,7 +101,15 @@ class ProcessWebhookAction
     }
 
 
-    private function createUser($email, $pricingPlan, $amount) 
+    /**
+    * Create User 
+    *
+    * @param string $email
+    * @param PricingPlan $pricingPlan
+    * @param float $amount
+    * @return User|null
+    */
+    private function createUser(string $email, PricingPlan $pricingPlan, float $amount): User|null
     {
         $user  = User::createNew([
             'email' => $email,
@@ -119,7 +129,16 @@ class ProcessWebhookAction
         return $user;
     }
 
-    private function createTransaction($user, $pricingPlan, $amount, $reference) 
+    /**
+    * Create transaction
+    *
+    * @param User $user
+    * @param PricingPlan $pricingPlan
+    * @param float $amount
+    * @param string $reference
+    * @return void
+    */
+    private function createTransaction(User $user, PricingPlan $pricingPlan, float $amount, string $reference): void 
     {
         $data = [
             'user_id' => $user->id,
@@ -142,7 +161,14 @@ class ProcessWebhookAction
         Mail::to($user)->send(new SuccessfulPaymentMail($mail_data));
     }
 
-    private function updateWebhookLog($webhookLog, $response)
+    /**
+    * Update Webhook Log
+    *
+    * @param WebhookLog $webhookLog
+    * @param string $response
+    * @return JsonResponse
+    */
+    private function updateWebhookLog(WebhookLog $webhookLog, string $response): void
     {
         $webhookLog->update([
             'response' => $response

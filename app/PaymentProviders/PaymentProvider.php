@@ -1,20 +1,16 @@
 <?php
 namespace App\PaymentProviders;
- 
-use App\Traits\FormatApiResponse;
 
 class PaymentProvider
 {
-    use FormatApiResponse;
-
    /**
     * Initialize payment 
     *
-    * @param $paymentUrl
-    * @param $reference
-    * @return JsonResponse
+    * @param string $paymentUrl
+    * @param string $reference
+    * @return array
     */
-    public static function initiatePaymentResponse($paymentUrl, $reference)
+    public static function initiatePaymentResponse(string $paymentUrl, string $reference): array
     {
         return [
             'status' => true,
@@ -26,14 +22,16 @@ class PaymentProvider
     /**
     * Verify Payment
     *
-    * @param $transactionStatus
-    * @param $reference
-    * @param $smount
-    * @param $email
-    * @param $pricingPlan
-    * @return JsonResponse
+    * @param string $transactionStatus
+    * @param string $reference
+    * @param float $smount
+    * @param string $email
+    * @param string $pricingPlan
+    * @return array
     */
-    public static function verifyPaymentResponse($transactionStatus, $reference, $amount, $email, $pricingPlan)
+    public static function verifyPaymentResponse(
+        string $transactionStatus, string $reference, float $amount, string $email, string $pricingPlanUid
+    ): array
     {
         if (in_array(strtolower($transactionStatus), ['success', 'successful'])){
             $transactionStatus  = 'success';
@@ -45,17 +43,17 @@ class PaymentProvider
             'reference' => $reference,
             'amount' => $amount,
             'email' => $email,
-            'pricing_plan' => $pricingPlan
+            'pricing_plan_uid' => $pricingPlanUid
         ];
     }
 
     /**
     * Validate Webhook
     *
-    * @param $reference
-    * @return JsonResponse
+    * @param string $reference
+    * @return array
     */
-    public static function validateWebhookResponse($reference)
+    public static function validateWebhookResponse(string $reference): array
     {
         return [
             'status' => true,
@@ -66,10 +64,10 @@ class PaymentProvider
     /**
     * Error Response
     *
-    * @param $errorMessage
-    * @return JsonResponse
+    * @param string $errorMessage
+    * @return array
     */
-    public static function errorResponse($errorMessage)
+    public static function errorResponse(string $errorMessage): array
     {
         return [
             'status' => false,
