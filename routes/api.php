@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlanPaymentController;
 use App\Http\Controllers\PricingPlanController;
 use App\Http\Controllers\ServiceController;
@@ -59,6 +60,14 @@ Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum']], fu
 
 Route::group(['prefix' => 'users', 'middleware' => ['auth:sanctum']], function () {
     Route::post('profile', [UserController::class, 'editProfile'])->name('edit-profile');
+});
+
+Route::group(['prefix' => 'dashboard', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('total-summary', [DashboardController::class, 'getTotalSummary']);
+    Route::get('graph', [DashboardController::class, 'graphData']);
+    Route::get('spend-by-currency', [DashboardController::class, 'spendByCurrency']);
+    Route::get('spend-by-category', [DashboardController::class, 'spendByCategory']);
+    Route::get('expiring-soon', [DashboardController::class, 'expiringSoon']);
 });
 
 Route::group(['prefix' => 'payment'], function () {

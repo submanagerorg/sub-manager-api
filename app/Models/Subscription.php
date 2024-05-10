@@ -87,7 +87,7 @@ class Subscription extends Model
      * @return self|null
      */
     public static function createNew(array $data): self | null
-    { 
+    {
         if(self::exists($data)){
             return null;
         }
@@ -99,7 +99,7 @@ class Subscription extends Model
         }else{
             $category = Service::categorize($data);
         }
-        
+
         $subscription = self::create([
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
@@ -122,7 +122,7 @@ class Subscription extends Model
      * @return bool
      */
     public static function exists(array $data): bool
-    {   
+    {
         return self::where([
             'user_id' => $data['user_id'],
             'name' => $data['name'],
