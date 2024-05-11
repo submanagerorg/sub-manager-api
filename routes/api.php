@@ -72,6 +72,7 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth:sanctum']], functi
 
 Route::group(['prefix' => 'payment'], function () {
     Route::post('', [PlanPaymentController::class, 'initiatePayment'])->name('payment');
+    Route::get('callback', [PlanPaymentController::class, 'processCallback'])->name('payment-callback');
     Route::post('webhook', [PlanPaymentController::class, 'processWebhook'])->name('process-webhook');
 });
 
