@@ -3,26 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="./images/logo.png"  type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>SubSync</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
         body{
             margin: auto;
             font-size: 14px;
-            font-family:'Poppins';
+            background-color: #fff;
+            font-family: 'Poppins', Arial, sans-serif;
+            text-align: center;
         }
 
         .centered-section {
-            height: 100%; /* Set height to 100% of the viewport height */
-            display: flex;
-            flex-direction: column;
+            height: 100%;
             justify-content: center;
             align-items: center;
             background-color: #fff;
+            text-align: center;
         }
 
         .logo-img {
@@ -31,17 +29,24 @@
         }
 
         .hero-heading {
-            margin-top: 20px; /* Added margin to the heading for spacing */
+            margin-top: 20px; 
         }
             
-        .btn{
+        .btn {
             padding: 1vh 1vw;
             border-radius: 6px;
             background-color: #042B4E;
+            color: #fff;
             width: 98vw;
             max-width: 400px;
             text-align: center;
             font-size: 16px;
+            display: inline-block;
+        }
+
+
+        .btn:hover {
+            background-color: #024174;
         }
 
         .orange-text{
@@ -59,7 +64,7 @@
         .content-image {
             height: 30vh;
             width: 60vw;
-            align-self: center;
+            margin: 0 auto; 
         }
         
         .content {
@@ -70,6 +75,8 @@
         .content-container {
             width: 98vw;
             max-width: 400px;
+            margin: 0 auto; 
+            text-align: center;
         }
 
         .content-container a{
@@ -94,19 +101,13 @@
         .code-container{
             width: 98vw;
             max-width: 400px;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
+            margin: 0 auto;
         }
 
         .button-container{
             width: 98vw;
             max-width: 400px;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
+            margin: 0 auto;
         }
 
         .code{
@@ -117,43 +118,56 @@
             padding: 5px 10px;
         }
 
-        .btn-renew{
-            margin-left: 35px;
-            padding: 5px 20px;
-            width: 48vw;
-            max-width: 200px;
-            border-radius: 6px;
-            border: 0.1px solid;
-            background-color: #fff;
-            border-color:#042B4E ;
-            color:#042B4E ;
 
+        .btn-renew {
+            padding: 8px 10px;
+            border-radius: 6px;
+            background-color: #fff;
+            color:#042B4E ;
+            display: inline-block;
+            border: 1px solid #042B4E;
         }
 
         .btn-renew:hover{
-            border-radius: 6px;
-            border: 3px solid #042B4E;
+            background-color: #024174;
+            color: #fff;
         }
 
-        .sub-name p{
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
+        .button-container table {
+            width: 30%;
+            border-collapse: collapse;
         }
 
-        .row .sub-name{
-            max-width: 120px;
+        .button-container table.center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .button-container th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .button-container th {
+            background-color: #f2f2f2;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .sub-text {
+            font-size: medium;
         }
 
     </style>
 </head>
 
 <body>
-    <section class="centered-section hero-heading">
-        <br> 
-
+    <section class="centered-section">
         <div class=" text-center mb-3 ">
-            <img src="{{ asset('images/main-logo.png') }}" alt="logo" class="logo-img">
+            <img src="https://res.cloudinary.com/dwn7phnpa/image/upload/v1715429003/subsyncassets/email_assets/gy0mypzxprenm9qily0b.png " alt="logo" class="logo-img">
         </div>
         <div class="text-center heading">
             @yield('subject')
@@ -169,7 +183,7 @@
 
         <br>
 
-        <div class="center-btn centered-section">
+        <div class="center-btn">
             @yield('button-link')
         </div>
 
@@ -187,24 +201,5 @@
             <p><a href="{{ config('app.website_url') }}">SubSync</a></p>
         </div>
     </section>
-
-    <!-- <div class="container-fluid">
-    <div class="row"> -->
-        <!-- Desktop View -->
-        <!-- <div class="col-md-8 d-none d-md-block">
-        </div> -->
-
-        <!-- Mobile View -->
-        <!-- <div class="col-12 d-block d-md-none">
-        </div>
-    </div>
-    </div> -->
-
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
-
 </body>
 </html>
