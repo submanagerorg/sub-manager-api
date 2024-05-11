@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PlanPaymentController;
 use App\Http\Controllers\PricingPlanController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TimezoneController;
@@ -67,6 +68,11 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth:sanctum']], functi
     Route::get('spend-by-currency', [DashboardController::class, 'spendByCurrency']);
     Route::get('spend-by-category', [DashboardController::class, 'spendByCategory']);
     Route::get('expiring-soon', [DashboardController::class, 'expiringSoon']);
+});
+
+Route::group(['prefix' => 'payment'], function () {
+    Route::post('', [PlanPaymentController::class, 'initiatePayment'])->name('payment');
+    Route::post('webhook', [PlanPaymentController::class, 'processWebhook'])->name('process-webhook');
 });
 
 
