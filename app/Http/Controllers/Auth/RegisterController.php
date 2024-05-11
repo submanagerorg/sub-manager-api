@@ -42,7 +42,7 @@ class RegisterController extends Controller
             ];
 
             Mail::to($user)->send(new WelcomeMail($mail_data));
-            Mail::to($user)->send(new VerificationMail($mail_data));
+            // Mail::to($user)->send(new VerificationMail($mail_data));
 
             DB::commit();
 

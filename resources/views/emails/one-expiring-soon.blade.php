@@ -30,7 +30,7 @@
 
 @section('button-link')
     <a href="#"><button class="btn btn-dark">Renew Subscription</button></a>
-    <br>
+    <br><br>
     <a href="#"><button class="btn btn-dark">View Subscription</button></a>
 @endsection
 

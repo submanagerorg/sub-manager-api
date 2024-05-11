@@ -20,7 +20,6 @@
             align-items: center;
             background-color: #fff;
             text-align: center;
-            /* border: 2px solid red; */
         }
 
         .logo-img {
@@ -43,15 +42,7 @@
             font-size: 16px;
             display: inline-block;
         }
-/* 
-        .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            background-color: #042B4E;
-            color: #fff;
-            text-decoration: none;
-            display: inline-block;
-        } */
+
 
         .btn:hover {
             background-color: #024174;
@@ -126,32 +117,47 @@
             padding: 5px 10px;
         }
 
-        .btn-renew{
-            margin-left: 35px;
-            padding: 5px 20px;
-            width: 48vw;
-            max-width: 200px;
-            border-radius: 6px;
-            border: 0.1px solid;
-            background-color: #fff;
-            border-color:#042B4E ;
-            color:#042B4E ;
 
+        .btn-renew {
+            padding: 8px 10px;
+            border-radius: 6px;
+            background-color: #fff;
+            color:#042B4E ;
+            display: inline-block;
+            border: 1px solid #042B4E;
         }
 
         .btn-renew:hover{
-            border-radius: 6px;
-            border: 3px solid #042B4E;
+            background-color: #024174;
+            color: #fff;
         }
 
-        .sub-name p{
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
+        .button-container table {
+            width: 30%;
+            border-collapse: collapse;
         }
 
-        .row .sub-name{
-            max-width: 120px;
+        .button-container table.center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .button-container th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .button-container th {
+            background-color: #f2f2f2;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .sub-text {
+            font-size: medium;
         }
 
     </style>

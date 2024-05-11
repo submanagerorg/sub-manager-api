@@ -27,33 +27,32 @@
         </p>
     </div>
     <br>
-    <div class="button-container">
-        <div class="row">
-            <!-- Left Column -->
-            <div class="col-xs-3 text-left sub-name">
-                <p class="blue-text"><b>Spotify</b></p>
-                <br>
-                <p class="blue-text"><b>Amazon Prime</b></p>
-                <br>
-                <p class="blue-text"><b>Hulu</b></p>
-            </div>
-            <!-- Right Column -->
-
-            <div class="col-xs-5 custom-column">
-                <div>
-                    <a href="#"><button class="btn-renew">Renew</button></a>
-                </div>
-                <br>
-                <div>
-                    <a href="#"><button class="btn-renew">Renew</button></a>
-                </div>
-                <br>
-                <div>
-                    <a href="#"><button class="btn-renew">Renew</button></a>
-                </div> 
-            </div>  
-        </div >
-    </div>
+    <table class="center button-container">
+        <tr>
+            <td>
+                <span class="blue-text sub-text">Spotify</span> - N4800
+            </td>
+            <td>
+                <button class="btn-renew"><b>Renew</b></button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="blue-text sub-text">Amazon Prime</span> - N9000
+            </td>
+            <td>
+                <button class="btn-renew"><b>Renew</b></button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="blue-text sub-text">Hulu</span> - N7200
+            </td>
+            <td>
+                <button class="btn-renew"><b>Renew</b></button>
+            </td>
+        </tr>
+    </table>
   <br>
 @endsection
 
