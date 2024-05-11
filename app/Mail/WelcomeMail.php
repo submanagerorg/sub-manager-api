@@ -33,7 +33,7 @@ class WelcomeMail extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->subject('Welcome To SubSync')
-            ->view('emails.change-password')
+            ->view('emails.welcome')
             ->with([
                 'chrome_extension_url' => $this->data['chrome_extension_url']
             ]);
