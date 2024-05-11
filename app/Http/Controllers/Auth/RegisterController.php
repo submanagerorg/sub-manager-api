@@ -27,7 +27,9 @@ class RegisterController extends Controller
 
             $user = User::createNew($request->validated());
 
-            $user->addUserPricingPlan(PricingPlan::PLANS['BASIC'], PricingPlan::PERIOD['LIFETIME']);
+            $pricingPlan = PricingPlan::where('name', PricingPlan::DEFAULT_PLAN)->first();
+
+            $user->addUserPricingPlan($pricingPlan);
            
             $user->refresh();
 
