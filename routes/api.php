@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PlanPaymentController;
 use App\Http\Controllers\PricingPlanController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TimezoneController;
@@ -69,10 +70,19 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth:sanctum']], functi
     Route::get('expiring-soon', [DashboardController::class, 'expiringSoon']);
 });
 
+Route::group(['prefix' => 'payment'], function () {
+    Route::post('', [PlanPaymentController::class, 'initiatePayment'])->name('payment');
+    Route::post('webhook', [PlanPaymentController::class, 'processWebhook'])->name('process-webhook');
+});
+
+Route::group(['prefix' => 'pricing-plans'], function () {
+    Route::get('', [PricingPlanController::class, 'getPricingPlans'])->name('get-pricing-plans');
+    Route::get('{id}', [PricingPlanController::class, 'getPricingPlan'])->name('get-pricing-plan');
+});
+
 
 Route::get('currencies', [CurrencyController::class, 'getCurrencies'])->name('get-currencies');
 Route::get('timezones', [TimezoneController::class, 'getTimezones'])->name('get-timezones');
 Route::get('services', [ServiceController::class, 'getServices'])->name('get-services');
 Route::get('categories', [CategoryController::class, 'getCategories'])->name('get-categories');
-Route::get('pricing-plans', [PricingPlanController::class, 'getPricingPlans'])->name('get-pricing-plans');
 

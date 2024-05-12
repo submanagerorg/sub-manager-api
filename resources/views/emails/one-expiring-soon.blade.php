@@ -6,7 +6,7 @@
 
 @section('image')
     <div class="text-center mb-3 content-image">
-        <img src="{{ asset('images/reminder.png') }}" alt="Expiring soon image" height="100%">
+        <img src="https://res.cloudinary.com/dwn7phnpa/image/upload/w_500,f_auto,q_auto/v1715429058/subsyncassets/email_assets/l54wbnvxj9svasaonlzx.png" alt="Expiring soon image" height="100%">
     </div>
 @endsection
 
@@ -30,7 +30,7 @@
 
 @section('button-link')
     <a href="#"><button class="btn btn-dark">Renew Subscription</button></a>
-    <br>
+    <br><br>
     <a href="#"><button class="btn btn-dark">View Subscription</button></a>
 @endsection
 

@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Password;
+namespace App\Http\Requests\PlanPayment;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
-class ResetPasswordRequest extends FormRequest
+class InitiatePaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +24,8 @@ class ResetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'token' => ['required', 'string', 'exists:password_resets,token'],
-            'password' => ['required', 'confirmed', 'min:8']
+            'email' => ['required', 'string', 'email:rfc,dns', 'max:191'],
+            'pricing_plan_uid' => ['required', 'string', 'exists:pricing_plans,uid'],
         ];
     }
 }

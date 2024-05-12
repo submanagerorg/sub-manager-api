@@ -6,7 +6,7 @@
 
 @section('image')
     <div class="text-center mb-3 content-image">
-        <img src="{{ asset('images/verified-account.png') }}" alt="Verified image" height="100%">
+        <img src="https://res.cloudinary.com/dwn7phnpa/image/upload/v1715429028/subsyncassets/email_assets/bqjqtb5u3z1fztqq1bsl.png" alt="Verified image" height="100%">
     </div>
 @endsection
 

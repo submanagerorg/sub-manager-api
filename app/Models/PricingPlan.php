@@ -13,6 +13,8 @@ class PricingPlan extends Model
 
     protected $guarded = ['id'];
 
+    const DEFAULT_PLAN = 'BASIC';
+
      /**
      * The attributes that should be hidden for arrays.
      *

@@ -6,7 +6,7 @@
 
 @section('image')
     <div class="text-center mb-3 content-image">
-        <img src="{{ asset('images/reset-password.png') }}" alt="Password reset image" height="85%">
+        <img src="https://res.cloudinary.com/dwn7phnpa/image/upload/v1715429043/subsyncassets/email_assets/j2i9odzsaehyasbricxx.png" alt="Password reset image" height="85%">
     </div>
 @endsection
 

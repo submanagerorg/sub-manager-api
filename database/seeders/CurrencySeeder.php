@@ -17,10 +17,10 @@ class CurrencySeeder extends Seeder
     {
         $data = [
         ["name" => "Afghan afghani","sign" => "؋","code" => "AFN"],
-        ["name" => "Euro", "sign" => "€","code" => "EUR"],
+        ["name" => "Euro", "sign" => "€","code" => "EUR", "is_active" => 1],
         ["name" => "Albanian lek", "sign" => "Lek","code" => "ALL"],
         ["name" => "Algerian dinar", "sign" => "دج","code" => "DZD"],
-        ["name" => "United States dollar", "sign" => "$","code" => "USD"],
+        ["name" => "United States dollar", "sign" => "$","code" => "USD", "is_active" => 1],
         ["name" => "Angolan kwanza", "sign" => "Kz","code" => "AOA"],
         ["name" => "Eastern Caribbean dollar", "sign" => "$","code" => "XCD"],
         ["name" => "Antarctic dollar", "sign" => "$","code" => "AAD"],
@@ -47,7 +47,7 @@ class CurrencySeeder extends Seeder
         ["name" => "Burundian franc	", "sign" => "FBu","code" => "BIF"],
         ["name" => "Cambodian riel", "sign" => "KHR","code" => "KHR"],
         ["name" => "Central African CFA franc", "sign" => "FCFA","code" => "XAF"],
-        ["name" => "Canadian dollar", "sign" => "$","code" => "CAD"],
+        ["name" => "Canadian dollar", "sign" => "$","code" => "CAD", "is_active" => 1],
         ["name" => "Cape Verdean escudo	", "sign" => "$","code" => "CVE"],
         ["name" => "Cayman Islands dollar", "sign" => "$","code" => "KYD"],
         ["name" => "Chilean peso", "sign" => "$","code" => "CLP"],
@@ -70,10 +70,10 @@ class CurrencySeeder extends Seeder
         ["name" => "CFP franc", "sign" => "₣","code" => "XPF"],
         ["name" => "Gambian dalasi", "sign" => "D","code" => "GMD"],
         ["name" => "Georgian lari", "sign" => "ლ","code" => "GEL"],
-        ["name" => "Ghanaian cedi", "sign" => "GH₵","code" => "GHS"],
+        ["name" => "Ghanaian cedi", "sign" => "GH₵","code" => "GHS", "is_active" => 1],
         ["name" => "Gibraltar pound", "sign" => "£","code" => "GIP"],
         ["name" => "Guatemalan quetzal", "sign" => "Q","code" => "GTQ"],
-        ["name" => "British pound", "sign" => "£","code" => "GBP"],
+        ["name" => "British pound", "sign" => "£","code" => "GBP", "is_active" => 1],
         ["name" => "Guinean franc", "sign" => "FG","code" => "GNF"],
         ["name" => "Guyanese dollar", "sign" => "$","code" => "GYD"],
         ["name" => "Haitian gourde", "sign" => "G","code" => "HTG"],
@@ -90,7 +90,7 @@ class CurrencySeeder extends Seeder
         ["name" => "Japanese yen", "sign" => "¥","code" => "JPY"],
         ["name" => "Jordanian dinar", "sign" => "ا.د","code" => "JOD"],
         ["name" => "Kazakhstani tenge", "sign" => "лв","code" => "KZT"],
-        ["name" => "Kenyan shilling", "sign" => "KSh","code" => "KES"],
+        ["name" => "Kenyan shilling", "sign" => "KSh","code" => "KES", "is_active" => 1],
         ["name" => "North Korean won", "sign" => "₩","code" => "KPW"],
         ["name" => "South Korean won", "sign" => "₩","code" => "KRW"],
         ["name" => "Kuwaiti dinar", "sign" => "ك.د","code" => "KWD"],
@@ -119,7 +119,7 @@ class CurrencySeeder extends Seeder
         ["name" => "Nepalese rupee", "sign" => "₨","code" => "NPR"],
         ["name" => "New Zealand dollar", "sign" => "$","code" => "NZD"],
         ["name" => "Nicaraguan córdoba", "sign" => "C$","code" => "NIO"],
-        ["name" => "Nigerian naira", "sign" => "₦","code" => "NGN"],
+        ["name" => "Nigerian naira", "sign" => "₦","code" => "NGN", "is_active" => 1],
         ["name" => "Omani rial", "sign" => ".ع.ر","code" => "OMR"],
         ["name" => "Pakistani rupee", "sign" => "₨","code" => "PKR"],
         ["name" => "Panamanian balboa", "sign" => "B/.","code" => "PAB"],
@@ -183,6 +183,7 @@ class CurrencySeeder extends Seeder
             $currency->name = $datum["name"];
             $currency->sign = $datum["sign"];
             $currency->code = $datum["code"];
+            $currency->is_active = isset($datum["is_active"]) ? $datum["is_active"] : 0;
             $currency->save();
         }
        

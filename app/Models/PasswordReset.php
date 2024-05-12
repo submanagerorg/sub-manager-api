@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class PasswordReset extends Model
 {
     use HasFactory;
-
-    protected $primaryKey = 'email';
     
+    protected $primaryKey = 'email';
+    public $incrementing = false;
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +23,4 @@ class PasswordReset extends Model
         'token',
         'created_at'
     ];
-
-    public $timestamps = false;
 }

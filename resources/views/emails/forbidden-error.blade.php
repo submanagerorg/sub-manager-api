@@ -6,7 +6,7 @@
 
 @section('image')
     <div class="text-center mb-3 content-image">
-        <img src="{{ asset('images/forbidden-error.png') }}" alt="Forbidden Error image" height="85%">
+        <img src="https://res.cloudinary.com/dwn7phnpa/image/upload/v1715428965/subsyncassets/email_assets/serdojhqwu3kehe7brxl.png" alt="Forbidden Error image" height="85%">
     </div>
 @endsection
 

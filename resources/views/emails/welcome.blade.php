@@ -6,7 +6,7 @@
 
 @section('image')
     <div class="text-center mb-3 content-image">
-        <img src="{{ asset('images/welcome.png') }}" alt="Welcome image" height="100%">
+        <img src="https://res.cloudinary.com/dwn7phnpa/image/upload/v1715429013/subsyncassets/email_assets/cdrvkxbkhfw05oqazffj.png" alt="Welcome image" height="100%">
     </div>
 @endsection
 
@@ -27,3 +27,4 @@
 @section('url-link')
     <a href="{{ $chrome_extension_url }}">{{ $chrome_extension_url }}</a>
 @endsection
+
