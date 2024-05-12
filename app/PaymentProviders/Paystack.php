@@ -42,7 +42,8 @@ class Paystack
             'reference' => $data['reference'],
             'metadata' => [
                 'pricing_plan_uid' =>  $data['plan']->uid,
-            ]
+            ],
+            'callback_url' => config('app.website_url') . "/payment/callback?planuid={$data['plan']->uid}&email={$data['email']}"
         ];
 
         $response = Http::withHeaders([

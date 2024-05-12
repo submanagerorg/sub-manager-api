@@ -75,10 +75,14 @@ Route::group(['prefix' => 'payment'], function () {
     Route::post('webhook', [PlanPaymentController::class, 'processWebhook'])->name('process-webhook');
 });
 
+Route::group(['prefix' => 'pricing-plans'], function () {
+    Route::get('', [PricingPlanController::class, 'getPricingPlans'])->name('get-pricing-plans');
+    Route::get('{id}', [PricingPlanController::class, 'getPricingPlan'])->name('get-pricing-plan');
+});
+
 
 Route::get('currencies', [CurrencyController::class, 'getCurrencies'])->name('get-currencies');
 Route::get('timezones', [TimezoneController::class, 'getTimezones'])->name('get-timezones');
 Route::get('services', [ServiceController::class, 'getServices'])->name('get-services');
 Route::get('categories', [CategoryController::class, 'getCategories'])->name('get-categories');
-Route::get('pricing-plans', [PricingPlanController::class, 'getPricingPlans'])->name('get-pricing-plans');
 
