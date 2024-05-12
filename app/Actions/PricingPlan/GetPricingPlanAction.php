@@ -22,6 +22,6 @@ class GetPricingPlanAction
             return $this->formatApiResponse(404, "Pricing plan not found");
         }
 
-        return $this->formatApiResponse(200, 'Pricing Plans retrieved successfuly', $pricingPlan);
+        return $this->formatApiResponse(200, 'Pricing Plan retrieved successfuly', $pricingPlan);
     }
 }
