@@ -49,7 +49,7 @@ class SetPasswordMail extends Mailable implements ShouldQueue
         $token = Str::random(32);
 
         PasswordReset::updateOrCreate(
-            ['email' => $this->data['user']->email],
+            ['email' => $this->data['email']],
             [
                 'token' => $token,
                 'created_at' => now(),
