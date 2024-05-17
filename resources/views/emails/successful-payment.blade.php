@@ -13,7 +13,6 @@
             Your Payment of the sum of <span class="orange-text">{{$amount}}</span> for
             <span class="orange-text">{{$plan}}</span> was successful. 
         </p>
-        <br>
         <p>  Your plan is now active. </p>
         <br>
         <div class="text-left">
