@@ -79,7 +79,9 @@ class ProcessWebhookAction
             $pricingPlan = PricingPlan::where('uid', $verifyPayment['pricing_plan_uid'])->first();
 
             if(!$user){
-                $user = $this->createUser($verifyPayment['email'], $pricingPlan, $verifyPayment['amount']);
+                $this->createUser($verifyPayment['email'], $pricingPlan, $verifyPayment['amount']);
+                
+                $user = User::where('email', $verifyPayment['email'])->first();
             }
 
             $user->addUserPricingPlan($pricingPlan);
@@ -107,9 +109,9 @@ class ProcessWebhookAction
     * @param string $email
     * @param PricingPlan $pricingPlan
     * @param float $amount
-    * @return User|null
+    * @return void
     */
-    private function createUser(string $email, PricingPlan $pricingPlan, float $amount): User|null
+    private function createUser(string $email, PricingPlan $pricingPlan, float $amount): void
     {
         $user  = User::createNew([
             'email' => $email,
@@ -117,7 +119,7 @@ class ProcessWebhookAction
         ]);
 
         $mail_data = [
-            'user' =>  $user,
+            'email' =>  $user->email,
             'chrome_extension_url' => config('app.chrome_extension_url'),
             'amount' => $amount,
             'pricing_plan' => $pricingPlan,
@@ -125,8 +127,6 @@ class ProcessWebhookAction
 
         Mail::to($user)->send(new WelcomeMail($mail_data));
         Mail::to($user)->send(new SetPasswordMail($mail_data));
-
-        return $user;
     }
 
     /**
