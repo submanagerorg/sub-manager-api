@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\Category\GetCategoriesAction;
 use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -92,13 +93,7 @@ class Subscription extends Model
             return null;
         }
 
-        $service = Service::where('name', 'like', '%' . $data['name'] . '%')->first();
-
-        if ($service) {
-            $category = $service->category;
-        }else{
-            $category = Service::categorize($data);
-        }
+        $categoryId = (new GetCategoriesAction)->autoCategorize($data['name']);
 
         $subscription = self::create([
             'uid' => Str::orderedUuid(),
@@ -106,7 +101,7 @@ class Subscription extends Model
             'name' => $data['name'],
             'url' => isset($data['url']) ? $data['url'] : null,
             'currency_id' => $data['currency_id'],
-            'category_id' => $category->id,
+            'category_id' => $categoryId,
             'amount' => $data['amount'],
             'status' => self::STATUS['ACTIVE'],
             'start_date' => $data['start_date'],

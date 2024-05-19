@@ -2,8 +2,11 @@
 namespace App\Actions\Category;
 
 use App\Models\Category;
+use App\Models\Service;
 use App\Traits\FormatApiResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use OpenAI\Laravel\Facades\OpenAI;
 
 
@@ -29,23 +32,65 @@ class GetCategoriesAction
      */
     public function autoCategorize(string $service)
     {
-        $allAvailableVCategories = Category::get();
+        $categoryId = null;
 
-        $result = OpenAI::chat()->create([
-            'model' => 'gpt-3.5-turbo',
-            'messages' => [
-                'role' => 'user',
-                'content' => "you are an auto categorization engine with knowledge about online services,
-                which of these categories does the service $service most likely belongs to [" . $allAvailableVCategories->join(', ') ."]"
-            ]
-        ]);
+        $categoryId = $this->checkTheCacheForAMatch($service);
 
-        $allResults = [];
-
-        foreach ($result->choices as $choice) {
-            $allResults[] = $choice->message->content;
+        if (!$categoryId) {
+            $categoryId = $this->compareStringMatch($service, 'exact');
         }
 
-        return $this->formatApiResponse(Response::HTTP_OK, 'Auto categorization retrieved successfuly', $allResults);
+        if (!$categoryId) {
+            $categoryId = $this->compareStringMatch($service, 'like');
+        }
+
+        if (!$categoryId) {
+            $categoryId = $this->getSoundexMatch($service);
+        }
+
+        if (!$categoryId) {
+            $categoryId = Category::whereName(Category::OTHER)->first()->id;
+        }
+
+        $this->cacheTheMatch($service, $categoryId);
+
+        return $categoryId;
+    }
+
+    /**
+     *
+     */
+    private function checkTheCacheForAMatch(string $service): ?int {
+        $mappings = Cache::get('service-category-mapping', []);
+
+        return $mappings[$service] ?? null;
+    }
+
+    /**
+     *
+     */
+    private function compareStringMatch(string $service, string $matchPattern = 'exact'): ?int {
+        if ($matchPattern === 'exact') {
+            return optional(Service::whereName($service)->first())->category_id;
+        }
+
+        return optional(Service::where('name', 'like', "%$service%")->first())->category_id;
+    }
+
+    /**
+     *
+     */
+    private function getSoundexMatch(string $service): ?int {
+        return optional(DB::table('services')->whereRaw("SOUNDEX(name) = SOUNDEX('$service')")->first())->category_id;
+    }
+
+    /**
+     *
+     */
+    private function cacheTheMatch(string $service, int $categoryId): void {
+        $mappings = Cache::pull('service-category-mapping');
+        $mappings[$service] = $categoryId;
+
+        Cache::put('service-category-mapping', $mappings);
     }
 }
