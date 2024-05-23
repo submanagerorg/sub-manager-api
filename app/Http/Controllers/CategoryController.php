@@ -13,4 +13,9 @@ class CategoryController extends Controller
     {
         return (new GetCategoriesAction())->execute($request->all());
     }
+
+    public function autoCategorize(Request $request)
+    {
+        return (new GetCategoriesAction())->autoCategorize($request->service);
+    }
 }

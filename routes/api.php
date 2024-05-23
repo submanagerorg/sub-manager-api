@@ -86,3 +86,5 @@ Route::get('timezones', [TimezoneController::class, 'getTimezones'])->name('get-
 Route::get('services', [ServiceController::class, 'getServices'])->name('get-services');
 Route::get('categories', [CategoryController::class, 'getCategories'])->name('get-categories');
 
+Route::get('test-categorization', [CategoryController::class, 'autoCategorize'])->middleware('auth:sanctum');
+
