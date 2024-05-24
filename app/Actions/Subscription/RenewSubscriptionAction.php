@@ -4,6 +4,7 @@ namespace App\Actions\Subscription;
 use App\Models\Currency;
 use App\Models\Subscription;
 use App\Traits\FormatApiResponse;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class RenewSubscriptionAction
@@ -15,7 +16,7 @@ class RenewSubscriptionAction
     * @param array $data
     * @return JsonResponse
     */
-    public function execute($parentId, array $data)
+    public function execute($parentId, array $data): JsonResponse
     {
         try{
             $user = auth()->user();
@@ -36,7 +37,7 @@ class RenewSubscriptionAction
                 return $this->formatApiResponse(400, 'Subscription already exists');
             }
     
-            return $this->formatApiResponse(200, 'Subscription has been added', $subscription);
+            return $this->formatApiResponse(200, 'Subscription has been renewed', $subscription);
 
         } catch(Throwable $e) {
             logger($e);

@@ -14,6 +14,7 @@ use App\Http\Filters\SubscriptionFilter;
 use App\Http\Requests\Subscription\AddSubscriptionRequest;
 use App\Http\Requests\Subscription\EditSubscriptionRequest;
 use App\Http\Requests\Subscription\RenewSubscriptionRequest;
+use Illuminate\Http\JsonResponse;
 
 class SubscriptionController extends Controller
 {
@@ -43,7 +44,7 @@ class SubscriptionController extends Controller
         return (new EditSubscriptionAction())->execute($subscriptionId, $request->validated());
     }
 
-    public function renewSubscription($parentId, RenewSubscriptionRequest $request)
+    public function renewSubscription(string $parentId, RenewSubscriptionRequest $request): JsonResponse
     {
         return (new RenewSubscriptionAction())->execute($parentId, $request->validated());
     }

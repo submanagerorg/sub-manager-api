@@ -99,11 +99,13 @@ class Subscription extends Model
      */
     public static function createNew(array $data): self | null
     {
+        $categoryId = null;
+        
         if(isset($data['parent_id'])){
             $parentSubscription = Subscription::where('id', $data['parent_id'])->first();
-            $categoryId = $parentSubscription->category_id;
             $data['name'] = $parentSubscription->name;
             $data['url'] = $parentSubscription->url;
+            $categoryId = $parentSubscription->category_id;
         }
         
         if(self::exists($data)){
