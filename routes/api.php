@@ -56,6 +56,7 @@ Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum']], fu
     Route::get('{id}', [SubscriptionController::class, 'getSubscription'])->name('get-subscription');
     Route::post('remove/{id}', [SubscriptionController::class, 'removeSubscription'])->name('remove-subscription');
     Route::post('edit/{id}', [SubscriptionController::class, 'editSubscription'])->name('edit-subscription');
+    Route::post('renew/{parent_id}', [SubscriptionController::class, 'renewSubscription'])->name('renew-subscription');
 });
 
 Route::group(['prefix' => 'users', 'middleware' => ['auth:sanctum']], function () {

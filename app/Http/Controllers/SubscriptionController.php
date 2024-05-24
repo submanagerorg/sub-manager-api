@@ -7,11 +7,13 @@ use App\Actions\Subscription\EditSubscriptionAction;
 use App\Actions\Subscription\GetSubscriptionAction;
 use App\Actions\Subscription\GetSubscriptionsAction;
 use App\Actions\Subscription\RemoveSubscriptionAction;
+use App\Actions\Subscription\RenewSubscriptionAction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Filters\SubscriptionFilter;
 use App\Http\Requests\Subscription\AddSubscriptionRequest;
 use App\Http\Requests\Subscription\EditSubscriptionRequest;
+use App\Http\Requests\Subscription\RenewSubscriptionRequest;
 
 class SubscriptionController extends Controller
 {
@@ -39,6 +41,11 @@ class SubscriptionController extends Controller
     public function editSubscription($subscriptionId, EditSubscriptionRequest $request)
     {
         return (new EditSubscriptionAction())->execute($subscriptionId, $request->validated());
+    }
+
+    public function renewSubscription($parentId, RenewSubscriptionRequest $request)
+    {
+        return (new RenewSubscriptionAction())->execute($parentId, $request->validated());
     }
     
 }
