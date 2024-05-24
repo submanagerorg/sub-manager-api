@@ -74,7 +74,7 @@ class Subscription extends Model
     }
 
     /**
-     * Get User Attribute.
+     * Get Parent Attribute.
      *
      * @return string
      */
