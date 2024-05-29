@@ -26,12 +26,12 @@ class Subscription extends Model
      * @var array
      */
     protected $hidden = [
-        'id', 'currency_id', 'user_id', 'category_id'
+        'id', 'currency_id', 'user_id', 'category_id', 'parent_id'
     ];
 
     protected $with = ['category'];
 
-    protected $appends = ['user_uid', 'currency'];
+    protected $appends = ['user_uid', 'currency', 'parent_uid'];
 
     /**
      * Returns the user of the subscription.
@@ -84,16 +84,31 @@ class Subscription extends Model
     }
 
     /**
+     * Get Parent Attribute.
+     *
+     * @return string
+     */
+    public function getParentUidAttribute()
+    {
+        if(!$this->parent_id) return null;
+        
+        return self::where('id', $this->parent_id)->first()->uid;
+    }
+
+    /**
      * @param array $data
      * @return self|null
      */
     public static function createNew(array $data): self | null
     {
+        
         if(self::exists($data)){
             return null;
+        }  
+        
+        if(!isset($data['category_id'])){
+            $data['category_id'] = (new GetCategoriesAction)->autoCategorize($data['name']);
         }
-
-        $categoryId = (new GetCategoriesAction)->autoCategorize($data['name']);
 
         $subscription = self::create([
             'uid' => Str::orderedUuid(),
@@ -101,12 +116,13 @@ class Subscription extends Model
             'name' => $data['name'],
             'url' => isset($data['url']) ? $data['url'] : null,
             'currency_id' => $data['currency_id'],
-            'category_id' => $categoryId,
+            'category_id' => $data['category_id'],
             'amount' => $data['amount'],
             'status' => self::STATUS['ACTIVE'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'description' => isset($data['description']) ? $data['description'] : null,
+            'parent_id' => isset($data['parent_id']) ? $data['parent_id'] : null,
         ]);
 
         return $subscription->load('category');
