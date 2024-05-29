@@ -17,7 +17,7 @@ class Subscription extends Model
 
     public const STATUS = [
         'ACTIVE' => 'active',
-        'INACTIVE' => 'inactive',
+        'EXPIRED' => 'expired',
     ];
 
     /**
