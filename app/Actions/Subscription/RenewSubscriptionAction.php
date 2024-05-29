@@ -16,7 +16,7 @@ class RenewSubscriptionAction
     * @param array $data
     * @return JsonResponse
     */
-    public function execute($parentId, array $data): JsonResponse
+    public function execute(string $parentId, array $data): JsonResponse
     {
         try{
             $user = auth()->user();
