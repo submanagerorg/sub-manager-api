@@ -4,6 +4,7 @@
 namespace App\Http\Filters;
 
 use App\Http\Filters\Filter;
+use App\Models\Category;
 use App\Models\Currency;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -63,6 +64,23 @@ class SubscriptionFilter extends Filter
             $currency = Currency::where('code', $value)->first();
 
             return $this->builder->where('currency_id', $currency ? $currency->id : null);
+        }
+
+        return $this->builder;
+    }
+
+    /**
+     * Filter the subscriptions by the category.
+     *
+     * @param string|null $value
+     * @return Builder
+     */
+    public function category(string $value = null): Builder
+    {
+        if (isset($value)) {
+            $category = Category::where('name', $value)->first();
+
+            return $this->builder->where('category_id', $category ? $category->id : null);
         }
 
         return $this->builder;
