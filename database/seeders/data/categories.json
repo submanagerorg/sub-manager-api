@@ -1,23 +1,30 @@
 [
     {
-        "name":"Creativity"
+        "name":"Creativity",
+        "colour": "#FD0D0D"
     },
     {
-        "name":"Entertainment"
+        "name":"Entertainment",
+        "colour": "#7413F1"
     },
     {
-        "name":"AI Tools"
+        "name":"AI Tools",
+        "colour": "#3072AC"
     },
     {
-        "name":"Knowledge"
+        "name":"Knowledge",
+        "colour": "#0BF14B"
     },
     {
-        "name":"Work Tools"
+        "name":"Work Tools",
+        "colour": "#FF8E0E"
     },
     {
-        "name":"Management"
+        "name":"Management",
+        "colour": "#007BE5"
     },
     {
-        "name":"Others"
+        "name":"Others",
+        "colour": "#000000"
     }
 ]
