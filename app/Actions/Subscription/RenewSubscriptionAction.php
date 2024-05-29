@@ -30,6 +30,9 @@ class RenewSubscriptionAction
             $data['user_id'] = $user->id;
             $data['currency_id'] = Currency::where('code', $data['currency'])->first()->id;
             $data['parent_id'] = $parentSubscription->id;
+            $data['name'] = $parentSubscription->name;
+            $data['url'] = $parentSubscription->url;
+            $data['category_id'] = $parentSubscription->category_id;
     
             $subscription = Subscription::createNew($data);
     

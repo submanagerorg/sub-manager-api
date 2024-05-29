@@ -90,7 +90,9 @@ class Subscription extends Model
      */
     public function getParentUidAttribute()
     {
-       return self::where('id', $this->parent_id)->first()->uid;
+        if(!$this->parent_id) return null;
+        
+        return self::where('id', $this->parent_id)->first()->uid;
     }
 
     /**
@@ -99,21 +101,13 @@ class Subscription extends Model
      */
     public static function createNew(array $data): self | null
     {
-        $categoryId = null;
-        
-        if(isset($data['parent_id'])){
-            $parentSubscription = Subscription::where('id', $data['parent_id'])->first();
-            $data['name'] = $parentSubscription->name;
-            $data['url'] = $parentSubscription->url;
-            $categoryId = $parentSubscription->category_id;
-        }
         
         if(self::exists($data)){
             return null;
         }  
         
-        if(!$categoryId){
-            $categoryId = (new GetCategoriesAction)->autoCategorize($data['name']);
+        if(!isset($data['category_id'])){
+            $data['category_id'] = (new GetCategoriesAction)->autoCategorize($data['name']);
         }
 
         $subscription = self::create([
@@ -122,7 +116,7 @@ class Subscription extends Model
             'name' => $data['name'],
             'url' => isset($data['url']) ? $data['url'] : null,
             'currency_id' => $data['currency_id'],
-            'category_id' => $categoryId,
+            'category_id' => $data['category_id'],
             'amount' => $data['amount'],
             'status' => self::STATUS['ACTIVE'],
             'start_date' => $data['start_date'],
