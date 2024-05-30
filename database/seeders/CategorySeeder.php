@@ -21,13 +21,13 @@ class CategorySeeder extends Seeder
         foreach($data as $datum){
             $category = Category::where('name', $datum->name)->first();
 
-            if ($category) {
-                continue;
-            }   
+            if (!$category) {
+                $category = new Category();
+                $category->uid = Str::orderedUuid();
+            }    
 
-            $category = new Category();
-            $category->uid = Str::orderedUuid();
             $category->name = $datum->name;
+            $category->colour = $datum->colour;
             $category->save();
         }
        

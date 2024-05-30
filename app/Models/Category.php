@@ -10,6 +10,8 @@ class Category extends Model
 {
     use HasFactory;
 
+    const OTHER = 'Others';
+
     protected $guarded = ['id'];
 
     /**

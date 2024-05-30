@@ -69,29 +69,59 @@ class DashboardRepository {
 
     public function getGraphData(string|null $period = null) {
         $currentYear = now()->year;
+        $data = [];
+        $months = ['January', 'February', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
         if ($period === 'month') {
-            return Subscription::toBase()->select(
-                DB::raw('YEAR(created_at) as subscription_year'),
-                DB::raw('MONTH(created_at) as subscription_month'),
+            $data = Subscription::toBase()->select(
+                DB::raw('YEAR(start_date) as subscription_year'),
+                DB::raw('MONTH(start_date) as subscription_month'),
                 DB::raw('SUM(amount) as total_amount'),
-                DB::raw('MONTHNAME(created_at) as month_name')
+                DB::raw('MONTHNAME(start_date) as month_name')
             )
             ->whereYear('created_at', $currentYear)
             ->where('user_id', auth()->id())
-            ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'))
+            ->groupBy(DB::raw('YEAR(start_date)'), DB::raw('MONTH(start_date)'), DB::raw('MONTHNAME(start_date)'))
             ->orderBy('subscription_year')
             ->orderBy('subscription_month')
-            ->get();
+            ->get()
+            ->toArray();
+
+            $dataMonths = array_column($data, 'month_name');
+            $newData = [];
+
+            foreach ($months as $month) {
+                if (!in_array($month, $dataMonths)) {
+                    $newData[] = [
+                        'subscription_year' => today()->year(),
+                        'subscription_month' => 0,
+                        'total_amount' => 0,
+                        'month_name' => $month
+                    ];
+                } else {
+                    $item = collect($data)->firstWhere('month_name', $month);
+                    $newData[] = [
+                        'subscription_year' => $item->subscription_year,
+                        'subscription_month' => $item->subscription_month,
+                        'total_amount' => $item->total_amount,
+                        'month_name' => $month
+                    ];
+                }
+            }
+
+            $data = $newData;
+        } else {
+            $data = Subscription::toBase()->select(
+                DB::raw('YEAR(created_at) as subscription_year'),
+                DB::raw('SUM(amount) as total_amount')
+            )
+            ->where('user_id', auth()->id())
+            ->groupBy(DB::raw('YEAR(created_at)'))
+            ->orderBy('subscription_year')
+            ->get()
+            ->toArray();
         }
 
-        return Subscription::toBase()->select(
-            DB::raw('YEAR(created_at) as subscription_year'),
-            DB::raw('SUM(amount) as total_amount')
-        )
-        ->where('user_id', auth()->id())
-        ->groupBy(DB::raw('YEAR(created_at)'))
-        ->orderBy('subscription_year')
-        ->get();
+        return $data;
     }
 }
