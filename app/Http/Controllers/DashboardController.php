@@ -31,6 +31,6 @@ class DashboardController extends Controller
     }
 
     public function graphData(Request $request) {
-        return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->getGraphData($request->period));
+        return $this->formatApiResponse(Response::HTTP_OK, __('Data retrieved successfully'), $this->dashboardRepository->getGraphData($request->period, $request->currency));
     }
 }
