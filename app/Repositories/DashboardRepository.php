@@ -134,4 +134,24 @@ class DashboardRepository {
 
         return $data;
     }
+
+    public function getMostRenewed(string|null $type = 'most') {
+        if ($type === 'least') {
+            return Subscription::toBase()
+                        ->select('parent_id', 'name', 'amount', DB::raw('COUNT(*) as num_renewed'))
+                        ->whereNotNull('parent_id', 'name', 'amount')
+                        ->groupBy('parent_id')
+                        ->orderBy('num_renewed', 'asc')
+                        ->limit(5)
+                        ->get();
+        }
+
+        return Subscription::toBase()
+                        ->select('parent_id', 'name', 'amount', DB::raw('COUNT(*) as num_renewed'))
+                        ->whereNotNull('parent_id')
+                        ->groupBy('parent_id', 'name', 'amount')
+                        ->orderBy('num_renewed', 'desc')
+                        ->limit(5)
+                        ->get();
+    }
 }

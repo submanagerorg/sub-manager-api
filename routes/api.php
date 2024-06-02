@@ -69,6 +69,7 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth:sanctum']], functi
     Route::get('spend-by-currency', [DashboardController::class, 'spendByCurrency']);
     Route::get('spend-by-category', [DashboardController::class, 'spendByCategory']);
     Route::get('expiring-soon', [DashboardController::class, 'expiringSoon']);
+    Route::get('renewed', [DashboardController::class, 'getMostAndLeastRenewed']);
 });
 
 Route::group(['prefix' => 'payment'], function () {
