@@ -140,7 +140,7 @@ class DashboardRepository {
             return Subscription::toBase()
                         ->select('parent_id', 'name', 'amount', DB::raw('COUNT(*) as num_renewed'))
                         ->whereNotNull('parent_id', 'name', 'amount')
-                        ->groupBy('parent_id')
+                        ->groupBy('parent_id', 'name', 'amount')
                         ->orderBy('num_renewed', 'asc')
                         ->limit(5)
                         ->get();
