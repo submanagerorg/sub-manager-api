@@ -138,18 +138,18 @@ class DashboardRepository {
     public function getMostRenewed(string|null $type = 'most') {
         if ($type === 'least') {
             return Subscription::toBase()
-                        ->select('parent_id', 'name', 'amount', DB::raw('COUNT(*) as num_renewed'))
-                        ->whereNotNull('parent_id', 'name', 'amount')
-                        ->groupBy('parent_id', 'name', 'amount')
+                        ->select('parent_id', 'name', DB::raw('COUNT(*) as num_renewed'))
+                        ->whereNotNull('parent_id')
+                        ->groupBy('parent_id', 'name')
                         ->orderBy('num_renewed', 'asc')
                         ->limit(5)
                         ->get();
         }
 
         return Subscription::toBase()
-                        ->select('parent_id', 'name', 'amount', DB::raw('COUNT(*) as num_renewed'))
+                        ->select('parent_id', 'name', DB::raw('COUNT(*) as num_renewed'))
                         ->whereNotNull('parent_id')
-                        ->groupBy('parent_id', 'name', 'amount')
+                        ->groupBy('parent_id', 'name')
                         ->orderBy('num_renewed', 'desc')
                         ->limit(5)
                         ->get();
