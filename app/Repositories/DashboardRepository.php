@@ -48,7 +48,7 @@ class DashboardRepository {
                             }
                         )->select(
                             'categories.name',
-                            'categories.color',
+                            'categories.colour',
                             DB::raw('SUM(amount) as total_amount'),
                             DB::raw("ROUND((SUM(amount) / (SELECT SUM(amount) FROM subscriptions where user_id = $userId)) * 100, 0) as percentage")
                         )
