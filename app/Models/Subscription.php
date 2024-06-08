@@ -91,7 +91,7 @@ class Subscription extends Model
     public function getParentUidAttribute()
     {
         if(!$this->parent_id) return null;
-        
+
         return self::where('id', $this->parent_id)->first()->uid;
     }
 
@@ -101,11 +101,10 @@ class Subscription extends Model
      */
     public static function createNew(array $data): self | null
     {
-        
         if(self::exists($data)){
             return null;
-        }  
-        
+        }
+
         if(!isset($data['category_id'])){
             $data['category_id'] = (new GetCategoriesAction)->autoCategorize($data['name']);
         }

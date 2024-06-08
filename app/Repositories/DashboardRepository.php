@@ -28,7 +28,7 @@ class DashboardRepository {
                                 $join->on('subscriptions.currency_id', '=', 'currencies.id');
                             }
                         )->select(
-                            'symbol',
+                            'currencies.code',
                             DB::raw('SUM(amount) as total_amount'),
                             DB::raw("ROUND((SUM(amount) / (SELECT SUM(amount) FROM subscriptions where user_id = $userId)) * 100, 0) as percentage")
                         )
@@ -48,6 +48,7 @@ class DashboardRepository {
                             }
                         )->select(
                             'categories.name',
+                            'categories.color',
                             DB::raw('SUM(amount) as total_amount'),
                             DB::raw("ROUND((SUM(amount) / (SELECT SUM(amount) FROM subscriptions where user_id = $userId)) * 100, 0) as percentage")
                         )
@@ -67,13 +68,14 @@ class DashboardRepository {
         return $subscriptions;
     }
 
-    public function getGraphData(string|null $period = null) {
+    public function getGraphData(string|null $period = null, string|null $currency) {
         $currentYear = now()->year;
         $data = [];
         $months = ['January', 'February', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $currencyId = optional(Currency::whereCode($currency)->first())->id;
 
         if ($period === 'month') {
-            $data = Subscription::toBase()->select(
+            $query = Subscription::toBase()->select(
                 DB::raw('YEAR(start_date) as subscription_year'),
                 DB::raw('MONTH(start_date) as subscription_month'),
                 DB::raw('SUM(amount) as total_amount'),
@@ -83,9 +85,13 @@ class DashboardRepository {
             ->where('user_id', auth()->id())
             ->groupBy(DB::raw('YEAR(start_date)'), DB::raw('MONTH(start_date)'), DB::raw('MONTHNAME(start_date)'))
             ->orderBy('subscription_year')
-            ->orderBy('subscription_month')
-            ->get()
-            ->toArray();
+            ->orderBy('subscription_month');
+
+            if ($currencyId) {
+                $query->where('currency_id', $currencyId);
+            }
+
+            $data = $query->get()->toArray();
 
             $dataMonths = array_column($data, 'month_name');
             $newData = [];
@@ -111,17 +117,41 @@ class DashboardRepository {
 
             $data = $newData;
         } else {
-            $data = Subscription::toBase()->select(
+            $query = Subscription::toBase()->select(
                 DB::raw('YEAR(created_at) as subscription_year'),
                 DB::raw('SUM(amount) as total_amount')
             )
             ->where('user_id', auth()->id())
             ->groupBy(DB::raw('YEAR(created_at)'))
-            ->orderBy('subscription_year')
-            ->get()
-            ->toArray();
+            ->orderBy('subscription_year');
+
+            if ($currencyId) {
+                $query->where('currency_id', $currencyId);
+            }
+
+            $data = $query->get()->toArray();
         }
 
         return $data;
+    }
+
+    public function getMostRenewed(string|null $type = 'most') {
+        if ($type === 'least') {
+            return Subscription::toBase()
+                        ->select('parent_id', 'name', DB::raw('COUNT(*) as num_renewed'))
+                        ->whereNotNull('parent_id')
+                        ->groupBy('parent_id', 'name')
+                        ->orderBy('num_renewed', 'asc')
+                        ->limit(5)
+                        ->get();
+        }
+
+        return Subscription::toBase()
+                        ->select('parent_id', 'name', DB::raw('COUNT(*) as num_renewed'))
+                        ->whereNotNull('parent_id')
+                        ->groupBy('parent_id', 'name')
+                        ->orderBy('num_renewed', 'desc')
+                        ->limit(5)
+                        ->get();
     }
 }
