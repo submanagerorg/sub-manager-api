@@ -84,6 +84,18 @@ class Subscription extends Model
     }
 
     /**
+     * Get Parent Attribute.
+     *
+     * @return string
+     */
+    public function getParentUidAttribute()
+    {
+        if(!$this->parent_id) return null;
+
+        return self::where('id', $this->parent_id)->first()->uid;
+    }
+
+    /**
      * @param array $data
      * @return self|null
      */
@@ -93,7 +105,9 @@ class Subscription extends Model
             return null;
         }
 
-        $categoryId = (new GetCategoriesAction)->autoCategorize($data['name']);
+        if(!isset($data['category_id'])){
+            $data['category_id'] = (new GetCategoriesAction)->autoCategorize($data['name']);
+        }
 
         $subscription = self::create([
             'uid' => Str::orderedUuid(),
