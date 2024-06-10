@@ -16,13 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $formUrl = config('app.welcome_form_url');
-
-    if(!$formUrl){
-        return response('Welcome To Subscription Manager!', 200);
-    }
-
-    return Redirect::away($formUrl);
+    return 'Ok';
 });
 
 Route::get('email/verified', [VerificationController::class, 'index'])->name('verified');
