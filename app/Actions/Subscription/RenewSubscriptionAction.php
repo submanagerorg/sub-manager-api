@@ -33,8 +33,13 @@ class RenewSubscriptionAction
             $data['name'] = $parentSubscription->name;
             $data['url'] = $parentSubscription->url;
             $data['category_id'] = $parentSubscription->category_id;
+            $data['service_id'] = $parentSubscription->service_id;
     
             $subscription = Subscription::createNew($data);
+
+            $parentSubscription->update([
+                'status' =>  Subscription::STATUS['EXPIRED']
+            ]);
     
             if(!$subscription){
                 return $this->formatApiResponse(400, 'Subscription already exists');
