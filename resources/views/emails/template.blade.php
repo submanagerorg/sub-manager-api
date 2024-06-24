@@ -198,7 +198,8 @@
         </div>
 
         <div class="footer">
-            <p><a href="{{ config('app.website_url') }}">SubSync</a></p>
+            <a href="{{ config('app.website_url') }}">SubSync</a>
+            <br><br>
         </div>
     </section>
 </body>
