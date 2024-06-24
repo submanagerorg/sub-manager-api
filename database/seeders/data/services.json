@@ -2,6 +2,7 @@
     {
         "name":"SubSync",
         "url":"https://subsync.app",
+        "subscription_url": "https://subsync.app/pricing",
         "category":"Management"
     },
     {

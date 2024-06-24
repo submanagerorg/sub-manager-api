@@ -1,7 +1,7 @@
 @extends('emails.template')
 
 @section('subject')
-    <h2 class=" ">Subscriptions Expiring Soon</h2>
+    <h2 class=" ">Subscription(s) Expiring Soon</h2>
 @endsection
 
 @section('image')
@@ -13,11 +13,11 @@
 @section('content')
     <div class="text-left content-container">
         <p>
-            Hello Stacey,
+            Hello {{$username}},
         </p>
         <p >
-            This is a friendly reminder that <span class="red-text">three (3)</span> of
-            your subscriptions will expire in <span class="red-text"><b>3 days</b></span>. 
+            This is a friendly reminder that <span class="red-text">{{$subscription_count}}</span> of
+            your subscriptions will expire in <span class="red-text"><b> {{$days_left}} day(s)</b></span>. 
         </p>
         <p >
             You can always view your account and manage your subscriptions on the app.
@@ -29,38 +29,26 @@
     <br>
 
     <table class="center button-container">
-      <tr>
-          <td>
-              <span class="blue-text sub-text">Spotify</span> - N4800
-          </td>
-          <td>
-              <button class="btn-renew"><b>Renew</b></button>
-          </td>
-      </tr>
-      <tr>
-          <td>
-              <span class="blue-text sub-text">Amazon Prime</span> - N9000
-          </td>
-          <td>
-              <button class="btn-renew"><b>Renew</b></button>
-          </td>
-      </tr>
-      <tr>
-          <td>
-              <span class="blue-text sub-text">Hulu</span> - N7200
-          </td>
-          <td>
-              <button class="btn-renew"><b>Renew</b></button>
-          </td>
-      </tr>
+        @foreach ($subscriptions as $subscription)
+        <tr>
+            <td>
+                <span class="blue-text sub-text">{{ $subscription->name }}</span> - {{$subscription->currency->sign}}{{$subscription->amount}}
+            </td>
+            <td>
+                <a href="{{ $subscription->service && $subscription->service->subscription_url ? $subscription->service->subscription_url : config('app.web_app_url') . '/subscriptions/renew/' . $subscription->uid }}">
+                    <button class="btn-renew"><b>Renew</b></button>
+                </a>
+            </td>
+        </tr>
+        @endforeach
   </table>
   <br>
 @endsection
 
 @section('button-link')
-    <a href="#"><button class="btn btn-dark">View Subscriptions</button></a>
+    <a href="{{ config('app.web_app_url')  .'/subscriptions' }}"><button class="btn btn-dark">View Subscriptions</button></a>
 @endsection
 
 @section('url-link')
-    <a href="https:/subsync.com/xxxxxx">https:/subsync.com/xxxxxx</a>
+<a href="{{ config('app.web_app_url')  .'/subscriptions' }}">{{ config('app.web_app_url') . '/subscriptions' }}</a>
 @endsection

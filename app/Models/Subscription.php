@@ -31,7 +31,7 @@ class Subscription extends Model
 
     protected $with = ['category'];
 
-    protected $appends = ['user_uid', 'currency', 'parent_uid'];
+    protected $appends = ['user_uid', 'currency_code', 'parent_uid'];
 
     /**
      * Returns the user of the subscription.
@@ -63,12 +63,22 @@ class Subscription extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+     /**
+     * Returns the service of the subscription.
+     *
+     * @return BelongsTo
+     */
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
     /**
      * Get Currency Attribute.
      *
      * @return string
      */
-    public function getCurrencyAttribute()
+    public function getCurrencyCodeAttribute()
     {
        return Currency::where('id', $this->currency_id)->first()->code;
     }
@@ -122,6 +132,7 @@ class Subscription extends Model
             'end_date' => $data['end_date'],
             'description' => isset($data['description']) ? $data['description'] : null,
             'parent_id' => isset($data['parent_id']) ? $data['parent_id'] : null,
+            'service_id' => isset($data['service_id']) ? $data['service_id'] : null
         ]);
 
         return $subscription->load('category');

@@ -25,6 +25,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('subscription:expiry-reminder 0')->cron('0 0,6,12,18 * * *');
+        $schedule->command('subscription:expiry-reminder 1')->cron('0 0,6,12,18 * * *');
+        $schedule->command('subscription:expiry-reminder 7')->cron('0 0,6,12,18 * * *');
     }
 
     /**

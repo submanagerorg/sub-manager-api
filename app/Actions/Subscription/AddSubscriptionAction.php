@@ -2,6 +2,7 @@
 namespace App\Actions\Subscription;
 
 use App\Models\Currency;
+use App\Models\Service;
 use App\Models\Subscription;
 use App\Traits\FormatApiResponse;
 use Throwable;
@@ -23,9 +24,16 @@ class AddSubscriptionAction
             if($user->isSubscriptionLimitReached()){
                 return $this->formatApiResponse(400, 'Subscription limit exceeded. Upgrade to higher plan.');
             }
-    
+
             $data['user_id'] = $user->id;
             $data['currency_id'] = Currency::where('code', $data['currency'])->first()->id;
+
+            $service = Service::where('name', $data['name'])->first();
+
+            if($service){
+                $data['service_id'] = $service->id;
+                $data['category_id'] = $service->category_id;
+            }
     
             $subscription = Subscription::createNew($data);
     
