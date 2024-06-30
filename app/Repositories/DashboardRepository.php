@@ -19,8 +19,41 @@ class DashboardRepository {
         ];
     }
 
-    public function spendByCurrencyData() {
+    public function spendByCurrencyData(string|null $period) {
         $userId = auth()->id();
+
+        if ($period) {
+            $yearQuery = Subscription::toBase()
+            ->whereUserId($userId)
+            ->join(
+                'currencies', function($join) {
+                    $join->on('subscriptions.currency_id', '=', 'currencies.id');
+                }
+            )->select(
+                'currencies.code',
+                DB::raw('SUM(amount) as total_amount'),
+                DB::raw("ROUND((SUM(amount) / (SELECT SUM(amount) FROM subscriptions where user_id = $userId)) * 100, 0) as percentage")
+            )
+            ->whereYear('subscriptions.created_at', $period)
+            ->groupBy('subscriptions.currency_id');
+
+            $monthQuery = Subscription::toBase()
+            ->whereUserId($userId)
+            ->join(
+                'currencies', function($join) {
+                    $join->on('subscriptions.currency_id', '=', 'currencies.id');
+                }
+            )->select(
+                'currencies.code',
+                DB::raw('SUM(amount) as total_amount'),
+                DB::raw("ROUND((SUM(amount) / (SELECT SUM(amount) FROM subscriptions where user_id = $userId)) * 100, 0) as percentage")
+            )
+            ->whereMonth('subscriptions.created_at', $period)
+            ->groupBy('subscriptions.currency_id');
+
+            return $yearQuery->union($monthQuery)->get();
+        }
+
         $subcriptions = Subscription::toBase()
                         ->whereUserId($userId)
                         ->join(
