@@ -35,7 +35,7 @@
                 <span class="blue-text sub-text">{{ $subscription->name }}</span> - {{$subscription->currency->sign}}{{$subscription->amount}}
             </td>
             <td>
-                <a href="{{ $subscription->service && $subscription->service->subscription_url ? $subscription->service->subscription_url : config('app.web_app_url') . '/renew-subscription' . $subscription->uid }}">
+                <a href="{{ $subscription->service && $subscription->service->subscription_url ? $subscription->service->subscription_url : config('app.web_app_url') . '/renew-subscription/' . $subscription->uid }}">
                     <button class="btn-renew"><b>Renew</b></button>
                 </a>
             </td>
