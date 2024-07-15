@@ -34,7 +34,7 @@
                 <span class="blue-text sub-text">{{ $subscription->name }}</span> - {{$subscription->currency->sign}}{{$subscription->amount}}
             </td>
             <td>
-                <a href="{{ $subscription->service && $subscription->service->subscription_url ? $subscription->service->subscription_url : config('app.web_app_url') . '/subscriptions/renew/' . $subscription->uid }}">
+                <a href="{{ $subscription->service && $subscription->service->subscription_url ? $subscription->service->subscription_url : config('app.web_app_url') . '/renew-subscription' . $subscription->uid }}">
                     <button class="btn-renew"><b>Renew</b></button>
                 </a>
             </td>
@@ -45,9 +45,9 @@
 @endsection
 
 @section('button-link')
-    <a href="{{ config('app.web_app_url')  .'/subscriptions' }}"><button class="btn btn-dark">View Subscriptions</button></a>
+    <a href="{{ config('app.web_app_url')  .'/all-subscriptions' }}"><button class="btn btn-dark">View Subscriptions</button></a>
 @endsection
 
 @section('url-link')
-<a href="{{ config('app.web_app_url')  .'/subscriptions' }}">{{ config('app.web_app_url') . '/subscriptions' }}</a>
+<a href="{{ config('app.web_app_url')  .'/all-subscriptions' }}">{{ config('app.web_app_url') . '/all-subscriptions' }}</a>
 @endsection
