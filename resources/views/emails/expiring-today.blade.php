@@ -45,9 +45,9 @@
 @endsection
 
 @section('button-link')
-    <a href="{{ config('app.web_app_url')  .'/subscriptions' }}"><button class="btn btn-dark">View Subscriptions</button></a>
+    <a href="{{ config('app.web_app_url')  .'/all-subscriptions' }}"><button class="btn btn-dark">View Subscriptions</button></a>
 @endsection
 
 @section('url-link')
-<a href="{{ config('app.web_app_url')  .'/subscriptions' }}">{{ config('app.web_app_url') . '/subscriptions' }}</a>
+<a href="{{ config('app.web_app_url')  .'/all-subscriptions' }}">{{ config('app.web_app_url') . '/all-subscriptions' }}</a>
 @endsection
