@@ -145,6 +145,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function addUserPricingPlan($pricingPlan): self | null
     {
         $userPricingPlan = UserPricingPlan::where('id', $this->id)->first();
+        $service = Service::where('name', 'SubSync')->first();
 
         if (!$pricingPlan) {
             return null;
@@ -178,6 +179,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'user_id' => $this->id,
                 'currency_id' => $currency->id,
                 'amount' => $userPricingPlan->amount,
+                'service_id' => $service->id,
                 'start_date' => now(),
                 'end_date' => $userPricingPlan->end_date,
                 'description' => "SubSync {$pricingPlan->name} Plan Subscription ({$pricingPlan->period})",

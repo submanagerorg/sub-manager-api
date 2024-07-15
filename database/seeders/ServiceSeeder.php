@@ -38,6 +38,7 @@ class ServiceSeeder extends Seeder
 
             $service->name = $datum->name;
             $service->url = $datum->url;
+            $service->subscription_url = isset($datum->subscription_url) ? $datum->subscription_url: null;
             $service->category_id = $category->id;
             $service->save();
         }
