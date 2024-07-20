@@ -61,6 +61,7 @@ Route::group(['prefix' => 'subscriptions', 'middleware' => ['auth:sanctum']], fu
 
 Route::group(['prefix' => 'users', 'middleware' => ['auth:sanctum']], function () {
     Route::post('profile', [UserController::class, 'editProfile'])->name('edit-profile');
+    Route::get('profile',  [UserController::class, 'getProfile'])->name('get-profile');
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth:sanctum']], function () {
