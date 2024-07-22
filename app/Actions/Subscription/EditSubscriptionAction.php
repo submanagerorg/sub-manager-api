@@ -29,6 +29,10 @@ class EditSubscriptionAction
             return $this->formatApiResponse(400, 'Subscription does not exist for user');
         }
 
+        if($subscription->status !== Subscription::STATUS['ACTIVE']){
+            return $this->formatApiResponse(400, 'Subscription is no longer active');
+        }
+
         $data = [
             'currency_id' =>  isset($data['currency']) ? Currency::where('code', $data['currency'])->first()->id : $subscription->currency_id,
             'amount' =>  isset($data['amount']) ? $data['amount'] : $subscription->amount,

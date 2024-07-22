@@ -13,6 +13,8 @@ class Service extends Model
     use HasFactory, Filterable;
 
     protected $guarded = ['id'];
+
+    const DEFAULT_SERVICE = 'SubSync';
     
     /**
      * The attributes that should be hidden for arrays.

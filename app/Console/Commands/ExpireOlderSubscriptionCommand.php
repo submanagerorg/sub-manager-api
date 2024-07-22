@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Mail\SubscriptionExpiringMail;
+use App\Models\PricingPlan;
+use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -49,9 +51,7 @@ class ExpireOlderSubscriptionCommand extends Command
                     ->get();
 
         foreach($subscriptions as $subscription){
-            $subscription->update([
-                'status' =>  Subscription::STATUS['EXPIRED']
-            ]);
+            $this->expireSubscription($subscription);
 
             $this->groupSubscription($subscription);
         }
@@ -87,6 +87,23 @@ class ExpireOlderSubscriptionCommand extends Command
         }
 
         $this->selectedSubscriptions[$userId][] = $subscription;
+    }
+
+    /**
+     * Expire subscription.
+     *
+     * @return void
+     */
+    public function expireSubscription($subscription) 
+    {
+        $subscription->update([
+            'status' =>  Subscription::STATUS['EXPIRED']
+        ]);
+
+        if ($subscription->name == Service::DEFAULT_SERVICE) {
+            $pricingPlan = PricingPlan::where('name', PricingPlan::DEFAULT_PLAN)->first();
+            $subscription->user->addUserPricingPlan($pricingPlan);
+        }
     }
 
    
