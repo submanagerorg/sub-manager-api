@@ -32,64 +32,71 @@ class GetCategoriesAction
      */
     public function autoCategorize(string $service)
     {
+        $serviceId = null;
         $categoryId = null;
 
-        $categoryId = $this->checkTheCacheForAMatch($service);
+        [$serviceId, $categoryId] = $this->checkTheCacheForAMatch($service);
 
         if (!$categoryId) {
-            $categoryId = $this->compareStringMatch($service, 'exact');
+            [$serviceId, $categoryId] = $this->compareStringMatch($service, 'exact');
         }
 
         if (!$categoryId) {
-            $categoryId = $this->compareStringMatch($service, 'like');
+            [$serviceId, $categoryId] = $this->compareStringMatch($service, 'like');
         }
 
         if (!$categoryId) {
-            $categoryId = $this->getSoundexMatch($service);
+            [$serviceId, $categoryId] = $this->getSoundexMatch($service);
         }
 
         if (!$categoryId) {
             $categoryId = Category::whereName(Category::OTHER)->first()->id;
         }
 
-        $this->cacheTheMatch($service, $categoryId);
+        $this->cacheTheMatch($service, $serviceId, $categoryId);
 
-        return $categoryId;
+        return [$serviceId, $categoryId];
     }
 
     /**
      *
      */
-    private function checkTheCacheForAMatch(string $service): ?int {
+    private function checkTheCacheForAMatch(string $service): array {
         $mappings = Cache::get('service-category-mapping', []);
 
-        return $mappings[$service] ?? null;
+        return $mappings[$service] ?? [null, null];
     }
 
     /**
      *
      */
-    private function compareStringMatch(string $service, string $matchPattern = 'exact'): ?int {
+    private function compareStringMatch(string $service, string $matchPattern = 'exact'): array {
         if ($matchPattern === 'exact') {
-            return optional(Service::whereName($service)->first())->category_id;
+            $service = Service::whereName($service)->first();
+
+            return $service ? [$service->id, $service->category_id] : [null, null];
         }
 
-        return optional(Service::where('name', 'like', "%$service%")->first())->category_id;
+        $service = Service::where('name', 'like', "%$service%")->first();
+
+        return $service ? [$service->id, $service->category_id] : [null, null];
     }
 
     /**
      *
      */
-    private function getSoundexMatch(string $service): ?int {
-        return optional(DB::table('services')->whereRaw("SOUNDEX(name) = SOUNDEX('$service')")->first())->category_id;
+    private function getSoundexMatch(string $service): array {
+        $service = DB::table('services')->whereRaw("SOUNDEX(name) = SOUNDEX('$service')")->first();
+
+        return $service ? [$service->id, $service->category_id] : [null, null];
     }
 
     /**
      *
      */
-    private function cacheTheMatch(string $service, int $categoryId): void {
+    private function cacheTheMatch(string $service, ?int $serviceId, int $categoryId): void {
         $mappings = Cache::pull('service-category-mapping');
-        $mappings[$service] = $categoryId;
+        $mappings[$service] = [$serviceId, $categoryId];
 
         Cache::put('service-category-mapping', $mappings);
     }

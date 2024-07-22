@@ -23,8 +23,11 @@ class RemoveSubscriptionAction
         if(!$subscription){
             return $this->formatApiResponse(400, 'Subscription does not exist for user');
         }
+
+        if($subscription->status !== Subscription::STATUS['ACTIVE']){
+            return $this->formatApiResponse(400, 'Subscription is no longer active');
+        }
         
-        //todo: delete reminder
         $subscription->delete();
 
         return $this->formatApiResponse(200, 'Subscription has been removed');
