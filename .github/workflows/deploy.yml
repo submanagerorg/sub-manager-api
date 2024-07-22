@@ -20,7 +20,7 @@ jobs:
         run: |
           branch=${{ steps.branch_name.outputs.branch }}
           branch_upper=$(echo "$branch" | tr '[:lower:]' '[:upper:]')
-          ip=${{ secrets["DROPLET_IP_${branch_upper}"] }}
+          ip=${{ secrets["DROPLET_IP_" + ${branch_upper}"] }}
 
           echo "::set-output name=ip::$ip"
         
