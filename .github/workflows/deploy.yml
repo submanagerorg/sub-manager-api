@@ -14,6 +14,12 @@ jobs:
       - name: Get branch name
         id: branch_name
         run: echo "::set-output name=branch::$(echo "${{ github.ref_name }}")"
+
+      - name: Get droplet ip
+        id: droplet_ip
+        run: |
+          branch=${{ steps.branch_name.outputs.branch }}
+          echo "::set-output name=ip::$(echo "${{ secrets.DROPLET_IP_${branch^^} }}")"
         
       - name: Checkout code
         uses: actions/checkout@v2
@@ -25,13 +31,14 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
           # Select DROPLET_IP based on branch
-          branch=${{ steps.branch_name.outputs.branch }}
-          ssh-keyscan -H ${{ secrets.DROPLET_IP_${branch^^} }} >> ~/.ssh/known_hosts
+          ip=${{ steps.droplet_ip.outputs.ip }}
+          ssh-keyscan -H ${ ip } >> ~/.ssh/known_hosts
 
       - name: Deploy to DigitalOcean
         run: |
           # Determine the branch name from the event payload
           branch=${{ steps.branch_name.outputs.branch }}
+          ip=${{ steps.droplet_ip.outputs.ip }}
 
           # SSH into the Droplet and execute deployment script with branch parameter
-          ssh -i ~/.ssh/id_rsa ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP_${branch^^} }} "bash -s" < deploy.sh $branch
+          ssh -i ~/.ssh/id_rsa ${{ secrets.DROPLET_USERNAME }}@${ ip } "bash -s" < deploy.sh $branch
