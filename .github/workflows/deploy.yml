@@ -19,7 +19,9 @@ jobs:
         id: droplet_ip
         run: |
           branch=${{ steps.branch_name.outputs.branch }}
-          echo "::set-output name=ip::$(echo "${{ secrets.DROPLET_IP_${branch^^} }}")"
+          branch_upper=$(echo "$branch" | tr '[:lower:]' '[:upper:]')
+          
+          echo "::set-output name=ip::$(echo "${{ secrets.DROPLET_IP_${branch_upper} }}")"
         
       - name: Checkout code
         uses: actions/checkout@v2
