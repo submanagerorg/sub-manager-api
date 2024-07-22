@@ -1,10 +1,14 @@
 <?php
 namespace App\Actions\PlanPayment;
 
+use App\Actions\Subscription\AddSubscriptionAction;
+use App\Actions\Subscription\RenewSubscriptionAction;
 use App\Mail\SetPasswordMail;
 use App\Mail\SuccessfulPaymentMail;
 use App\Mail\WelcomeMail;
 use App\Models\PricingPlan;
+use App\Models\Service;
+use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\WebhookLog;
@@ -20,6 +24,8 @@ class ProcessWebhookAction
 {
     use FormatApiResponse;
 
+    protected $user;
+
    /**
     * Process Webhook
     *
@@ -32,7 +38,7 @@ class ProcessWebhookAction
             'request' => json_encode([
                 'body' => $request->all(),
                 'headers' => $request->header(),
-            ])
+            ], JSON_FORCE_OBJECT)
         ]);
 
         $paymentProvider = Transaction::getPaymentProvider();
@@ -74,19 +80,21 @@ class ProcessWebhookAction
                 return $this->formatApiResponse(200, 'OK');
             }
 
-            $user = User::where('email', $verifyPayment['email'])->first();
+            $this->user = User::where('email', $verifyPayment['email'])->first();
 
             $pricingPlan = PricingPlan::where('uid', $verifyPayment['pricing_plan_uid'])->first();
 
-            if(!$user){
+            if(!$this->user){
                 $this->createUser($verifyPayment['email'], $pricingPlan, $verifyPayment['amount']);
                 
-                $user = User::where('email', $verifyPayment['email'])->first();
+                $this->user = User::where('email', $verifyPayment['email'])->first();
             }
 
-            $user->addUserPricingPlan($pricingPlan);
+            $this->user->addUserPricingPlan($pricingPlan);
 
-            $this->createTransaction($user, $pricingPlan, $verifyPayment['amount'], $verifyPayment['reference']);
+            $this->createTransaction($pricingPlan, $verifyPayment['amount'], $verifyPayment['reference']);
+
+            $this->addSubscription($pricingPlan, $verifyPayment['amount']);
 
             $this->updateWebhookLog($webhookLog, 'OK');
 
@@ -132,16 +140,15 @@ class ProcessWebhookAction
     /**
     * Create transaction
     *
-    * @param User $user
     * @param PricingPlan $pricingPlan
     * @param float $amount
     * @param string $reference
     * @return void
     */
-    private function createTransaction(User $user, PricingPlan $pricingPlan, float $amount, string $reference): void 
+    private function createTransaction(PricingPlan $pricingPlan, float $amount, string $reference): void 
     {
         $data = [
-            'user_id' => $user->id,
+            'user_id' => $this->user->id,
             'pricing_plan_id' => $pricingPlan->id,
             'amount' =>  $amount,
             'reference' => $reference,
@@ -152,13 +159,41 @@ class ProcessWebhookAction
         Transaction::createNew($data);
 
         $mail_data = [
-            'user' => $user,
+            'user' => $this->user,
             'amount' => $amount,
             'pricing_plan' => $pricingPlan,
             'reference' => $reference,
         ];
 
-        Mail::to($user)->send(new SuccessfulPaymentMail($mail_data));
+        Mail::to($this->user)->send(new SuccessfulPaymentMail($mail_data));
+    }
+
+    /**
+    * Add subscription
+    *
+    * @param PricingPlan $pricingPlan
+    * @param float $amount
+    * @return void
+    */
+    private function addSubscription(PricingPlan $pricingPlan, float $amount): void
+    {
+        $parentSubscription = Subscription::where('user_id', $this->user->id)->where('name', Service::DEFAULT_SERVICE)->first();
+
+        $data = [
+            'name' => Service::DEFAULT_SERVICE,
+            'email' => $this->user->email,
+            'currency' => Transaction::DEFAULT_CURRENCY['CODE'],
+            'amount' => $amount,
+            'start_date' => $this->user->userPricingPlan->start_date,
+            'end_date' => $this->user->userPricingPlan->end_date,
+            'description' => "{$pricingPlan->name} Plan Subscription ({$pricingPlan->period})"
+        ];
+
+        if($parentSubscription){
+            (new RenewSubscriptionAction)->execute($parentSubscription->uid, $data, true);
+        } else {
+            (new AddSubscriptionAction)->execute($data, true);
+        }
     }
 
     /**

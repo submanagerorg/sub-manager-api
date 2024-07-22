@@ -145,7 +145,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function addUserPricingPlan($pricingPlan): self | null
     {
         $userPricingPlan = UserPricingPlan::where('id', $this->id)->first();
-        $service = Service::where('name', 'SubSync')->first();
 
         if (!$pricingPlan) {
             return null;
@@ -171,24 +170,6 @@ class User extends Authenticatable implements MustVerifyEmail
         //Add user pricing plan history
         UserPricingPlanHistory::createNew($data);
 
-        if ($userPricingPlan->end_date) {
-            $currency = Currency::where('code', "NGN")->first();
-
-            $data = [
-                'name' => 'SubSync',
-                'user_id' => $this->id,
-                'currency_id' => $currency->id,
-                'amount' => $userPricingPlan->amount,
-                'service_id' => $service->id,
-                'start_date' => now(),
-                'end_date' => $userPricingPlan->end_date,
-                'description' => "SubSync {$pricingPlan->name} Plan Subscription ({$pricingPlan->period})",
-            ];
-
-            //Add subscription
-            Subscription::createNew($data);
-        }
-       
         return $this;
     }
 

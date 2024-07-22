@@ -3,11 +3,15 @@
 namespace App\Console\Commands;
 
 use App\Mail\SubscriptionExpiringMail;
+use App\Models\PricingPlan;
+use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class SubscriptionExpiryReminderCommand extends Command
 {
@@ -46,53 +50,59 @@ class SubscriptionExpiryReminderCommand extends Command
      */
     public function handle()
     {
-        $this->daysLeft = $this->argument('days_left');
-     
-        $daysFromNow = Carbon::now()->addDays($this->daysLeft);
+        DB::beginTransaction();
 
-        $subscriptions = Subscription::where('status', Subscription::STATUS['ACTIVE'])
-                    ->where('status', Subscription::STATUS['ACTIVE'])
-                    ->whereDate('end_date', $daysFromNow)
-                    ->get();
+        try {
+            $this->daysLeft = $this->argument('days_left');
+        
+            $daysFromNow = Carbon::now()->addDays($this->daysLeft);
 
-        foreach($subscriptions as $subscription){
-            $timezone = $subscription->user->timezone;
-            $timezoneName = $timezone->zone_name;
+            $subscriptions = Subscription::where('status', Subscription::STATUS['ACTIVE'])
+                        ->where('status', Subscription::STATUS['ACTIVE'])
+                        ->whereDate('end_date', $daysFromNow)
+                        ->get();
 
-            $todayInTimezone = Carbon::now()->setTimezone($timezoneName);
-            $todayStartInTimezone = Carbon::now()->setTimezone($timezoneName)->startOfDay();
-            $daysFromNowInTimezoneDate = Carbon::now()->setTimezone($timezoneName)->addDays($this->daysLeft)->format('Y-m-d');
-            $endDate = Carbon::parse($subscription->end_date)->shiftTimezone($timezoneName)->format('Y-m-d');
+            foreach($subscriptions as $subscription){
+                $timezone = $subscription->user->timezone;
+                $timezoneName = $timezone->zone_name;
 
-            if ($endDate == $daysFromNowInTimezoneDate) {
-                
-                if ($todayInTimezone->diffInHours($todayStartInTimezone) <= 5){
-                    if($this->daysLeft == 0) {
-                        $subscription->update([
-                            'status' =>  Subscription::STATUS['EXPIRED']
-                        ]);
+                $todayInTimezone = Carbon::now()->setTimezone($timezoneName);
+                $todayStartInTimezone = Carbon::now()->setTimezone($timezoneName)->startOfDay();
+                $daysFromNowInTimezoneDate = Carbon::now()->setTimezone($timezoneName)->addDays($this->daysLeft)->format('Y-m-d');
+                $endDate = Carbon::parse($subscription->end_date)->shiftTimezone($timezoneName)->format('Y-m-d');
+
+                if ($endDate == $daysFromNowInTimezoneDate) {
+                    
+                    if ($todayInTimezone->diffInHours($todayStartInTimezone) <= 5){
+                        if($this->daysLeft == 0) {
+                            $this->expireSubscription($subscription);
+                        }
+
+                        $this->groupSubscription($subscription);
                     }
-
-                    $this->groupSubscription($subscription);
                 }
+
             }
 
-        }
+            foreach($this->selectedSubscriptions as $userId => $subscriptions){
+                $user = User::where('id', $userId)->first();
 
-        foreach($this->selectedSubscriptions as $userId => $subscriptions){
-            $user = User::where('id', $userId)->first();
+                $mailData = [
+                    'username' => $user->username,
+                    'subscriptions' => $subscriptions,
+                    'days_left' => $this->daysLeft
+                ];
 
-            $mailData = [
-                'username' => $user->username,
-                'subscriptions' => $subscriptions,
-                'days_left' => $this->daysLeft
-            ];
+                Mail::to($user->email)->send(new SubscriptionExpiringMail($mailData)); 
 
-           
-            Mail::to($user->email)->send(new SubscriptionExpiringMail($mailData)); 
+                DB::commit();
+            }
+        } catch(Throwable $e) {
+            DB::rollBack();
+
+            logger($e);
         }
        
-
         return 0;
     }
 
@@ -100,7 +110,7 @@ class SubscriptionExpiryReminderCommand extends Command
     /**
      * Group the selected subscriptions by user.
      *
-     * @return array
+     * @return void
      */
     public function groupSubscription($subscription) 
     {
@@ -111,6 +121,23 @@ class SubscriptionExpiryReminderCommand extends Command
         }
 
         $this->selectedSubscriptions[$userId][] = $subscription;
+    }
+
+     /**
+     * Expire subscription.
+     *
+     * @return void
+     */
+    public function expireSubscription($subscription) 
+    {
+        $subscription->update([
+            'status' =>  Subscription::STATUS['EXPIRED']
+        ]);
+
+        if ($subscription->name == Service::DEFAULT_SERVICE) {
+            $pricingPlan = PricingPlan::where('name', PricingPlan::DEFAULT_PLAN)->first();
+            $subscription->user->addUserPricingPlan($pricingPlan);
+        }
     }
 
    

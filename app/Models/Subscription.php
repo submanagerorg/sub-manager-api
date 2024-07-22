@@ -116,14 +116,14 @@ class Subscription extends Model
         }
 
         if(!isset($data['category_id'])){
-            $data['category_id'] = (new GetCategoriesAction)->autoCategorize($data['name']);
+            [$data['service_id'], $data['category_id']] = (new GetCategoriesAction)->autoCategorize($data['name']);
         }
 
         $subscription = self::create([
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
-            'name' => $data['name'],
-            'url' => isset($data['url']) ? $data['url'] : null,
+            'name' => ucfirst($data['name']), 
+            'url' => $data['url'] ?? ($data['service_id'] ? Service::where('id', $data['service_id'])->first()->url : null),
             'currency_id' => $data['currency_id'],
             'category_id' => $data['category_id'],
             'amount' => $data['amount'],
