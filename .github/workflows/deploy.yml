@@ -19,8 +19,8 @@ jobs:
         id: droplet_ip
         run: |
           branch=${{ steps.branch_name.outputs.branch }}
-          branch_upper=$(echo "$branch" | tr '[:lower:]' '[:upper:]')
-          ip=${{ secrets["DROPLET_IP_" + ${branch_upper}"] }}
+          echo "::set-env name=DROPLET_IP::"DROPLET_IP_${branch^^}"
+          ip=${{ secrets[env.DROPLET_IP] }}
 
           echo "::set-output name=ip::$ip"
         
