@@ -144,7 +144,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function addUserPricingPlan($pricingPlan): self | null
     {
-        $userPricingPlan = UserPricingPlan::where('id', $this->id)->first();
+        $userPricingPlan = UserPricingPlan::where('user_id', $this->id)->first();
 
         if (!$pricingPlan) {
             return null;
