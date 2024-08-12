@@ -44,7 +44,7 @@ class EditProfileAction
             return $this->formatApiResponse(200, 'User profile has been updated', ['user' => $user]);
 
         } catch(Throwable $e) {
-            logger($e);
+            report($e);
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
         }
        

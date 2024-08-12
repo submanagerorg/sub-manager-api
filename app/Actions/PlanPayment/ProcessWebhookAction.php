@@ -12,11 +12,14 @@ use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\WebhookLog;
+use App\Notifications\NewSignUpNotification;
 use App\Traits\FormatApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Throwable;
 use Illuminate\Support\Str;
 
@@ -54,7 +57,7 @@ class ProcessWebhookAction
                 $this->updateWebhookLog($webhookLog, 'Request could not be validated.');
 
                 DB::commit();
-                return $this->formatApiResponse(403, 'Request could not be validated.');
+                return $this->formatApiResponse(200, 'Request could not be validated.');
             }
 
             $verifyPayment = $paymentProvider->verifyPayment($validationResponse['reference']); 
@@ -63,7 +66,7 @@ class ProcessWebhookAction
                 $this->updateWebhookLog($webhookLog, 'Transaction could not be verified.');
 
                 DB::commit();
-                return $this->formatApiResponse(403, 'Transaction could not be verified.');
+                return $this->formatApiResponse(200, 'Transaction could not be verified.');
             }
 
             if($verifyPayment['transaction_status'] !== 'success'){
@@ -80,9 +83,16 @@ class ProcessWebhookAction
                 return $this->formatApiResponse(200, 'OK');
             }
 
-            $this->user = User::where('email', $verifyPayment['email'])->first();
-
             $pricingPlan = PricingPlan::where('uid', $verifyPayment['pricing_plan_uid'])->first();
+
+            if(!$pricingPlan) {
+                $this->updateWebhookLog($webhookLog, 'Pricing plan does not exist');
+
+                DB::commit();
+                return $this->formatApiResponse(200, 'Pricing plan does not exist');
+            }
+
+            $this->user = User::where('email', $verifyPayment['email'])->first();
 
             if(!$this->user){
                 $this->createUser($verifyPayment['email'], $pricingPlan, $verifyPayment['amount']);
@@ -104,7 +114,7 @@ class ProcessWebhookAction
         } catch(Throwable $e) {
             DB::rollback();
 
-            logger($e);
+            report($e);
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
         }
        
@@ -128,13 +138,20 @@ class ProcessWebhookAction
 
         $mail_data = [
             'email' =>  $user->email,
-            'chrome_extension_url' => config('app.chrome_extension_url'),
             'amount' => $amount,
             'pricing_plan' => $pricingPlan,
         ];
 
-        Mail::to($user)->send(new WelcomeMail($mail_data));
+        Mail::to($user)->send(new WelcomeMail());
         Mail::to($user)->send(new SetPasswordMail($mail_data));
+
+        try {
+            Notification::route('slack', config('services.slack.webhook_url.info'))
+                ->notify(new NewSignUpNotification(['email' => $user->email]));
+
+        } catch (\Throwable $e) {
+            Log::error('Failed to send notification to slack: ' . $e->getMessage());
+        }
     }
 
     /**
