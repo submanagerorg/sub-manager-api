@@ -21,10 +21,10 @@
 @endsection
 
 @section('button-link')
-    <a href="{{ $chrome_extension_url }}"><button class="btn btn-dark">Download Extension</button></a>
+    <a href="{{ config('app.chrome_extension_url') }}"><button class="btn btn-dark">Download Extension</button></a>
 @endsection
 
 @section('url-link')
-    <a href="{{ $chrome_extension_url }}">{{ $chrome_extension_url }}</a>
+    <a href="{{ config('app.chrome_extension_url') }}">{{ config('app.chrome_extension_url') }}</a>
 @endsection
 

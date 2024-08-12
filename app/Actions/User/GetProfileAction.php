@@ -23,7 +23,7 @@ class GetProfileAction
             return $this->formatApiResponse(200, 'User profile retrieved successfully', ['user' => $user]);
 
         } catch(Throwable $e) {
-            logger($e);
+            report($e);
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
         }
        

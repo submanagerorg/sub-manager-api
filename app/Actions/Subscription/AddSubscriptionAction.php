@@ -43,12 +43,12 @@ class AddSubscriptionAction
             return $this->formatApiResponse(200, 'Subscription has been added', $subscription);
 
         } catch(Throwable $e) {
-            logger($e);
-
             if($isSubSyncSubscription){
                 throw new \Exception($e);
             }
 
+            report($e);
+            
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
         }
        

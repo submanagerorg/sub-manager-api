@@ -20,9 +20,9 @@ class WelcomeMail extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct()
     {
-        $this->data = $data;
+        
     }
 
     /**
@@ -33,9 +33,6 @@ class WelcomeMail extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->subject('Welcome To SubSync')
-            ->view('emails.welcome')
-            ->with([
-                'chrome_extension_url' => $this->data['chrome_extension_url']
-            ]);
+            ->view('emails.welcome');
     }
 }
