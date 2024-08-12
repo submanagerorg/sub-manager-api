@@ -100,7 +100,7 @@ class SubscriptionExpiryReminderCommand extends Command
         } catch(Throwable $e) {
             DB::rollBack();
 
-            logger($e);
+            report($e);
         }
        
         return 0;

@@ -9,8 +9,11 @@ use App\Http\Controllers\Controller;
 use App\Mail\VerificationMail;
 use App\Mail\WelcomeMail;
 use App\Models\PricingPlan;
+use App\Notifications\NewSignUpNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
@@ -21,7 +24,7 @@ class RegisterController extends Controller
         DB::beginTransaction();
 
         try{
-            if(User::exists($request->email)){
+            if(User::exists($request->email)){ 
                 return $this->formatApiResponse(400, 'User already exists');
             }
 
@@ -38,20 +41,27 @@ class RegisterController extends Controller
 
             $mail_data = [
                 'user' =>  $user,
-                'chrome_extension_url' => config('app.chrome_extension_url')
             ];
 
-            Mail::to($user)->send(new WelcomeMail($mail_data));
+            Mail::to($user)->send(new WelcomeMail());
             Mail::to($user)->send(new VerificationMail($mail_data));
 
             DB::commit();
+
+            try {
+                Notification::route('slack', config('services.slack.webhook_url.info'))
+                    ->notify(new NewSignUpNotification(['email' => $user->email]));
+
+            } catch (\Throwable $e) {
+                Log::error('Failed to send notification to slack: ' . $e->getMessage());
+            }
 
             return $this->formatApiResponse(201, 'Registration Successful. Proceed to verify your email',['user' => $user]);
 
         }catch(Throwable $e) {
             DB::rollback();
 
-            logger($e);
+            report($e);
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
         }
 
