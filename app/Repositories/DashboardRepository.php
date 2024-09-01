@@ -34,7 +34,7 @@ class DashboardRepository {
                 DB::raw('SUM(amount) as total_amount'),
                 DB::raw("ROUND((SUM(amount) / (SELECT SUM(amount) FROM subscriptions where user_id = $userId)) * 100, 0) as percentage")
             )
-            ->whereYear('subscriptions.created_at', $period)
+            ->whereYear('subscriptions.start_date', $period)
             ->groupBy('subscriptions.currency_id');
 
             $monthQuery = Subscription::toBase()
@@ -48,7 +48,7 @@ class DashboardRepository {
                 DB::raw('SUM(amount) as total_amount'),
                 DB::raw("ROUND((SUM(amount) / (SELECT SUM(amount) FROM subscriptions where user_id = $userId)) * 100, 0) as percentage")
             )
-            ->whereMonth('subscriptions.created_at', $period)
+            ->whereMonth('subscriptions.start_date', $period)
             ->groupBy('subscriptions.currency_id');
 
             return $yearQuery->union($monthQuery)->get();
@@ -151,11 +151,11 @@ class DashboardRepository {
             $data = $newData;
         } else {
             $query = Subscription::toBase()->select(
-                DB::raw('YEAR(created_at) as subscription_year'),
+                DB::raw('YEAR(start_date) as subscription_year'),
                 DB::raw('SUM(amount) as total_amount')
             )
             ->where('user_id', auth()->id())
-            ->groupBy(DB::raw('YEAR(created_at)'))
+            ->groupBy(DB::raw('YEAR(start_date)'))
             ->orderBy('subscription_year');
 
             if ($currencyId) {
