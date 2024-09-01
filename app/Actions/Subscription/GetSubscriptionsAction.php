@@ -19,7 +19,7 @@ class GetSubscriptionsAction
     {
         $user = auth()->user();
 
-        $subscriptions =  Subscription::where('user_id', $user->id);
+        $subscriptions =  Subscription::where('user_id', $user->id)->orderBy('id', 'desc');
 
         $subscriptions = $subscriptions->filter($filter)->paginate($data['length'] ?? 20);
 
