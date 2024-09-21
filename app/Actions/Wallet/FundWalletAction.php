@@ -4,6 +4,7 @@ namespace App\Actions\Wallet;
 
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Wallet;
 use App\Traits\FormatApiResponse;
 use App\Traits\TransactionTrait;
 use Illuminate\Http\JsonResponse;
@@ -28,7 +29,7 @@ class FundWalletAction
 
         try {
             $paymentData = [
-                'reference' => $this->generateReference(),
+                'reference' => $this->generateReference(Wallet::LABEL),
                 'amount' => $amount + $fee,
                 'email' => $user->email,
                 'currency' => $this->getDefaultCurrency()['CODE'],

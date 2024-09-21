@@ -3,7 +3,7 @@
 namespace App\Actions\PlanPayment;
 
 use App\Models\PricingPlan;
-use App\Models\Transaction;
+use App\Models\Subscription;
 use App\Traits\FormatApiResponse;
 use App\Traits\TransactionTrait;
 use Illuminate\Http\JsonResponse;
@@ -28,7 +28,7 @@ class InitiatePaymentAction
             $plan = PricingPlan::where('uid', $data['pricing_plan_uid'])->first();
 
             $paymentData = [
-                'reference' => $this->generateReference(),
+                'reference' => $this->generateReference(Subscription::LABEL),
                 'amount' => $plan->amount,
                 'email' => $data['email'],
                 'currency' => $this->getDefaultCurrency()['CODE'],

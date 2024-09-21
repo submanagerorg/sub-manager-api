@@ -78,7 +78,7 @@ class ProcessWebhookAction
                 return $this->formatApiResponse(200, 'OK');
             }
 
-            if (Transaction::where('reference', $verifyPayment['reference'])->first()) {
+            if (Transaction::where('reference', $verifyPayment['reference'])->first() || WalletTransaction::where('reference', $verifyPayment['reference'])->first()) {
                 $this->updateWebhookLog($webhookLog, 'OK - Transaction already exists');
 
                 DB::commit();
@@ -257,6 +257,6 @@ class ProcessWebhookAction
         $fee = $verifyPayment['metadata']->fee;
         $amount = $verifyPayment['amount'] - $fee;
 
-        $this->user->wallet->credit($amount, $fee, WalletTransaction::TYPE['DEPOSIT'], 'Wallet Deposit');
+        $this->user->wallet->credit($verifyPayment['reference'], $amount, $fee, WalletTransaction::TYPE['DEPOSIT'], 'Wallet Deposit');
     }
 }

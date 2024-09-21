@@ -15,6 +15,8 @@ class Wallet extends Model
 
     protected $guarded = ['id'];
 
+    public const LABEL = "WAL";
+
     /**
      * Returns the user of the subscription.
      *
@@ -45,7 +47,7 @@ class Wallet extends Model
         return $this->hasMany(WalletHistory::class);
     }
 
-    public function credit(float $amount, float $fee, string $transactionType, string $description)
+    public function credit(string $reference, float $amount, float $fee, string $transactionType, string $description)
     {
         $isTransactionActive = DB::transactionLevel() > 0;
 
@@ -56,7 +58,7 @@ class Wallet extends Model
         try {
             $this->lockForUpdate();
 
-            $this->updateBalanceAndCreateRecords(WalletHistory::TYPE['CREDIT'], $amount, $fee, $transactionType, $description);
+            $this->updateBalanceAndCreateRecords($reference, WalletHistory::TYPE['CREDIT'], $amount, $fee, $transactionType, $description);
 
             if (!$isTransactionActive) {
                 DB::commit();
@@ -69,7 +71,7 @@ class Wallet extends Model
         }
     }
 
-    public function debit(float $amount, float $fee, string $transactionType, string $description)
+    public function debit(string $reference, float $amount, float $fee, string $transactionType, string $description)
     {
         $isTransactionActive = DB::transactionLevel() > 0;
 
@@ -87,7 +89,7 @@ class Wallet extends Model
                 throw new \Exception("Insufficient balance.");
             }
 
-            $this->updateBalanceAndCreateRecords(WalletHistory::TYPE['DEBIT'], -$amount, $fee, $transactionType, $description);
+            $this->updateBalanceAndCreateRecords($reference, WalletHistory::TYPE['DEBIT'], -$amount, $fee, $transactionType, $description);
 
             if (!$isTransactionActive) {
                 DB::commit();
@@ -101,14 +103,14 @@ class Wallet extends Model
     }
 
 
-    protected function updateBalanceAndCreateRecords(string $type, float $amount, float $fee, string $transactionType, string $description)
+    protected function updateBalanceAndCreateRecords(string $reference, string $type, float $amount, float $fee, string $transactionType, string $description)
     {
         $previousBalance = $this->balance;
         $currentBalance = $previousBalance + $amount;
 
         // Create wallet transaction
         $transaction = $this->wallet_transactions()->create([
-            'reference' => $this->generateReference(),
+            'reference' => $reference,
             'amount' => $amount,
             'fee' => $fee,
             'status' => WalletTransaction::STATUS['SUCCESSFUL'],

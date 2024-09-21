@@ -20,6 +20,8 @@ class Subscription extends Model
         'EXPIRED' => 'expired',
     ];
 
+    public const LABEL = "SUB";
+
     /**
      * The attributes that should be hidden for arrays.
      *

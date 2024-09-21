@@ -8,17 +8,18 @@ trait TransactionTrait
 {
     /**
      * Generate transaction reference
-     *
+     * @param string $label
      * @return string
      */
-    public function generateReference()
+    public function generateReference(string $label)
     {
         return Str::upper(sprintf(
-            '%s-%s-%s-%s',
+            '%s-%s-%s-%s-%s',
             'TRF',
             'SBSY',
+            $label,
             now()->format('YmdHis'),
-            Str::random(6)
+            Str::random(3)
         ));
     }
 
