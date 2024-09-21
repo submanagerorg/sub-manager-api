@@ -37,7 +37,7 @@ class FundWalletAction
                     'type' =>  'wallet',
                     'fee' => $fee
                 ],
-                'callback_url' => config('app.webapp_url') . "/payment/callback?email={$user->email}"
+                'callback_url' => config('app.web_app_url') . "/payment/callback?email={$user->email}"
             ];
 
             $response = (new $paymentProvider())->initiatePayment($paymentData);
