@@ -1,42 +1,42 @@
 <?php
 
-namespace App\Actions\PlanPayment;
+namespace App\Actions\Wallet;
 
-use App\Models\PricingPlan;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Traits\FormatApiResponse;
 use App\Traits\TransactionTrait;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
-class InitiatePaymentAction
+class FundWalletAction
 {
     use FormatApiResponse, TransactionTrait;
 
     /**
-     * Initiate payment
+     * Fund wallet
      *
-     * @param array $data
+     * @param User $user
+     * @param float $amount
+     * 
      * @return JsonResponse
      */
-    public function execute(array $data): JsonResponse
+    public function execute(User $user, float $amount): JsonResponse
     {
         $paymentProvider = $this->getPaymentProvider();
+        $fee = $this->getTransactionFee($amount);
 
         try {
-
-            $plan = PricingPlan::where('uid', $data['pricing_plan_uid'])->first();
-
             $paymentData = [
                 'reference' => $this->generateReference(),
-                'amount' => $plan->amount,
-                'email' => $data['email'],
+                'amount' => $amount + $fee,
+                'email' => $user->email,
                 'currency' => $this->getDefaultCurrency()['CODE'],
                 'metadata' => [
-                    'type' => 'subscription',
-                    'pricing_plan_uid' => $plan->uid,
+                    'type' =>  'wallet',
+                    'fee' => $fee
                 ],
-                'callback_url' => config('app.website_url') . "/payment/callback?planuid={$plan->uid}&email={$data['email']}"
+                'callback_url' => config('app.webapp_url') . "/payment/callback?email={$user->email}"
             ];
 
             $response = (new $paymentProvider())->initiatePayment($paymentData);

@@ -14,6 +14,7 @@ use App\Http\Controllers\PricingPlanController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,7 +84,6 @@ Route::group(['prefix' => 'pricing-plans'], function () {
     Route::get('{id}', [PricingPlanController::class, 'getPricingPlan'])->name('get-pricing-plan');
 });
 
-
 Route::get('currencies', [CurrencyController::class, 'getCurrencies'])->name('get-currencies');
 Route::get('timezones', [TimezoneController::class, 'getTimezones'])->name('get-timezones');
 Route::get('services', [ServiceController::class, 'getServices'])->name('get-services');
@@ -91,3 +91,8 @@ Route::get('categories', [CategoryController::class, 'getCategories'])->name('ge
 
 Route::get('test-categorization', [CategoryController::class, 'autoCategorize'])->middleware('auth:sanctum');
 
+Route::group(['prefix' => 'wallet', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('balance', [WalletController::class, 'getBalance'])->name('wallet-balance');
+    Route::post('credit', [WalletController::class, 'addFunds'])->name('wallet-credit');
+    Route::get('transactions', [WalletController::class, 'getWalletTransactions'])->name('wallet-transactions');
+});

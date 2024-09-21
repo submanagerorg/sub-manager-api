@@ -26,11 +26,11 @@ class PaymentProvider
     * @param string $reference
     * @param float $smount
     * @param string $email
-    * @param string $pricingPlan
+    * @param object $metadata
     * @return array
     */
     public static function verifyPaymentResponse(
-        string $transactionStatus, string $reference, float $amount, string $email, string $pricingPlanUid
+        string $transactionStatus, string $reference, float $amount, string $email, object $metadata
     ): array
     {
         if (in_array(strtolower($transactionStatus), ['success', 'successful'])){
@@ -43,7 +43,7 @@ class PaymentProvider
             'reference' => $reference,
             'amount' => $amount,
             'email' => $email,
-            'pricing_plan_uid' => $pricingPlanUid
+            'metadata' => $metadata
         ];
     }
 
