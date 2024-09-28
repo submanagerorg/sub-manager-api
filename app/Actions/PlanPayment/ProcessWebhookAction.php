@@ -78,7 +78,10 @@ class ProcessWebhookAction
                 return $this->formatApiResponse(200, 'OK');
             }
 
-            if (Transaction::where('reference', $verifyPayment['reference'])->first() || WalletTransaction::where('reference', $verifyPayment['reference'])->first()) {
+            $transaction = Transaction::where('reference', $verifyPayment['reference'])->first();
+            $walletTransaction =  WalletTransaction::where('reference', $verifyPayment['reference'])->first();
+
+            if ($transaction || $walletTransaction) {
                 $this->updateWebhookLog($webhookLog, 'OK - Transaction already exists');
 
                 DB::commit();
