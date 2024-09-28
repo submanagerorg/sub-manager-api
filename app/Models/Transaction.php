@@ -24,22 +24,6 @@ class Transaction extends Model
     ];
 
     /**
-    * Generate transaction reference
-    *
-    * @return string
-    */
-    public static function generateReference()
-    {
-        return Str::upper(sprintf(
-            '%s-%s-%s-%s',
-            'TRF',
-            'SBSY',            
-            now()->format('YmdHis'),
-            Str::random(6)
-        ));
-    }
-
-    /**
     * Retrieve payment provider
     *
     * @return string

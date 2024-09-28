@@ -65,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Timezone::class, 'timezone_id');
     }
 
-     /**
+    /**
      * returns user subscriptions
      *
      * @return HasMany
@@ -85,7 +85,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserPricingPlan::class, 'user_id');
     }
 
-     /**
+    /**
      * returns pricing plan
      *
      * @return HasOneThrough
@@ -95,7 +95,15 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOneThrough(PricingPlan::class, UserPricingPlan::class, 'user_id', 'id', 'id', 'pricing_plan_id');
     }
 
-     /**
+    /**
+     * Get the wallet associated with the user.
+     */
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    /**
      * @param array $data
      * @return self|null
      * 
@@ -104,14 +112,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $timezone = Timezone::where('zone_name', Timezone::DEFAULT_TIMEZONE)->first();
 
-        if(!$timezone){
+        if (!$timezone) {
             return null;
         }
 
         $name = explode("@", $data['email'])[0];
         $username = $name . random_int(1000, 9999);
 
-        while(self::where('username', $username)->exists()){
+        while (self::where('username', $username)->exists()) {
             $username = $name . random_int(1000, 9999);
         }
 
@@ -123,7 +131,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'timezone_id' => $timezone->id,
         ]);
 
-       return $user->load('timezone', 'pricingPlan');
+        return $user->load('timezone', 'pricingPlan');
     }
 
     /**
@@ -159,7 +167,6 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($userPricingPlan) {
 
             $userPricingPlan = $userPricingPlan->updateRecord($data);
-
         } else {
 
             $userPricingPlan = UserPricingPlan::createNew($data);
@@ -182,14 +189,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isSubscriptionLimitReached(): bool
     {
         if ($this->pricingPlan) {
-            
+
             $subscriptionCount = $this->subscriptions()->where('status', 'active')->count();
 
-            if(is_null($this->pricingPlan->subscription_limit)) {
+            if (is_null($this->pricingPlan->subscription_limit)) {
                 return false;
             }
 
-            if ($subscriptionCount >= $this->pricingPlan->subscription_limit){
+            if ($subscriptionCount >= $this->pricingPlan->subscription_limit) {
                 return true;
             }
         }
@@ -205,8 +212,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function canAccessFeature($featureName): bool
     {
         $planFeatures = $this->pricingPlan->pricingPlanFeatures->pluck('feature.name')->toArray();
-        
+
         return in_array(strtolower($featureName), $planFeatures);
     }
-
 }

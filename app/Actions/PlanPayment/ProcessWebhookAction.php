@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Actions\PlanPayment;
 
 use App\Actions\Subscription\AddSubscriptionAction;
@@ -11,6 +12,7 @@ use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\WalletTransaction;
 use App\Models\WebhookLog;
 use App\Notifications\NewSignUpNotification;
 use App\Traits\FormatApiResponse;
@@ -29,12 +31,12 @@ class ProcessWebhookAction
 
     protected $user;
 
-   /**
-    * Process Webhook
-    *
-    * @param Request $request
-    * @return JsonResponse
-    */
+    /**
+     * Process Webhook
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function execute(Request $request): JsonResponse
     {
         $webhookLog = WebhookLog::create([
@@ -48,87 +50,81 @@ class ProcessWebhookAction
 
         DB::beginTransaction();
 
-        try{
+        try {
 
             $paymentProvider = (new $paymentProvider());
-            $validationResponse = $paymentProvider->validateWebhook($request); 
+            $validationResponse = $paymentProvider->validateWebhook($request);
 
-            if($validationResponse['status'] !== true) {
+            if ($validationResponse['status'] !== true) {
                 $this->updateWebhookLog($webhookLog, 'Request could not be validated.');
 
                 DB::commit();
                 return $this->formatApiResponse(200, 'Request could not be validated.');
             }
 
-            $verifyPayment = $paymentProvider->verifyPayment($validationResponse['reference']); 
+            $verifyPayment = $paymentProvider->verifyPayment($validationResponse['reference']);
 
-            if($verifyPayment['status'] !== true){
+            if ($verifyPayment['status'] !== true) {
                 $this->updateWebhookLog($webhookLog, 'Transaction could not be verified.');
 
                 DB::commit();
                 return $this->formatApiResponse(200, 'Transaction could not be verified.');
             }
 
-            if($verifyPayment['transaction_status'] !== 'success'){
+            if ($verifyPayment['transaction_status'] !== 'success') {
                 $this->updateWebhookLog($webhookLog, 'OK - Transaction is not successful');
 
                 DB::commit();
                 return $this->formatApiResponse(200, 'OK');
             }
 
-            if(Transaction::where('reference', $verifyPayment['reference'])->first()){
-               $this->updateWebhookLog($webhookLog, 'OK - Transaction already exists');
+            $transaction = Transaction::where('reference', $verifyPayment['reference'])->first();
+            $walletTransaction =  WalletTransaction::where('reference', $verifyPayment['reference'])->first();
+
+            if ($transaction || $walletTransaction) {
+                $this->updateWebhookLog($webhookLog, 'OK - Transaction already exists');
 
                 DB::commit();
                 return $this->formatApiResponse(200, 'OK');
             }
 
-            $pricingPlan = PricingPlan::where('uid', $verifyPayment['pricing_plan_uid'])->first();
 
-            if(!$pricingPlan) {
-                $this->updateWebhookLog($webhookLog, 'Pricing plan does not exist');
+            if ($verifyPayment['metadata']->type == 'wallet') {
+                $this->processWalletTransaction($verifyPayment);
+            } else {
+                $pricingPlan = PricingPlan::where('uid', $verifyPayment['metadata']->pricing_plan_uid)->first();
 
-                DB::commit();
-                return $this->formatApiResponse(200, 'Pricing plan does not exist');
+                if (!$pricingPlan) {
+                    $this->updateWebhookLog($webhookLog, 'Pricing plan does not exist');
+
+                    DB::commit();
+                    return $this->formatApiResponse(200, 'Pricing plan does not exist');
+                }
+
+                $this->processSubscription($pricingPlan, $verifyPayment);
             }
-
-            $this->user = User::where('email', $verifyPayment['email'])->first();
-
-            if(!$this->user){
-                $this->createUser($verifyPayment['email'], $pricingPlan, $verifyPayment['amount']);
-                
-                $this->user = User::where('email', $verifyPayment['email'])->first();
-            }
-
-            $this->user->addUserPricingPlan($pricingPlan);
-
-            $this->createTransaction($pricingPlan, $verifyPayment['amount'], $verifyPayment['reference']);
-
-            $this->addSubscription($pricingPlan, $verifyPayment['amount']);
 
             $this->updateWebhookLog($webhookLog, 'OK');
 
             DB::commit();
             return $this->formatApiResponse(200, 'OK');
-
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             DB::rollback();
 
             report($e);
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
         }
-       
     }
 
 
     /**
-    * Create User 
-    *
-    * @param string $email
-    * @param PricingPlan $pricingPlan
-    * @param float $amount
-    * @return void
-    */
+     * Create User 
+     *
+     * @param string $email
+     * @param PricingPlan $pricingPlan
+     * @param float $amount
+     * @return void
+     */
     private function createUser(string $email, PricingPlan $pricingPlan, float $amount): void
     {
         $user  = User::createNew([
@@ -148,21 +144,20 @@ class ProcessWebhookAction
         try {
             Notification::route('slack', config('services.slack.webhook_url.info'))
                 ->notify(new NewSignUpNotification(['email' => $user->email]));
-
         } catch (\Throwable $e) {
             Log::error('Failed to send notification to slack: ' . $e->getMessage());
         }
     }
 
     /**
-    * Create transaction
-    *
-    * @param PricingPlan $pricingPlan
-    * @param float $amount
-    * @param string $reference
-    * @return void
-    */
-    private function createTransaction(PricingPlan $pricingPlan, float $amount, string $reference): void 
+     * Create transaction
+     *
+     * @param PricingPlan $pricingPlan
+     * @param float $amount
+     * @param string $reference
+     * @return void
+     */
+    private function createTransaction(PricingPlan $pricingPlan, float $amount, string $reference): void
     {
         $data = [
             'user_id' => $this->user->id,
@@ -186,12 +181,12 @@ class ProcessWebhookAction
     }
 
     /**
-    * Add subscription
-    *
-    * @param PricingPlan $pricingPlan
-    * @param float $amount
-    * @return void
-    */
+     * Add subscription
+     *
+     * @param PricingPlan $pricingPlan
+     * @param float $amount
+     * @return void
+     */
     private function addSubscription(PricingPlan $pricingPlan, float $amount): void
     {
         $parentSubscription = Subscription::where('user_id', $this->user->id)->where('name', Service::DEFAULT_SERVICE)->first();
@@ -206,7 +201,7 @@ class ProcessWebhookAction
             'description' => "{$pricingPlan->name} Plan Subscription ({$pricingPlan->period})"
         ];
 
-        if($parentSubscription){
+        if ($parentSubscription) {
             (new RenewSubscriptionAction)->execute($parentSubscription->uid, $data, true);
         } else {
             (new AddSubscriptionAction)->execute($data, true);
@@ -214,16 +209,57 @@ class ProcessWebhookAction
     }
 
     /**
-    * Update Webhook Log
-    *
-    * @param WebhookLog $webhookLog
-    * @param string $response
-    * @return JsonResponse
-    */
+     * Update Webhook Log
+     *
+     * @param WebhookLog $webhookLog
+     * @param string $response
+     * @return JsonResponse
+     */
     private function updateWebhookLog(WebhookLog $webhookLog, string $response): void
     {
         $webhookLog->update([
             'response' => $response
         ]);
+    }
+
+    /**
+     * Process Subscription
+     *
+     * @param PricingPlan $pricingPlan
+     * @param array $verifyPayment
+     * 
+     * @return void
+     */
+    private function processSubscription(PricingPlan $pricingPlan, array $verifyPayment)
+    {
+        $this->user = User::where('email', $verifyPayment['email'])->first();
+
+        if (!$this->user) {
+            $this->createUser($verifyPayment['email'], $pricingPlan, $verifyPayment['amount']);
+
+            $this->user = User::where('email', $verifyPayment['email'])->first();
+        }
+
+        $this->user->addUserPricingPlan($pricingPlan);
+
+        $this->createTransaction($pricingPlan, $verifyPayment['amount'], $verifyPayment['reference']);
+
+        $this->addSubscription($pricingPlan, $verifyPayment['amount']);
+    }
+
+    /**
+     * Process Wallet Transaction
+     *
+     * @param array $verifyPayment
+     * 
+     * @return void
+     */
+    private function processWalletTransaction(array $verifyPayment)
+    {
+        $this->user = User::where('email', $verifyPayment['email'])->first();
+        $fee = $verifyPayment['metadata']->fee;
+        $amount = $verifyPayment['amount'] - $fee;
+
+        $this->user->wallet->credit($verifyPayment['reference'], $amount, $fee, WalletTransaction::TYPE['DEPOSIT'], 'Wallet Deposit');
     }
 }
