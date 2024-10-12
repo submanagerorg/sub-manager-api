@@ -131,7 +131,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'timezone_id' => $timezone->id,
         ]);
 
-        return $user->load('timezone', 'pricingPlan');
+        $user->wallet()->create();
+
+        return $user->load('wallet', 'pricingPlan', 'timezone');
     }
 
     /**

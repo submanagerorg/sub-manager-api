@@ -30,8 +30,6 @@ class RegisterController extends Controller
 
             $user = User::createNew($request->validated());
 
-            $user->wallet()->create();
-
             $pricingPlan = PricingPlan::where('name', PricingPlan::DEFAULT_PLAN)->first();
 
             $user->addUserPricingPlan($pricingPlan);
