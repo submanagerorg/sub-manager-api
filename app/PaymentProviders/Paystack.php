@@ -35,10 +35,10 @@ class Paystack
     public function initiatePayment(array $data): array
     {
         $url = "{$this->base_url}/transaction/initialize";
-
+        
         $requestData = [
             "currency" => $data['currency'],
-            'amount' => $data['amount'] * 100, //amount is converted to kobo
+            'amount' => round($data['amount'], 2) * 100, //amount is converted to kobo
             'email' => $data['email'],
             'reference' => $data['reference'],
             'metadata' => $data['metadata'],
