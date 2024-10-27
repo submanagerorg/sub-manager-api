@@ -6,8 +6,13 @@ use App\Interfaces\PayForServiceInterface;
 
 class FlutterwaveDriver implements PayForServiceInterface
 {
-    public function payDstv(): mixed
+    public function payDstv(array $paymentData): mixed
     {
         return false;
+    }
+
+    public function getWalletBalance(): mixed
+    {
+        return true;
     }
 }
