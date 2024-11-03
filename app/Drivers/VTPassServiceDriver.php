@@ -19,7 +19,7 @@ class VTPassServiceDriver implements PayForServiceInterface
                 $paymentData['card_number'], 
                 $paymentData['variation_code'], 
                 $paymentData['phone_number'])) {
-                throw new Exception('The data passed for dstv payment is incomplete');
+                throw new Exception("The data passed for {$service} payment is incomplete");
             }
 
             $url = '/pay';
@@ -58,6 +58,46 @@ class VTPassServiceDriver implements PayForServiceInterface
         return $this->payTV($paymentData, 'gotv');
     }
 
+    public function payStartimes(array $paymentData): mixed 
+    {
+        return $this->payTV($paymentData, 'startimes');
+    }
+
+    public function payShowmax(array $paymentData): mixed 
+    {
+        try {
+
+            if (!isset(
+                $paymentData['variation_code'], 
+                $paymentData['phone_number'])) {
+                throw new Exception('The data passed for showmax payment is incomplete');
+            }
+
+            $url = '/pay';
+            $data = [
+                'request_id' => $this->generateRequestId(),
+                'serviceID' => 'showmax',
+                'billersCode' => $paymentData['phone_number'],
+                'variation_code' => $paymentData['variation_code'],
+                'phone' => $paymentData['phone_number']
+            ];
+
+            // This useful for renewals. The price is gotten from the smartcard verification endpoint.
+            // The price maybe be reduced for a renewal as opposed to a fresh sub
+            if (isset($paymentData['amount'])) {
+                $data['amount'] = $paymentData['amount'];
+            }
+
+            $response = $this->postBasic($url, $data);
+
+            return $response->json();
+
+        } catch (Throwable $e) {
+            Log::error($e->getMessage(), [$e->getTraceAsString()]);
+            throw $e;
+        }
+    }
+
     public function getVariations(string $service): mixed 
     {
         try {
@@ -85,6 +125,16 @@ class VTPassServiceDriver implements PayForServiceInterface
     public function getGotvVariations(): mixed 
     {
         return $this->getVariations('gotv');
+    }
+
+    public function getStartimesVariations(): mixed 
+    {
+        return $this->getVariations('startimes');
+    }
+
+    public function getShowmaxVariations(): mixed 
+    {
+        return $this->getVariations('showmax');
     }
 
     public function getSmartCardDetails(string|int $cardNumber, string $service): mixed 
@@ -115,6 +165,11 @@ class VTPassServiceDriver implements PayForServiceInterface
     public function getGotvSmartCardDetails(string|int $cardNumber): mixed 
     {
         return $this->getSmartCardDetails($cardNumber, 'gotv');
+    }
+
+    public function getStartimesSmartCardDetails(string|int $cardNumber): mixed 
+    {
+        return $this->getSmartCardDetails($cardNumber, 'startimes');
     }
 
     public function getWalletBalance(): mixed
