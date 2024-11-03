@@ -11,7 +11,7 @@ use Throwable;
 
 class VTPassServiceDriver implements PayForServiceInterface
 {
-    public function payDstv(array $paymentData): mixed
+    public function payTV(array $paymentData, string $service): mixed
     {
         try {
 
@@ -25,12 +25,18 @@ class VTPassServiceDriver implements PayForServiceInterface
             $url = '/pay';
             $data = [
                 'request_id' => $this->generateRequestId(),
-                'serviceID' => 'dstv',
+                'serviceID' => $service,
                 'billersCode' => $paymentData['card_number'],
                 'variation_code' => $paymentData['variation_code'],
                 'phone' => $paymentData['phone_number'],
                 'subscription_type' => 'change'
             ];
+
+            // This useful for renewals. The price is gotten from the smartcard verification endpoint.
+            // The price maybe be reduced for a renewal as opposed to a fresh sub
+            if (isset($paymentData['amount'])) {
+                $data['amount'] = $paymentData['amount'];
+            }
 
             $response = $this->postBasic($url, $data);
 
@@ -42,13 +48,23 @@ class VTPassServiceDriver implements PayForServiceInterface
         }
     }
 
-    public function getDstvVariations(): mixed 
+    public function payDstv(array $paymentData): mixed
+    {
+        return $this->payTV($paymentData, 'dstv');
+    }
+
+    public function payGotv(array $paymentData): mixed 
+    {
+        return $this->payTV($paymentData, 'gotv');
+    }
+
+    public function getVariations(string $service): mixed 
     {
         try {
 
             $url = '/service-variations';
             $query = [
-                'serviceID' => 'dstv'
+                'serviceID' => $service
             ];
 
             $response = $this->getBasic($url, $query);
@@ -61,14 +77,24 @@ class VTPassServiceDriver implements PayForServiceInterface
         }
     }
 
-    public function getDstvSmartCardDetails(string|int $cardNumber): mixed 
+    public function getDstvVariations(): mixed 
+    {
+        return $this->getVariations('dstv');
+    }
+
+    public function getGotvVariations(): mixed 
+    {
+        return $this->getVariations('gotv');
+    }
+
+    public function getSmartCardDetails(string|int $cardNumber, string $service): mixed 
     {
         try {
 
             $url = '/merchant-verify';
             $data = [
                 'billersCode' => $cardNumber,
-                'serviceID' => 'dstv'
+                'serviceID' => $service
             ];
 
             $response = $this->postBasic($url, $data);
@@ -81,6 +107,16 @@ class VTPassServiceDriver implements PayForServiceInterface
         }
     }
 
+    public function getDstvSmartCardDetails(string|int $cardNumber): mixed 
+    {
+        return $this->getSmartCardDetails($cardNumber, 'dstv');
+    }
+
+    public function getGotvSmartCardDetails(string|int $cardNumber): mixed 
+    {
+        return $this->getSmartCardDetails($cardNumber, 'gotv');
+    }
+
     public function getWalletBalance(): mixed
     {
         try {
@@ -88,6 +124,24 @@ class VTPassServiceDriver implements PayForServiceInterface
             $url = '/balance';
 
             $response = $this->get($url);        
+
+            return $response->json();
+
+        } catch (Throwable $e) {
+            Log::error($e->getMessage(), [$e->getTraceAsString()]);
+            throw $e;
+        }
+    }
+
+    public function getTransactionStatus(string $requestId):mixed 
+    {
+        try {
+
+            $url = '/requery';
+
+            $response = $this->postBasic($url, [
+                'request_id' => $requestId
+            ]);
 
             return $response->json();
 
