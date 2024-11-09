@@ -3,6 +3,7 @@
 namespace App\Drivers;
 
 use App\Interfaces\PayForServiceInterface;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -18,18 +19,19 @@ class VTPassServiceDriver implements PayForServiceInterface
             if (!isset(
                 $paymentData['card_number'], 
                 $paymentData['variation_code'], 
-                $paymentData['phone_number'])) {
+                $paymentData['phone_number'])
+                ) {
                 throw new Exception("The data passed for {$service} payment is incomplete");
             }
 
             $url = '/pay';
             $data = [
-                'request_id' => $this->generateRequestId(),
+                'request_id' => $paymentData['request_id'] ?? $this->generateRequestId(),
                 'serviceID' => $service,
                 'billersCode' => $paymentData['card_number'],
                 'variation_code' => $paymentData['variation_code'],
                 'phone' => $paymentData['phone_number'],
-                'subscription_type' => 'change'
+                'subscription_type' => $paymentData['subscription_type'] ?? 'change'
             ];
 
             // This useful for renewals. The price is gotten from the smartcard verification endpoint.
@@ -109,7 +111,16 @@ class VTPassServiceDriver implements PayForServiceInterface
 
             $response = $this->getBasic($url, $query);
 
-            return $response->json();
+            $responseBody = $response->json();
+            $variations = $responseBody['content']['varations'];
+
+            return collect($variations)->map(function ($item) {
+                return [
+                    'variation_code' => $item['variation_code'],
+                    'name' => $item['name'],
+                    'amount' => $item['variation_amount']
+                ];
+            })->toArray();
 
         } catch (Throwable $e) {
             Log::error($e->getMessage(), [$e->getTraceAsString()]);
@@ -148,8 +159,15 @@ class VTPassServiceDriver implements PayForServiceInterface
             ];
 
             $response = $this->postBasic($url, $data);
+            $responseBody = $response->json();
 
-            return $response->json();
+            return [
+                'customer_name' => $responseBody['content']['Customer_Name'],
+                'due_date' => Carbon::parse($responseBody['content']['Due_Date'])->toDateString(),
+                'current_variation_name' => $responseBody['content']['Current_Bouquet'],
+                'current_variation_code' => $responseBody['content']['Current_Bouquet_Code'],
+                'renewal_amount' => $responseBody['content']['Renewal_Amount']
+            ];
 
         } catch (Throwable $e) {
             Log::error($e->getMessage(), [$e->getTraceAsString()]);
@@ -250,7 +268,7 @@ class VTPassServiceDriver implements PayForServiceInterface
         ])->post(config('vtpass.url') . $url, $data);
     }
 
-    private function generateRequestId(): string 
+    public function generateRequestId(): string 
     {
         $now = now();
         $now->setTimezone('Africa/Lagos');
