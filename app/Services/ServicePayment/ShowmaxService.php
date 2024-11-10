@@ -12,7 +12,7 @@ class ShowmaxService implements TvSubscriptionServiceInterface
         return [];
     }
 
-    public function getSmartCardDetails(): mixed 
+    public function getSmartCardDetails($cardNumber): mixed 
     {
         return [];
     }

@@ -33,7 +33,8 @@ class PayAction
 
             $reference = $this->generateReference(Wallet::LABEL);
             
-            $customerDetails = $service->getSmartCardDetails();
+            $smartCardNumber = isset($data['smartcard_number']) ? $data['smartcard_number'] : null;
+            $customerDetails = $service->getSmartCardDetails($smartCardNumber);
 
             if($data['subscription_type'] == 'renew' && isset($customerDetails['renewal_amount'])) {
                 $amount = $customerDetails['renewal_amount'];
