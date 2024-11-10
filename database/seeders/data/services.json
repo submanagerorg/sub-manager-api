@@ -43,10 +43,10 @@
         "is_payment_supported": true
     },
     {
-        "name": "GOtv",
+        "name": "Gotv",
         "url": "https://www.gotvafrica.com/",
         "category": "Entertainment",
-        "is_payment_supported": false
+        "is_payment_supported": true
     },
     {
         "name": "Spotify",
@@ -89,5 +89,11 @@
         "url": "",
         "category": "Fitness",
         "is_payment_supported": false
+    },
+    {
+        "name": "Startimes",
+        "url": "https://www.startimestv.com/",
+        "category": "Entertainment",
+        "is_payment_supported": true
     }
 ]

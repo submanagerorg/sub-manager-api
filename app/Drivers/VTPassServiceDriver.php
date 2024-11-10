@@ -164,10 +164,10 @@ class VTPassServiceDriver implements PayForServiceInterface
 
             return [
                 'customer_name' => $responseBody['content']['Customer_Name'],
-                'due_date' => Carbon::parse($responseBody['content']['Due_Date'])->toDateString(),
-                'current_variation_name' => $responseBody['content']['Current_Bouquet'],
-                'current_variation_code' => $responseBody['content']['Current_Bouquet_Code'],
-                'renewal_amount' => $responseBody['content']['Renewal_Amount']
+                'due_date' =>  isset($responseBody['content']['Due_Date']) ? Carbon::parse($responseBody['content']['Due_Date'])->toDateString() : null,
+                'current_variation_name' => isset($responseBody['content']['Current_Bouquet']) ? $responseBody['content']['Current_Bouquet'] : null,
+                'current_variation_code' => isset($responseBody['content']['Current_Bouquet_Code']) ? $responseBody['content']['Current_Bouquet_Code'] : null,
+                'renewal_amount' => isset($responseBody['content']['Renewal_Amount']) ? $responseBody['content']['Renewal_Amount'] : null
             ];
 
         } catch (Throwable $e) {
