@@ -32,10 +32,10 @@ class ShowmaxService implements TvSubscriptionServiceInterface
         return PayForService::getShowmaxVariations();
     }
 
-    public function pay(): mixed {
-        //return [];
+    public function pay($data): mixed {
+        return [];
 
-        return PayForService::payShowmax();
+        //return PayForService::payShowmax($data);
     }
 
     public function generateRequestId(): mixed 

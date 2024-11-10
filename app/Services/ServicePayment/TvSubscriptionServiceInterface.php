@@ -10,7 +10,7 @@ interface TvSubscriptionServiceInterface
 
     public function getVariations(): mixed;
 
-    public function pay(): mixed;
+    public function pay($data): mixed;
 
     public function generateRequestId(): mixed;
 }
