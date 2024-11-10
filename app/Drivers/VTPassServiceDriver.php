@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Throwable;
 
 class VTPassServiceDriver implements PayForServiceInterface
@@ -17,7 +18,7 @@ class VTPassServiceDriver implements PayForServiceInterface
         try {
 
             if (!isset(
-                $paymentData['card_number'], 
+                $paymentData['smartcard_number'], 
                 $paymentData['variation_code'], 
                 $paymentData['phone_number'])
                 ) {
@@ -28,7 +29,7 @@ class VTPassServiceDriver implements PayForServiceInterface
             $data = [
                 'request_id' => $paymentData['request_id'] ?? $this->generateRequestId(),
                 'serviceID' => $service,
-                'billersCode' => $paymentData['card_number'],
+                'billersCode' => $paymentData['smartcard_number'],
                 'variation_code' => $paymentData['variation_code'],
                 'phone' => $paymentData['phone_number'],
                 'subscription_type' => $paymentData['subscription_type'] ?? 'change'
@@ -77,7 +78,7 @@ class VTPassServiceDriver implements PayForServiceInterface
 
             $url = '/pay';
             $data = [
-                'request_id' => $this->generateRequestId(),
+                'request_id' => $paymentData['request_id'] ?? $this->generateRequestId(),
                 'serviceID' => 'showmax',
                 'billersCode' => $paymentData['phone_number'],
                 'variation_code' => $paymentData['variation_code'],
@@ -273,6 +274,6 @@ class VTPassServiceDriver implements PayForServiceInterface
         $now = now();
         $now->setTimezone('Africa/Lagos');
 
-        return $now->format('YmdHi') . config('vtpass.salt');
+        return $now->format('YmdHi') . Str::random(5) . config('vtpass.salt');
     }
 }

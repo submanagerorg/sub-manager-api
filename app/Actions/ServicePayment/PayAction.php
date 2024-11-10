@@ -49,8 +49,8 @@ class PayAction
                 $variation = reset($variation); 
 
                 if ($variation) {
-                    $amount = $variation['variation_amount'];
-                    $data['variation_amount'] = $variation['variation_amount'];
+                    $amount = $variation['amount'];
+                    $data['variation_amount'] = $variation['amount'];
                 } else {
                     throw new Exception("Variation not found.");
                 }
