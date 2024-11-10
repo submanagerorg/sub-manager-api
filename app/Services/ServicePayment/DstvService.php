@@ -46,11 +46,11 @@ class DstvService implements TvSubscriptionServiceInterface
         //return PayForService::getDstvVariations();
     }
 
-    public function pay(): mixed 
+    public function pay($data): mixed 
     {
         return [];
 
-        //return PayForService::payDstv();
+        //return PayForService::payDstv($data);
     }
 
     public function generateRequestId(): mixed 
