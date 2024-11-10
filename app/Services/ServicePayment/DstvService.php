@@ -13,7 +13,7 @@ class DstvService implements TvSubscriptionServiceInterface
         ];
     }
 
-    public function getSmartCardDetails(): mixed 
+    public function getSmartCardDetails($cardNumber): mixed 
     {
         return [
             'customer_name' =>  "Mr  DsTEST",

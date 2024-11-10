@@ -17,7 +17,7 @@ class VerifySmartCardNumberAction
     public function execute(array $data)
     {
         try{
-            $response = Service::getServiceClass($data['service_name'])->getSmartCardDetails();
+            $response = Service::getServiceClass($data['service_name'])->getSmartCardDetails($data['smartcard_number']);
 
             if(!$response) {
                 return $this->formatApiResponse(400, 'Smart card number cannot be verified.');
