@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\InsufficientFundsException;
 use App\Traits\TransactionTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -86,7 +87,7 @@ class Wallet extends Model
              $amount += $fee;
 
             if ($this->balance < $amount) {
-                throw new \Exception("Insufficient balance.");
+                throw new InsufficientFundsException("Insufficient funds in wallet.");
             }
 
             $this->updateBalanceAndCreateRecords($reference, WalletHistory::TYPE['DEBIT'], -$amount, $fee, $transactionType, $description);
@@ -124,7 +125,7 @@ class Wallet extends Model
             'current_balance' => $currentBalance,
             'amount' => $amount,
             'type' => $type,
-            'transaction_id' => $transaction->id,
+            'wallet_transaction_id' => $transaction->id,
         ]);
 
         // Update wallet balance
