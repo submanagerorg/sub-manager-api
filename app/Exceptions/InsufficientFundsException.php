@@ -14,8 +14,8 @@ class InsufficientFundsException extends Exception
     public function render(Request $request)
     {
         return response()->json([
-            'status' => 500,
-            'message' => $this->getMessage(),
-        ], 500);
+            'status' => 400,
+            'message' => "Insufficient funds in wallet.",
+        ], 400);
     }
 }

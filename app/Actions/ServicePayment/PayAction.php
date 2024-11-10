@@ -79,10 +79,7 @@ class PayAction
             DB::rollback();
 
             if ($th instanceof InsufficientFundsException) {
-                return response()->json([
-                    'status' => 400,
-                    'message' => $th->getMessage(),
-                ], 400);
+                throw $th;
             }
 
             report($th);

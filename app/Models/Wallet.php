@@ -84,10 +84,10 @@ class Wallet extends Model
             $this->lockForUpdate();
 
              //add fee to the amount to be deducted
-             $amount += $fee;
+            $amount += $fee;
 
             if ($this->balance < $amount) {
-                throw new InsufficientFundsException("Insufficient funds in wallet.");
+                throw new InsufficientFundsException();
             }
 
             $this->updateBalanceAndCreateRecords($reference, WalletHistory::TYPE['DEBIT'], -$amount, $fee, $transactionType, $description);

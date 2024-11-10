@@ -99,8 +99,8 @@ Route::group(['prefix' => 'wallet', 'middleware' => ['auth:sanctum']], function 
 });
 
 Route::group(['prefix' => 'service-payment', 'middleware' => ['auth:sanctum']], function () {
-    Route::post('variations', [ServicePaymentController::class, 'getVariations'])->name('service-variations');
-    Route::post('validation-fields', [ServicePaymentController::class, 'getValidationFields'])->name('service-validation-fields');
-    Route::post('verify-smartcard-number', [ServicePaymentController::class, 'verifySmartCardNumber'])->name('service-verify-smartcard-number');
+    Route::get('variations', [ServicePaymentController::class, 'getVariations'])->name('service-variations');
+    Route::get('validation-fields', [ServicePaymentController::class, 'getValidationFields'])->name('service-validation-fields');
+    Route::get('verify-smartcard-number', [ServicePaymentController::class, 'verifySmartCardNumber'])->name('service-verify-smartcard-number');
     Route::post('pay', [ServicePaymentController::class, 'pay'])->name('service-pay');
 });
