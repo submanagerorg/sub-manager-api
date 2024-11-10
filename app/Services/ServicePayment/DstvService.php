@@ -24,7 +24,7 @@ class DstvService implements TvSubscriptionServiceInterface
         //     'renewal_amount' => "3500"
         // ];
 
-        return PayForService::getDstvSmartCardDetails();
+        return PayForService::getDstvSmartCardDetails($cardNumber);
     }
 
     public function getVariations(): mixed 
