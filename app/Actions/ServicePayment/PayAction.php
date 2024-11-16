@@ -70,9 +70,9 @@ class PayAction
  
             DB::commit();
 
-            app()->terminating(function () use ($service, $data) {
-                $service->pay($data);
-            });
+            // app()->terminating(function () use ($service, $data) {
+            //     $service->pay($data);
+            // });
             
             return $this->formatApiResponse(200, 'Service payment initiated successfully.');
         } catch(Throwable $th) {
