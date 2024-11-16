@@ -19,8 +19,9 @@ class GetServicesAction
 
         $services = Service::query();
         
-        if (isset($data['status'])) {
-            $services->where('status', $data['status']);
+        if (isset($data['payment_supported'])) {
+            $paymentSupported = filter_var($data['payment_supported'], FILTER_VALIDATE_BOOLEAN);
+            $services->where('is_payment_supported', (bool)$paymentSupported );
         }
         
         $services->orderBy('name', 'asc')->get();

@@ -1,78 +1,99 @@
 [
     {
-        "name":"SubSync",
-        "url":"https://subsync.app",
+        "name": "SubSync",
+        "url": "https://subsync.app",
         "subscription_url": "https://subsync.app/pricing",
-        "category":"Management"
+        "category": "Management",
+        "is_payment_supported": false
     },
     {
-        "name":"Netflix",
-        "url":"https://www.netflix.com/",
-        "category":"Entertainment"
+        "name": "Netflix",
+        "url": "https://www.netflix.com/",
+        "category": "Entertainment",
+        "is_payment_supported": false
     },
     {
-        "name":"Hulu",
-        "url":"https://www.hulu.com/",
-        "category":"Entertainment"
+        "name": "Hulu",
+        "url": "https://www.hulu.com/",
+        "category": "Entertainment",
+        "is_payment_supported": false
     },
     {
-        "name":"Prime Video",
-        "url":"https://www.primevideo.com/",
-        "category":"Entertainment"
+        "name": "Prime Video",
+        "url": "https://www.primevideo.com/",
+        "category": "Entertainment",
+        "is_payment_supported": false
     },
     {
-        "name":"Disney+",
-        "url":"https://www.disneyplus.com/",
-        "category":"Entertainment"
+        "name": "Disney+",
+        "url": "https://www.disneyplus.com/",
+        "category": "Entertainment",
+        "is_payment_supported": false
     },
     {
-        "name":"Showmax",
-        "url":"https://www.showmax.com/",
-        "category":"Entertainment"
+        "name": "Showmax",
+        "url": "https://www.showmax.com/",
+        "category": "Entertainment",
+        "is_payment_supported": true
     },
     {
-        "name":"Dstv",
-        "url":"https://www.dstv.com/",
-        "category":"Entertainment"
+        "name": "Dstv",
+        "url": "https://www.dstv.com/",
+        "category": "Entertainment",
+        "is_payment_supported": true
     },
     {
-        "name":"GOtv",
-        "url":"https://www.gotvafrica.com/",
-        "category":"Entertainment"
+        "name": "Gotv",
+        "url": "https://www.gotvafrica.com/",
+        "category": "Entertainment",
+        "is_payment_supported": true
     },
     {
-        "name":"Spotify",
-        "url":"https://open.spotify.com/",
-        "category":"Entertainment"
+        "name": "Spotify",
+        "url": "https://open.spotify.com/",
+        "category": "Entertainment",
+        "is_payment_supported": false
     },
     {
-        "name":"YouTube Music",
-        "url":"https://music.youtube.com/",
-        "category":"Entertainment"
+        "name": "YouTube Music",
+        "url": "https://music.youtube.com/",
+        "category": "Entertainment",
+        "is_payment_supported": false
     },
     {
-        "name":"Figma",
-        "url":"https://www.figma.com/",
-        "category":"Work Tools"
+        "name": "Figma",
+        "url": "https://www.figma.com/",
+        "category": "Work Tools",
+        "is_payment_supported": false
     },
     {
-        "name":"Postman",
-        "url":"https://www.figma.com/",
-        "category":"Work Tools"
+        "name": "Postman",
+        "url": "https://www.figma.com/",
+        "category": "Work Tools",
+        "is_payment_supported": false
     },
     {
-        "name":"ChatGPT",
-        "url":"https://chat.openai.com/",
-        "category":"AI Tools"
+        "name": "ChatGPT",
+        "url": "https://chat.openai.com/",
+        "category": "AI Tools",
+        "is_payment_supported": false
     },
     {
-        "name":"Lucidchart",
-        "url":"https://www.lucidchart.com/",
-        "category":"Work Tools"
+        "name": "Lucidchart",
+        "url": "https://www.lucidchart.com/",
+        "category": "Work Tools",
+        "is_payment_supported": false
     },
     {
-        "name":"DanceFitMe",
-        "url":"",
-        "category":"Fitness"
+        "name": "DanceFitMe",
+        "url": "",
+        "category": "Fitness",
+        "is_payment_supported": false
+    },
+    {
+        "name": "Startimes",
+        "url": "https://www.startimestv.com/",
+        "category": "Entertainment",
+        "is_payment_supported": true
     }
 ]

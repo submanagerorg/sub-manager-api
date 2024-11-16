@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlanPaymentController;
 use App\Http\Controllers\PricingPlanController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ServicePaymentController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WalletController;
@@ -95,4 +96,11 @@ Route::group(['prefix' => 'wallet', 'middleware' => ['auth:sanctum']], function 
     Route::get('balance', [WalletController::class, 'getBalance'])->name('wallet-balance');
     Route::post('credit', [WalletController::class, 'addFunds'])->name('wallet-credit');
     Route::get('transactions', [WalletController::class, 'getWalletTransactions'])->name('wallet-transactions');
+});
+
+Route::group(['prefix' => 'service-payment', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('variations', [ServicePaymentController::class, 'getVariations'])->name('service-variations');
+    Route::get('validation-fields', [ServicePaymentController::class, 'getValidationFields'])->name('service-validation-fields');
+    Route::get('verify-smartcard-number', [ServicePaymentController::class, 'verifySmartCardNumber'])->name('service-verify-smartcard-number');
+    Route::post('pay', [ServicePaymentController::class, 'pay'])->name('service-pay');
 });
