@@ -2,6 +2,7 @@
 namespace App\Actions\ServicePayment;
 
 use App\Exceptions\InsufficientFundsException;
+use App\Models\Currency;
 use App\Models\Service;
 use App\Models\ServicePaymentRequest;
 use App\Models\User;
@@ -63,7 +64,7 @@ class PayAction
             ServicePaymentRequest::create([
                 'request_id' => $data['request_id'],
                 'service_id' => Service::where('name', $data['service_name'])->first()->id,
-                'request_data' => $data,
+                'request_data' => $this->fillMetadata($data, $user, $service->getCurrencyCode(), $amount + $fee),
                 'user_id' => $user->id,
                 'wallet_transaction_id' => WalletTransaction::where('reference', $reference)->first()->id,
             ]);
@@ -86,5 +87,15 @@ class PayAction
             return $this->formatApiResponse(500, 'Unable to initiate service payment.');
         }
         
+    }
+
+    private function fillMetadata(array $data, User $user, string $currency, $fullAmount): array 
+    {
+        $data['user_id'] = $user->id;
+        $data['service_id'] = optional(Service::getByName($data['service_name']))->id;
+        $data['currency_id'] = optional(Currency::whereCode($currency))->id;
+        $data['full_amount'] = $fullAmount;
+
+        return $data;
     }
 }

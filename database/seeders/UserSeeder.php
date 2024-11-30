@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Timezone;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,9 +17,11 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::create([
-            'name' => 'Idris',
+            'uid' => fake()->uuid(),
+            'username' => 'Idris',
             'email' => 'idriseun222@gmail.com',
-            'password' => Hash::make('password')
+            'password' => Hash::make('password'),
+            'timezone_id' => Timezone::first()->id
         ]);
     }
 }

@@ -31,7 +31,11 @@ class ShowmaxService implements TvSubscriptionServiceInterface
     {
         return PayForService::generateRequestId();
     }
-   
+
+    public function getCurrencyCode(): string 
+    {
+        return 'NGN';
+    }
 }
 
    
