@@ -71,9 +71,9 @@ class PayAction
  
             DB::commit();
 
-            // app()->terminating(function () use ($service, $data) {
-            //     $service->pay($data);
-            // });
+            app()->terminating(function () use ($service, $data) {
+                $service->pay($data);
+            });
             
             return $this->formatApiResponse(200, 'Service payment initiated successfully.');
         } catch(Throwable $th) {
@@ -93,7 +93,7 @@ class PayAction
     {
         $data['user_id'] = $user->id;
         $data['service_id'] = optional(Service::getByName($data['service_name']))->id;
-        $data['currency_id'] = optional(Currency::whereCode($currency))->id;
+        $data['currency_id'] = optional(Currency::whereCode($currency)->first())->id;
         $data['full_amount'] = $fullAmount;
 
         return $data;

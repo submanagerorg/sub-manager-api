@@ -118,7 +118,7 @@ class Subscription extends Model
         }
 
         if(!isset($data['category_id'])){
-            [$data['service_id'], $data['category_id']] = (new GetCategoriesAction)->autoCategorize($data['name']);
+            $data['category_id'] = (new GetCategoriesAction)->autoCategorize($data['name']);
         }
 
         $subscription = self::create([

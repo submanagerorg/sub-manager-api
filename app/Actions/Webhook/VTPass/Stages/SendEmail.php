@@ -6,21 +6,30 @@ use App\Actions\Webhook\VTPass\HandleVTPassWebhookState;
 use App\Models\User;
 use App\Notifications\FailedServicePayment;
 use App\Notifications\SuccessfulServicePaymentEmail;
+use Closure;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class SendEmail 
 {
-    public function handle(HandleVTPassWebhookState $state)
+    public function handle(HandleVTPassWebhookState $state, Closure $next)
     {
-        $metaData = $state->getMetaData();
+        try {
+            $metaData = $state->getMetaData();
 
-        $user = User::find($metaData['user_id']);
+            $user = User::find($metaData['user_id']);
 
-        if (!$user) return;
+            if (!$user) return;
 
-        if ($state->transactionSuccessful()) {
-            $this->sendSuccessEmail($user, $metaData['service_name']);
-        } else {
-            $this->sendFailueEmail($user, $metaData['service_name']);
+            if ($state->transactionSuccessful()) {
+                $this->sendSuccessEmail($user, $metaData['service_name']);
+            } else {
+                $this->sendFailueEmail($user, $metaData['service_name']);
+            }
+
+            return $next($state);
+        } catch (Throwable $e) {
+            Log::error("Failure while trying to send email for vtpass webhook", [$e->getMessage(), $e->getTrace()]);
         }
     }
 

@@ -20,16 +20,16 @@ class HandleVTPassWebhookAction
     {
         $state = new HandleVTPassWebhookState($request);
 
-        (new Pipeline())->send($state)->through([
+        return app(Pipeline::class)->send($state)->through([
             LogWebhookRequest::class,
             ReadRequestData::class,
-            UpdateServicePaymentRequest::class,
             UpdateCacheForVariations::class,
+            UpdateServicePaymentRequest::class,
             RetrieveMetadata::class,
             TrackSubscription::class,
             TrackAutoRenewal::class,
             ReverseUserDebitWhenTransactionFails::class,
             SendEmail::class
-        ]);
+        ])->thenReturn();
     }
 }
