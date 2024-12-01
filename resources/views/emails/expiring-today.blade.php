@@ -5,7 +5,9 @@
 @endsection
 
 @section('image')
-    
+    <div class="text-center mb-3 content-image">
+        <img src="https://res.cloudinary.com/dwn7phnpa/image/upload/w_500,f_auto,q_auto/v1715429058/subsyncassets/email_assets/l54wbnvxj9svasaonlzx.png" alt="Expiring soon image" height="100%">
+    </div>
 @endsection
 
 @section('content')
