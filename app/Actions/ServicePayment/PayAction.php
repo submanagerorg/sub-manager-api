@@ -34,9 +34,9 @@ class PayAction
     */
     public function execute(User $user, array $data)
     { 
-        DB::beginTransaction();
         try{
 
+            DB::beginTransaction();
             $service = Service::getServiceClass($data['service_name']);
 
             $fee = 0;
@@ -83,7 +83,11 @@ class PayAction
 
             $response = $service->pay($data);
 
-            $this->executeAfterPayLogic($data, $response);
+            $successful = $this->executeAfterPayLogic($data, $response);
+
+            if (!$successful) {
+                return $this->formatApiResponse(400, 'Service payment failed.');
+            }
             
             return $this->formatApiResponse(200, 'Service payment initiated successfully.');
         } catch(Throwable $th) {
@@ -114,8 +118,8 @@ class PayAction
         $state = new HandlePaymentState($data, $payResponse);
 
         Log::info("Payment response: ", [$payResponse]);
-        
-        return app(Pipeline::class)->send($state)->through([
+
+        app(Pipeline::class)->send($state)->through([
             ReadPaymentResponse::class,
             UpdateServicePaymentRequest::class,
             TrackSubscription::class,
@@ -123,5 +127,7 @@ class PayAction
             ReverseUserDebitWhenTransactionFails::class,
             SendEmail::class
         ])->thenReturn();
+
+        return $state->transactionSuccessful();
     }
 }
