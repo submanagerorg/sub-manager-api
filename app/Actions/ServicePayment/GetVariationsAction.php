@@ -3,6 +3,7 @@ namespace App\Actions\ServicePayment;
 
 use App\Models\Service;
 use App\Traits\FormatApiResponse;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 class GetVariationsAction
@@ -17,7 +18,9 @@ class GetVariationsAction
     public function execute(array $data)
     {
         try{
-            $response = Service::getServiceClass($data['service_name'])->getVariations();
+            $response = Cache::rememberForever($data['service_name']. '-variations', function () use ($data){
+                return Service::getServiceClass($data['service_name'])->getVariations();
+            });
 
             return $this->formatApiResponse(200, 'Service variations retrieved successfully.', $response);
 

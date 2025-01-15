@@ -33,5 +33,9 @@ class GotvService implements TvSubscriptionServiceInterface
     {
         return PayForService::generateRequestId();
     }
-   
+    
+    public function getCurrencyCode(): string 
+    {
+        return 'NGN';
+    }
 }

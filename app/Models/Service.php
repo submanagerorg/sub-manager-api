@@ -82,4 +82,8 @@ class Service extends Model
         return new $services[$service]();
     }
 
+    public static function getByName(string $name)
+    {
+        return self::where('name', $name)->first();
+    }
 }

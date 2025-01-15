@@ -1,7 +1,15 @@
 <?php
 namespace App\Actions\ServicePayment;
 
+use App\Actions\ServicePayment\PayPipeline\HandlePaymentState;
+use App\Actions\ServicePayment\PayPipeline\Stages\ReadPaymentResponse;
+use App\Actions\ServicePayment\PayPipeline\Stages\ReverseUserDebitWhenTransactionFails;
+use App\Actions\ServicePayment\PayPipeline\Stages\SendEmail;
+use App\Actions\ServicePayment\PayPipeline\Stages\TrackAutoRenewal;
+use App\Actions\ServicePayment\PayPipeline\Stages\TrackSubscription;
+use App\Actions\ServicePayment\PayPipeline\Stages\UpdateServicePaymentRequest;
 use App\Exceptions\InsufficientFundsException;
+use App\Models\Currency;
 use App\Models\Service;
 use App\Models\ServicePaymentRequest;
 use App\Models\User;
@@ -10,7 +18,9 @@ use App\Models\WalletTransaction;
 use App\Traits\FormatApiResponse;
 use App\Traits\TransactionTrait;
 use Exception;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class PayAction
@@ -24,9 +34,9 @@ class PayAction
     */
     public function execute(User $user, array $data)
     { 
-        DB::beginTransaction();
         try{
 
+            DB::beginTransaction();
             $service = Service::getServiceClass($data['service_name']);
 
             $fee = 0;
@@ -59,6 +69,7 @@ class PayAction
             $user->wallet->debit($reference, $amount, $fee, WalletTransaction::TYPE['WITHDRAW'], ucfirst($data['service_name']).' Service Payment');
 
             $data['request_id'] = $service->generateRequestId();
+            $data = $this->fillMetadata($data, $user, $service->getCurrencyCode(), $amount + $fee);
 
             ServicePaymentRequest::create([
                 'request_id' => $data['request_id'],
@@ -70,9 +81,13 @@ class PayAction
  
             DB::commit();
 
-            // app()->terminating(function () use ($service, $data) {
-            //     $service->pay($data);
-            // });
+            $response = $service->pay($data);
+
+            $successful = $this->executeAfterPayLogic($data, $response);
+
+            if (!$successful) {
+                return $this->formatApiResponse(400, 'Service payment failed.');
+            }
             
             return $this->formatApiResponse(200, 'Service payment initiated successfully.');
         } catch(Throwable $th) {
@@ -86,5 +101,33 @@ class PayAction
             return $this->formatApiResponse(500, 'Unable to initiate service payment.');
         }
         
+    }
+
+    private function fillMetadata(array $data, User $user, string $currency, $fullAmount): array 
+    {
+        $data['user_id'] = $user->id;
+        $data['service_id'] = optional(Service::getByName($data['service_name']))->id;
+        $data['currency_id'] = optional(Currency::whereCode($currency)->first())->id;
+        $data['full_amount'] = $fullAmount;
+
+        return $data;
+    }
+
+    private function executeAfterPayLogic(array $data, mixed $payResponse) 
+    {
+        $state = new HandlePaymentState($data, $payResponse);
+
+        Log::info("Payment response: ", [$payResponse]);
+
+        app(Pipeline::class)->send($state)->through([
+            ReadPaymentResponse::class,
+            UpdateServicePaymentRequest::class,
+            TrackSubscription::class,
+            TrackAutoRenewal::class,
+            ReverseUserDebitWhenTransactionFails::class,
+            SendEmail::class
+        ])->thenReturn();
+
+        return $state->transactionSuccessful();
     }
 }

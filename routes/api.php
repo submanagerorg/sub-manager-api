@@ -16,6 +16,7 @@ use App\Http\Controllers\ServicePaymentController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\Webhook\VTPassController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,3 +105,6 @@ Route::group(['prefix' => 'service-payment', 'middleware' => ['auth:sanctum']], 
     Route::get('verify-smartcard-number', [ServicePaymentController::class, 'verifySmartCardNumber'])->name('service-verify-smartcard-number');
     Route::post('pay', [ServicePaymentController::class, 'pay'])->name('service-pay');
 });
+
+/** External Webhook */
+Route::post('/external/webhook/vtpass', [VTPassController::class, 'handleWebhook']);

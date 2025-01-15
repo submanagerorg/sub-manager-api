@@ -31,6 +31,6 @@ class ServicePaymentController extends Controller
 
     public function pay(PayRequest $request)
     {
-        return (new PayAction())->execute($request->user(), $request->all());
+        return (new PayAction())->execute($request->user(), $request->validated());
     }
 }

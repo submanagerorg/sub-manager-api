@@ -13,4 +13,6 @@ interface TvSubscriptionServiceInterface
     public function pay($data): mixed;
 
     public function generateRequestId(): mixed;
+
+    public function getCurrencyCode(): string;
 }
