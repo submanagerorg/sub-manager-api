@@ -1,7 +1,7 @@
 @extends('emails.template')
 
 @section('subject')
-    <h2 class=" ">Wallet Funding Successful</h2>
+    <h2 class=" ">Wallet Reversal Successful</h2>
 @endsection
 
 @section('image')
@@ -10,7 +10,7 @@
 @section('content')
     <div class="text-left content-container">
         <p>
-            Your wallet has been successfully funded with the amount of <span class="orange-text">{{$amount}}</span>.
+            Your wallet has been successfully reversed for the amount of <span class="orange-text">{{$amount}}</span>.
         </p>
         <p>  The details are shown below: </p>
         <div class="text-left">
@@ -20,6 +20,8 @@
             <p>Transaction Date & Time: <span class="blue-text"> {{$dateTime}} </span></p>
             <p>Current Balance: <span class="blue-text"> {{$balance}} </span></p>
         </div>
+        <br>
+        <p>Thank you for using SubSync.</p>
     </div>
 @endsection
 

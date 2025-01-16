@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="content-container">
-        <p>You payment for {{$serviceName}} has been failed to process.</p>
+        <p>You payment for {{$serviceName}} has failed to process.</p>
         <p>The full amount has been reversed to your wallet.</p>
         <p>You may try again at a later time.</p>
         <p>Thank you for using SubSync.</p>

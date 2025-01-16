@@ -22,7 +22,7 @@ class ReverseUserDebitWhenTransactionFails
             $user = User::find($requestData['user_id']);
 
             if ($state->transactionFailed() && $user) {
-                $user->wallet->credit($this->generateReference(Wallet::LABEL), $requestData['full_amount'], 0, WalletTransaction::TYPE['REVERSAL'], $requestData['service_name'] . ' Payment Reversal');
+                $user->wallet->credit($this->generateReference(Wallet::LABEL), $requestData['full_amount'], 0, WalletTransaction::TYPE['REVERSAL'], ucfirst($requestData['service_name']) . ' Payment Reversal');
 
                 Log::info("Subcription money refunded");
             }

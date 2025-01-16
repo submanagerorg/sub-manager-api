@@ -2,12 +2,13 @@
 
 namespace App\Notifications;
 
+use App\Models\Transaction;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class FailedServicePayment extends Notification
+class WalletReversedEmail extends Notification
 {
     use Queueable;
 
@@ -16,7 +17,7 @@ class FailedServicePayment extends Notification
      *
      * @return void
      */
-    public function __construct(private string $serviceName)
+    public function __construct(private array $data)
     {
         //
     }
@@ -41,9 +42,13 @@ class FailedServicePayment extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('Service Payment Failed')
-                    ->view('emails.service-payment-failed', [
-                        'serviceName' => ucfirst($this->serviceName)
+                    ->subject('Wallet Reversal Successful')
+                    ->view('emails.wallet-reversed', [
+                        'reference' =>  $this->data['reference'],
+                        'amount' => Transaction::DEFAULT_CURRENCY['SIGN'] . number_format($this->data['amount'], 2, '.', ','),
+                        'description' => $this->data['description'],
+                        'dateTime' => $this->data['dateTime'],
+                        'balance' => Transaction::DEFAULT_CURRENCY['SIGN'] . number_format($this->data['balance'], 2, '.', ','),
                     ]);
     }
 

@@ -262,17 +262,5 @@ class ProcessWebhookAction
         $amount = $verifyPayment['amount'] - $fee;
 
         $this->user->wallet->credit($verifyPayment['reference'], $amount, $fee, WalletTransaction::TYPE['DEPOSIT'], 'Wallet Deposit');
-
-        $walletTransaction = WalletTransaction::where('reference', $verifyPayment['reference'])->first();
-
-        $data = [
-            'amount' => $walletTransaction->amount,
-            'description' => $walletTransaction->description,
-            'reference' => $walletTransaction->reference,
-            'dateTime' => $walletTransaction->created_at,
-            'balance' => $walletTransaction->wallet->balance,
-        ];
-
-        Mail::to($this->user->email)->send(new SuccessfulWalletFundingMail($data));
     }
 }
