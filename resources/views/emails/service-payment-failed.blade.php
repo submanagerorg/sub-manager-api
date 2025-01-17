@@ -18,7 +18,7 @@
 @endsection
 
 @section('button-link')
-    <a href="{{ config('app.web_app_url') }}"><button class="btn btn-dark">Open Web App</button></a>
+    <a href="{{ config('app.web_app_url') }}"><button class="btn btn-dark">View Dashboard</button></a>
 @endsection
 
 @section('url-link')
