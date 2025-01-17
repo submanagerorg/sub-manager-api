@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Exceptions\InsufficientFundsException;
+use App\Notifications\WalletDebitedEmail;
+use App\Notifications\WalletFundedEmail;
+use App\Notifications\WalletReversedEmail;
 use App\Traits\TransactionTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -60,6 +63,7 @@ class Wallet extends Model
             $this->lockForUpdate();
 
             $this->updateBalanceAndCreateRecords($reference, WalletHistory::TYPE['CREDIT'], $amount, $fee, $transactionType, $description);
+            $this->sendEmail($reference, $transactionType);
 
             if (!$isTransactionActive) {
                 DB::commit();
@@ -91,6 +95,7 @@ class Wallet extends Model
             }
 
             $this->updateBalanceAndCreateRecords($reference, WalletHistory::TYPE['DEBIT'], -$amount, $fee, $transactionType, $description);
+            $this->sendEmail($reference, $transactionType);
 
             if (!$isTransactionActive) {
                 DB::commit();
@@ -130,5 +135,30 @@ class Wallet extends Model
 
         // Update wallet balance
         $this->update(['balance' => $currentBalance]);
+    }
+
+    protected function sendEmail($reference, $transactionType) {
+        $walletTransaction = WalletTransaction::where('reference', $reference)->first();
+        $user = $walletTransaction->wallet->user;
+
+        $data = [
+            'amount' => abs($walletTransaction->amount),
+            'description' => $walletTransaction->description,
+            'reference' => $walletTransaction->reference,
+            'dateTime' => $walletTransaction->created_at,
+            'balance' => $walletTransaction->wallet->balance,
+        ];
+
+        if($transactionType == WalletTransaction::TYPE['DEPOSIT']) {
+            $user->notify(new WalletFundedEmail($data));
+        }
+
+        if($transactionType == WalletTransaction::TYPE['WITHDRAW']) {
+            $user->notify(new WalletDebitedEmail($data));
+        }
+
+        if($transactionType == WalletTransaction::TYPE['REVERSAL']) {
+            $user->notify(new WalletReversedEmail($data));
+        }
     }
 }

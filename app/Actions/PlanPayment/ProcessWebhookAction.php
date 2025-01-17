@@ -6,6 +6,7 @@ use App\Actions\Subscription\AddSubscriptionAction;
 use App\Actions\Subscription\RenewSubscriptionAction;
 use App\Mail\SetPasswordMail;
 use App\Mail\SuccessfulPaymentMail;
+use App\Mail\SuccessfulWalletFundingMail;
 use App\Mail\WelcomeMail;
 use App\Models\PricingPlan;
 use App\Models\Service;
