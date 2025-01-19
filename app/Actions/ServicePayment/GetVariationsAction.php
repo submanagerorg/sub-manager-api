@@ -19,25 +19,21 @@ class GetVariationsAction
     {
         try{
             $response = Cache::rememberForever($data['service_name']. '-variations', function () use ($data){
-                
-                $variations = Service::getServiceClass($data['service_name'])->getVariations();
-
-                $fee = config('fee.tv_service');
-
-                $updatedData = collect($variations)->map(function ($item) use ($fee) {
-                    $amount = (float) $item['amount'];
-                    $item['fee'] =  sprintf('%.2f', $fee);
-                    $item['total'] = sprintf('%.2f', $amount + $fee);
-                    
-                    return $item;
-                });
-
-                $updatedData = $updatedData->toArray();
-
-                return $updatedData;
+                return Service::getServiceClass($data['service_name'])->getVariations();
             });
 
-            return $this->formatApiResponse(200, 'Service variations retrieved successfully.', $response);
+            $fee = config('fee.tv_service');
+
+            $data = collect($response)->map(function ($item) use ($fee) {
+                $item['fee'] =  sprintf('%.2f', $fee);
+                $item['total'] = sprintf('%.2f', $item['amount'] + $fee);
+                
+                return $item;
+            });
+
+            $data = $data->toArray();
+
+            return $this->formatApiResponse(200, 'Service variations retrieved successfully.', $data);
 
         } catch (Throwable $th) {
             report($th);

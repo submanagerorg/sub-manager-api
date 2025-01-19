@@ -23,6 +23,11 @@ class VerifySmartCardNumberAction
                 return $this->formatApiResponse(400, 'Smart card number cannot be verified.');
             }
 
+            $fee = config('fee.tv_service');
+
+            $response['fee'] =  sprintf('%.2f', $fee);
+            $response['total'] = $response['renewal_amount'] ? sprintf('%.2f', $response['renewal_amount'] + $fee) : null;
+
             return $this->formatApiResponse(200, 'Smart card number verified successfully.', $response);
             
         } catch (Throwable $th) {
