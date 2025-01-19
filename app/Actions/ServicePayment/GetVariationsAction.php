@@ -24,16 +24,14 @@ class GetVariationsAction
 
             $fee = config('fee.tv_service');
 
-            $data = collect($response)->map(function ($item) use ($fee) {
+            $response = collect($response)->map(function ($item) use ($fee) {
                 $item['fee'] =  sprintf('%.2f', $fee);
                 $item['total'] = sprintf('%.2f', $item['amount'] + $fee);
                 
                 return $item;
-            });
+            })->toArray();
 
-            $data = $data->toArray();
-
-            return $this->formatApiResponse(200, 'Service variations retrieved successfully.', $data);
+            return $this->formatApiResponse(200, 'Service variations retrieved successfully.', $response);
 
         } catch (Throwable $th) {
             report($th);
