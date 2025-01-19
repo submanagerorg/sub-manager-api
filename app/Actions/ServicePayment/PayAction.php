@@ -39,7 +39,7 @@ class PayAction
             DB::beginTransaction();
             $service = Service::getServiceClass($data['service_name']);
 
-            $fee = 0;
+            $fee = config('fee.tv_service');
 
             $reference = $this->generateReference(Wallet::LABEL);
             
