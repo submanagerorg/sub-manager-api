@@ -37,7 +37,6 @@ class GetVariationsAction
                 return $updatedData;
             });
 
-
             return $this->formatApiResponse(200, 'Service variations retrieved successfully.', $response);
 
         } catch (Throwable $th) {
