@@ -22,6 +22,15 @@ class GetVariationsAction
                 return Service::getServiceClass($data['service_name'])->getVariations();
             });
 
+            $fee = config('fee.tv_service');
+
+            $response = collect($response)->map(function ($item) use ($fee) {
+                $item['fee'] =  sprintf('%.2f', $fee);
+                $item['total'] = sprintf('%.2f', $item['amount'] + $fee);
+                
+                return $item;
+            })->toArray();
+
             return $this->formatApiResponse(200, 'Service variations retrieved successfully.', $response);
 
         } catch (Throwable $th) {
