@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'tv_service' => env('TV_SERVICE_FEE', 0.00),
+    'tv_service' => env('TV_SERVICE_FEE', 0),
 ];
