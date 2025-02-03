@@ -18,8 +18,9 @@ class GetVariationsAction
     public function execute(array $data)
     {
         try{
-            $response = Cache::rememberForever($data['service_name']. '-variations', function () use ($data){
-                return Service::getServiceClass($data['service_name'])->getVariations();
+            $serviceName = strtolower($data['service_name']);
+            $response = Cache::rememberForever($serviceName. '-variations', function () use ($serviceName){
+                return Service::getServiceClass($serviceName)->getVariations();
             });
 
             $fee = config('fee.tv_service');
