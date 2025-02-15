@@ -10,7 +10,12 @@ class StartimesService implements TvSubscriptionServiceInterface
     public function getUniqueRequiredFields(): mixed
     {
         return [
-            'smartcard_number',
+            [
+                'name' => 'smartcard_number',
+                'label' => 'SmartCard Number',
+                'type' => 'text',
+                'required' => true,
+            ]
         ];
     }
 
