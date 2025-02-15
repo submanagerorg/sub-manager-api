@@ -17,7 +17,7 @@ class GetValidationFieldsAction
     public function execute(array $data)
     {
         try{
-            $response = Service::getServiceClass($data['service_name'])->getUniqueRequiredFields();
+            $response = Service::getServiceClass(strtolower($data['service_name']))->getUniqueRequiredFields();
 
             return $this->formatApiResponse(200, 'Service validation fields retrieved successfully.', $response);
             
