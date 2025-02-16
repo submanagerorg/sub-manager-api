@@ -89,7 +89,7 @@ class PayAction
                 return $this->formatApiResponse(400, 'Service payment failed.');
             }
             
-            return $this->formatApiResponse(200, 'Service payment initiated successfully.');
+            return $this->formatApiResponse(200, 'Service payment completed successfully.');
         } catch(Throwable $th) {
             DB::rollback();
 
