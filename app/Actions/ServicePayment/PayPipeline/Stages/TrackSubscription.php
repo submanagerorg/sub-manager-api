@@ -28,7 +28,7 @@ class TrackSubscription
             'amount' => $requestData['variation_amount'],
             'start_date' => now()->toDateTimeString(),
             'end_date' => today()->addMonth(), // Todo: Find a better way of determining the end date
-            'description' => $requestData['service_name'] . ' ' . $requestData['variation_code'] ?? null . ' Subscription via Subsync'
+            'description' => $requestData['variation_code'] . ' Subscription via Subsync'
         ]);
 
         $state->setSubscription($subscription);
