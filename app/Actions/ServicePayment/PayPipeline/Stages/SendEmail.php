@@ -24,7 +24,7 @@ class SendEmail
             }
 
             dispatch(function () use ($state, $user, $requestData) {
-                $this->sendMail($state, $user, $requestData);
+                $this->sendMail($state, $user, $requestData['service_name']);
             });
 
             return $next($state);
@@ -41,11 +41,11 @@ class SendEmail
         $user->notify(new FailedServicePayment($serviceName));
     }
 
-    private function sendMail(HandlePaymentState $state, User $user, array $requestData) {
+    private function sendMail(HandlePaymentState $state, User $user, string $serviceName) {
         if ($state->transactionSuccessful()) {
-            $this->sendSuccessEmail($user, $requestData['service_name']);
+            $this->sendSuccessEmail($user, $serviceName);
         } else {
-            $this->sendFailueEmail($user, $requestData['service_name']);
+            $this->sendFailueEmail($user, $serviceName);
         }
     }
 }
