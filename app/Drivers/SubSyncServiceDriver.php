@@ -36,7 +36,8 @@ class SubSyncServiceDriver
             return [
                 'variation_code' => strtolower("{$item['name']}-{$item['period']}"),
                 'name' => "{$item['name']} ({$item['period']})",
-                'amount' => $item['amount']
+                'amount' => $item['amount'],
+                'period' => $item['period']
             ];
         })->toArray();
 

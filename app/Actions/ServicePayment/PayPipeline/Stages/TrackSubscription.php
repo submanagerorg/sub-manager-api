@@ -20,14 +20,17 @@ class TrackSubscription
             return $next($state);
         }
 
+        $startDate =  now();
+        $endDate = $this->getEndDate($startDate, $requestData['period'] ?? null);
+
         $subscription = Subscription::createNew([
             'user_id' => $requestData['user_id'],
             'name' => ucwords($requestData['service_name']) . ' Subscription',
             'service_id' => $requestData['service_id'],
             'currency_id' => $requestData['currency_id'],
             'amount' => $requestData['variation_amount'],
-            'start_date' => now()->toDateTimeString(),
-            'end_date' => today()->addMonth(), // Todo: Find a better way of determining the end date
+            'start_date' => $startDate,
+            'end_date' => $endDate, // Todo: Find a better way of determining the end date
             'description' => $requestData['variation_code'] . ' Subscription via Subsync'
         ]);
 
@@ -36,5 +39,16 @@ class TrackSubscription
         Log::info("Subscription tracked successfully");
 
         return $next($state);
+    }
+
+    public function getEndDate($startDate, $period) 
+    {
+        $startDate = clone $startDate;
+        
+        if($period == 'yearly'){
+            return $startDate->addYear();
+        }
+
+        return $startDate->addMonth();
     }
 }
