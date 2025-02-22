@@ -63,7 +63,6 @@ class PayAction
                     $amount = $variation['amount'];
                     $data['variation_amount'] = $variation['amount'];
                     $data['variation_name'] = $variation['name'];
-                    // $data['period'] = $variation['period'] ?? null;
                 } else {
                     throw new Exception("Variation not found.");
                 }
