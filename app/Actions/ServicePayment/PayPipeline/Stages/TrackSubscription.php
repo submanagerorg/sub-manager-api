@@ -22,13 +22,13 @@ class TrackSubscription
 
         $subscription = Subscription::createNew([
             'user_id' => $requestData['user_id'],
-            'name' => $requestData['service_name'] . ' Subscription',
+            'name' => ucwords($requestData['service_name']) . ' Subscription',
             'service_id' => $requestData['service_id'],
             'currency_id' => $requestData['currency_id'],
             'amount' => $requestData['variation_amount'],
             'start_date' => now()->toDateTimeString(),
             'end_date' => today()->addMonth(), // Todo: Find a better way of determining the end date
-            'description' => ucwords($requestData['service_name']) . ' Subscription via Subsync'
+            'description' => $requestData['variation_code'] . ' Subscription via Subsync'
         ]);
 
         $state->setSubscription($subscription);

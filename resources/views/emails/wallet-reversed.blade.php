@@ -10,7 +10,7 @@
 @section('content')
     <div class="text-left content-container">
         <p>
-            Your wallet has been successfully reversed for the amount of <span class="orange-text">{{$amount}}</span>.
+            Your wallet has been successfully credited with the amount of <span class="orange-text">{{$amount}}</span>.
         </p>
         <p>  The details are shown below: </p>
         <div class="text-left">
