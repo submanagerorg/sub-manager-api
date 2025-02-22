@@ -23,7 +23,7 @@ class SendEmail
                 return $next($state);
             }
 
-            app()->terminating(function () use ($state, $user, $requestData) {
+            dispatch(function () use ($state, $user, $requestData) {
                 $this->sendMail($state, $user, $requestData);
             });
 
