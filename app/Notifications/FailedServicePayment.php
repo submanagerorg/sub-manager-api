@@ -10,9 +10,6 @@ use Illuminate\Queue\SerializesModels;
 
 class FailedServicePayment extends Notification implements ShouldQueue
 {
-    use Queueable;
-    use SerializesModels;
-
     /**
      * Create a new notification instance.
      *

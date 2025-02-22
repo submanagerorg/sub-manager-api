@@ -10,9 +10,6 @@ use Illuminate\Queue\SerializesModels;
 
 class SuccessfulServicePaymentEmail extends Notification implements ShouldQueue
 {
-    use Queueable;
-    use SerializesModels;
-
     /**
      * Create a new notification instance.
      *
