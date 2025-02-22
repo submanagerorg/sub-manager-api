@@ -43,7 +43,7 @@ class FailedServicePayment extends Notification
         return (new MailMessage)
                     ->subject('Service Payment Failed')
                     ->view('emails.service-payment-failed', [
-                        'serviceName' => ucfirst($this->serviceName)
+                        'serviceName' => ucwords($this->serviceName)
                     ]);
     }
 

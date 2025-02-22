@@ -66,7 +66,7 @@ class PayAction
                 }
             }
 
-            $user->wallet->debit($reference, $amount, $fee, WalletTransaction::TYPE['WITHDRAW'], ucfirst($data['service_name']).' Service Payment');
+            $user->wallet->debit($reference, $amount, $fee, WalletTransaction::TYPE['WITHDRAW'], ucwords($data['service_name']).' Service Payment');
 
             $data['request_id'] = $service->generateRequestId();
             $data = $this->fillMetadata($data, $user, $service->getCurrencyCode(), $amount + $fee);

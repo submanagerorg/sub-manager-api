@@ -1,30 +1,37 @@
 <?php
 
-namespace App\Services\ServicePayment;
+namespace App\Services\ServicePayment\TvSubscriptionService;
 
 use App\Facades\PayForService;
 use Illuminate\Support\Str;
 
-class ShowmaxService implements TvSubscriptionServiceInterface
+class DstvService implements TvSubscriptionServiceInterface
 {
     public function getUniqueRequiredFields(): mixed
     {
-        return [];
+        return [
+            [
+                'name' => 'smartcard_number',
+                'label' => 'SmartCard Number',
+                'type' => 'text',
+                'required' => true,
+            ]
+        ];
     }
 
     public function getSmartCardDetails($cardNumber): mixed 
     {
-        return [];
+        return PayForService::getDstvSmartCardDetails($cardNumber);
     }
 
     public function getVariations(): mixed 
     {
-        return PayForService::getShowmaxVariations();
+        return PayForService::getDstvVariations();
     }
 
     public function pay($data): mixed 
     {
-        return PayForService::payShowmax($data);
+        return PayForService::payDstv($data);
     }
 
     public function generateRequestId(): mixed 
@@ -37,5 +44,3 @@ class ShowmaxService implements TvSubscriptionServiceInterface
         return 'NGN';
     }
 }
-
-   

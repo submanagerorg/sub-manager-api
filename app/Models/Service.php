@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use App\Services\ServicePayment\DstvService;
-use App\Services\ServicePayment\GotvService;
-use App\Services\ServicePayment\ShowmaxService;
-use App\Services\ServicePayment\StartimesService;
+use App\Services\ServicePayment\SubSyncService;
+use App\Services\ServicePayment\TvSubscriptionService\DstvService;
+use App\Services\ServicePayment\TvSubscriptionService\GotvService;
+use App\Services\ServicePayment\TvSubscriptionService\ShowmaxService;
+use App\Services\ServicePayment\TvSubscriptionService\StartimesService;
 use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -68,11 +69,14 @@ class Service extends Model
 
     public static function getServiceClass(string $service)
     {
+        $service = strtolower($service);
+         
         $services = [
             'dstv' => DstvService::class,
             'showmax' => ShowmaxService::class,
             'gotv' => GotvService::class,
             'startimes' => StartimesService::class,
+            'subsync' =>  SubSyncService::class,
         ];
 
         if (!array_key_exists($service, $services)) {

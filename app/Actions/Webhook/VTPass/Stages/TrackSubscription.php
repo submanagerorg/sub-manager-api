@@ -28,7 +28,7 @@ class TrackSubscription
                 'amount' => $metaData['variation_amount'],
                 'start_date' => now()->toDateTimeString(),
                 'end_date' => today()->addMonth(), // Todo: Find a better way to determining the end date
-                'description' => $metaData['service_name'] . ' Subscription via Subsync'
+                'description' => ucwords($metaData['service_name']) . ' Subscription via Subsync'
             ];
 
             // Check if user wants to track the subscription 

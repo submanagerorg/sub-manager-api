@@ -43,7 +43,7 @@ class SuccessfulServicePaymentEmail extends Notification
         return (new MailMessage)
                     ->subject('Service Payment Successful')
                     ->view('emails.service-payment-success', [
-                        'serviceName' => ucfirst($this->serviceName)
+                        'serviceName' => ucwords($this->serviceName)
                     ]);
     }
 

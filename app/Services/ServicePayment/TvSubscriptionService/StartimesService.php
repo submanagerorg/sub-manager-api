@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\ServicePayment;
+namespace App\Services\ServicePayment\TvSubscriptionService;
 
 use App\Facades\PayForService;
 use Illuminate\Support\Str;
 
-class DstvService implements TvSubscriptionServiceInterface
+class StartimesService implements TvSubscriptionServiceInterface
 {
     public function getUniqueRequiredFields(): mixed
     {
@@ -21,24 +21,24 @@ class DstvService implements TvSubscriptionServiceInterface
 
     public function getSmartCardDetails($cardNumber): mixed 
     {
-        return PayForService::getDstvSmartCardDetails($cardNumber);
+        return PayForService::getStartimesSmartCardDetails($cardNumber);
     }
 
     public function getVariations(): mixed 
     {
-        return PayForService::getDstvVariations();
+        return PayForService::getStartimesVariations();
     }
 
     public function pay($data): mixed 
     {
-        return PayForService::payDstv($data);
+        return PayForService::payStartimes($data);
     }
 
     public function generateRequestId(): mixed 
     {
         return PayForService::generateRequestId();
     }
-
+    
     public function getCurrencyCode(): string 
     {
         return 'NGN';
