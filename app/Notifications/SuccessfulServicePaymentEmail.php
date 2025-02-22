@@ -6,10 +6,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\SerializesModels;
 
-class SuccessfulServicePaymentEmail extends Notification
+class SuccessfulServicePaymentEmail extends Notification implements ShouldQueue
 {
     use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new notification instance.
