@@ -23,9 +23,7 @@ class SendEmail
                 return $next($state);
             }
 
-            dispatch(function () use ($state, $user, $requestData) {
-                $this->sendMail($state, $user, $requestData['service_name']);
-            });
+            $this->sendMail($state, $user, $requestData['service_name']);
 
             return $next($state);
         } catch (Throwable $e) {
