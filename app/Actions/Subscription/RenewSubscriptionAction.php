@@ -28,7 +28,11 @@ class RenewSubscriptionAction
                 $user = auth()->user();
             }
 
-            $parentSubscription = Subscription::where('uid', $parentId)->first();
+            if($user->isRenewalLimitReached()){
+                return $this->formatApiResponse(400, 'Renewal limit exceeded. Upgrade to higher plan.');
+            }
+
+            $parentSubscription = Subscription::where('uid', $parentId)->where('user_id', $user->id)->first();
 
             if(!$parentSubscription){
                 return $this->formatApiResponse(400, 'Parent subscription does not exist');

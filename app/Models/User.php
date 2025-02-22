@@ -191,19 +191,66 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isSubscriptionLimitReached(): bool
     {
         if ($this->pricingPlan) {
+            $query = $this->subscriptions()->whereNull('parent_id');
 
-            $subscriptionCount = $this->subscriptions()->where('status', 'active')->count();
-
+            if (strtolower($this->pricingPlan->name) !== 'basic') {
+                $query->whereBetween('created_at', [ 
+                    $this->userPricingPlan->startDate, 
+                    $this->userPricingPlan->endDate
+                ]);
+            }
+    
+            $subscriptionCount = $query->count();
+    
             if (is_null($this->pricingPlan->subscription_limit)) {
                 return false;
             }
-
-            if ($subscriptionCount >= $this->pricingPlan->subscription_limit) {
+    
+            if ($subscriptionCount > $this->pricingPlan->subscription_limit) {
                 return true;
             }
+
+            return false;
         }
 
-        return false;
+        return true;
+    }
+
+    /**
+     * Checks if renewal limit for a user based on their pricing plan is exceeded
+     * 
+     * @return bool
+     */
+    public function isRenewalLimitReached(): bool
+    {
+        if ($this->pricingPlan) {
+
+            $query = $this->subscriptions()->whereNotNull('parent_id');
+
+            if (strtolower($this->pricingPlan->name) !== 'basic') {
+                $query->whereBetween('created_at', [ 
+                    $this->userPricingPlan->startDate, 
+                    $this->userPricingPlan->endDate
+                ]);
+            }
+    
+            $renewalCount = $query->count();
+
+            logger($renewalCount);
+            logger($this->pricingPlan->renewal_limit);
+
+            if (is_null($this->pricingPlan->renewal_limit)) {
+                return false;
+            }
+
+            if ($renewalCount > $this->pricingPlan->renewal_limit) {
+                return true;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     /**

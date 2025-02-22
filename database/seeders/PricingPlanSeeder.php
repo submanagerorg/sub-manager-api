@@ -29,6 +29,7 @@ class PricingPlanSeeder extends Seeder
             $pricingPlan->name = $datum->name;
             $pricingPlan->details = json_encode($datum->details);
             $pricingPlan->subscription_limit = $datum->subscription_limit;
+            $pricingPlan->renewal_limit = $datum->renewal_limit;
             $pricingPlan->amount = $datum->amount;
             $pricingPlan->period = $datum->period;
             $pricingPlan->save();
