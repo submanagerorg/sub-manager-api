@@ -83,13 +83,13 @@ class PayAction
 
             $response = $service->pay($data);
 
-            $successful = $this->executeAfterPayLogic($data, $response);
+            $subData = $this->executeAfterPayLogic($data, $response);
 
-            if (!$successful) {
+            if (!$subData) {
                 return $this->formatApiResponse(400, 'Service payment failed.');
             }
             
-            return $this->formatApiResponse(200, 'Service payment completed successfully.');
+            return $this->formatApiResponse(200, 'Service payment completed successfully.', $subData);
         } catch(Throwable $th) {
             DB::rollback();
 
@@ -128,6 +128,6 @@ class PayAction
             SendEmail::class
         ])->thenReturn();
 
-        return $state->transactionSuccessful();
+        return $state->getSubcription();
     }
 }

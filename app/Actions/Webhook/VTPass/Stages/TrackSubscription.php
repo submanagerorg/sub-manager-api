@@ -2,6 +2,7 @@
 
 namespace App\Actions\Webhook\VTPass\Stages;
 
+use App\Actions\Category\GetCategoriesAction;
 use App\Actions\Webhook\VTPass\HandleVTPassWebhookState;
 use App\Models\Subscription;
 use Closure;
@@ -20,6 +21,8 @@ class TrackSubscription
                 return;
             }
 
+            $category_id = (new GetCategoriesAction)->autoCategorize(strtolower($metaData['service_name']));
+
             $data = [
                 'user_id' => $metaData['user_id'],
                 'name' => $metaData['service_name'] . ' Subscription',
@@ -28,7 +31,8 @@ class TrackSubscription
                 'amount' => $metaData['variation_amount'],
                 'start_date' => now()->toDateTimeString(),
                 'end_date' => today()->addMonth(), // Todo: Find a better way to determining the end date
-                'description' => $metaData['service_name'] . ' Subscription via Subsync'
+                'description' => $metaData['service_name'] . ' Subscription via Subsync',
+                'category_id' => $category_id,
             ];
 
             // Check if user wants to track the subscription 

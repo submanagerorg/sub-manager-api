@@ -2,6 +2,7 @@
 
 namespace App\Actions\ServicePayment\PayPipeline\Stages;
 
+use App\Actions\Category\GetCategoriesAction;
 use App\Actions\ServicePayment\PayPipeline\HandlePaymentState;
 use App\Models\Subscription;
 use Closure;
@@ -20,6 +21,8 @@ class TrackSubscription
             return $next($state);
         }
 
+        $category_id = (new GetCategoriesAction)->autoCategorize(strtolower($requestData['service_name']));
+
         $subscription = Subscription::createNew([
             'user_id' => $requestData['user_id'],
             'name' => $requestData['service_name'] . ' Subscription',
@@ -28,7 +31,8 @@ class TrackSubscription
             'amount' => $requestData['variation_amount'],
             'start_date' => now()->toDateTimeString(),
             'end_date' => today()->addMonth(), // Todo: Find a better way of determining the end date
-            'description' => $requestData['variation_code'] . ' Subscription via Subsync'
+            'description' => $requestData['variation_code'] . ' Subscription via Subsync',
+            'category_id' => $category_id,
         ]);
 
         $state->setSubscription($subscription);

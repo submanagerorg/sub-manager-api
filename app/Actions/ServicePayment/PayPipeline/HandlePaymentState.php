@@ -8,7 +8,7 @@ use App\Models\Subscription;
 
 class HandlePaymentState
 {
-    protected $subscription;
+    protected $subscription = null;
     protected $transactionStatus;
     protected $parsedPayResponse;
     
