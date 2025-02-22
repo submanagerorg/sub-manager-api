@@ -23,11 +23,9 @@ class SendEmail
                 return $next($state);
             }
 
-            if ($state->transactionSuccessful()) {
-                $this->sendSuccessEmail($user, $requestData['service_name']);
-            } else {
-                $this->sendFailueEmail($user, $requestData['service_name']);
-            }
+            app()->terminating(function () use ($state, $user, $requestData) {
+                $this->sendMail($state, $user, $requestData);
+            });
 
             return $next($state);
         } catch (Throwable $e) {
@@ -41,5 +39,13 @@ class SendEmail
 
     private function sendFailueEmail(User $user, string $serviceName) {
         $user->notify(new FailedServicePayment($serviceName));
+    }
+
+    private function sendMail(HandlePaymentState $state, User $user, array $requestData) {
+        if ($state->transactionSuccessful()) {
+            $this->sendSuccessEmail($user, $requestData['service_name']);
+        } else {
+            $this->sendFailueEmail($user, $requestData['service_name']);
+        }
     }
 }
