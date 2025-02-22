@@ -48,6 +48,7 @@ class PayAction
 
             if($data['subscription_type'] == 'renew' && isset($customerDetails['renewal_amount'])) {
                 $amount = $customerDetails['renewal_amount'];
+                $data['variation_name'] = $customerDetails['current_variation_name'];
                 $data['amount'] = $amount;
             } else{
                 $variations = $service->getVariations();
@@ -61,7 +62,7 @@ class PayAction
                 if ($variation) {
                     $amount = $variation['amount'];
                     $data['variation_amount'] = $variation['amount'];
-                    $data['period'] = $variation['period'] ?? null;
+                    $data['variation_name'] = $variation['name'];
                 } else {
                     throw new Exception("Variation not found.");
                 }

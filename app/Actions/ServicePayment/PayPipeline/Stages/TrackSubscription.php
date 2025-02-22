@@ -5,6 +5,7 @@ namespace App\Actions\ServicePayment\PayPipeline\Stages;
 use App\Actions\Category\GetCategoriesAction;
 use App\Actions\ServicePayment\PayPipeline\HandlePaymentState;
 use App\Models\Subscription;
+use App\Parsers\DateParser;
 use Closure;
 use Illuminate\Support\Facades\Log;
 
@@ -27,7 +28,7 @@ class TrackSubscription
         }
 
         $startDate =  now();
-        $endDate = $this->getEndDate($startDate, $requestData['period'] ?? null);
+        $endDate = (new DateParser)->getEndDate($startDate,  $requestData['variation_name']);
 
         $category_id = (new GetCategoriesAction)->autoCategorize(strtolower($requestData['service_name']));
 
@@ -38,7 +39,7 @@ class TrackSubscription
             'currency_id' => $requestData['currency_id'],
             'amount' => $requestData['variation_amount'],
             'start_date' => $startDate,
-            'end_date' => $endDate, // Todo: Find a better way of determining the end date
+            'end_date' => $endDate,
             'description' => $requestData['variation_code'] . ' Subscription via Subsync',
             'category_id' => $category_id,
         ]);
@@ -50,14 +51,4 @@ class TrackSubscription
         return $next($state);
     }
 
-    public function getEndDate($startDate, $period) 
-    {
-        $startDate = clone $startDate;
-        
-        if($period == 'yearly'){
-            return $startDate->addYear();
-        }
-
-        return $startDate->addMonth();
-    }
 }
