@@ -16,6 +16,7 @@ class UpdateServicePaymentRequest
 
         $paymentStatus = match($payResponse->status) {
             'delivered' => ServicePaymentRequest::STATUS['SUCCESSFUL'],
+            'success' => ServicePaymentRequest::STATUS['SUCCESSFUL'],
             default => ServicePaymentRequest::STATUS['FAILED']
         };
 

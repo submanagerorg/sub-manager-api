@@ -4,7 +4,7 @@
         "url": "https://subsync.app",
         "subscription_url": "https://subsync.app/pricing",
         "category": "Management",
-        "is_payment_supported": false
+        "is_payment_supported": true
     },
     {
         "name": "Netflix",

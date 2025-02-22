@@ -61,12 +61,13 @@ class PayAction
                 if ($variation) {
                     $amount = $variation['amount'];
                     $data['variation_amount'] = $variation['amount'];
+                    $data['period'] = $variation['period'] ?? null;
                 } else {
                     throw new Exception("Variation not found.");
                 }
             }
 
-            $user->wallet->debit($reference, $amount, $fee, WalletTransaction::TYPE['WITHDRAW'], ucfirst($data['service_name']).' Service Payment');
+            $user->wallet->debit($reference, $amount, $fee, WalletTransaction::TYPE['WITHDRAW'], ucwords($data['service_name']).' Service Payment');
 
             $data['request_id'] = $service->generateRequestId();
             $data = $this->fillMetadata($data, $user, $service->getCurrencyCode(), $amount + $fee);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\ServicePayment;
+namespace App\Services\ServicePayment\TvSubscriptionService;
 
 use App\Facades\PayForService;
 use Illuminate\Support\Str;
