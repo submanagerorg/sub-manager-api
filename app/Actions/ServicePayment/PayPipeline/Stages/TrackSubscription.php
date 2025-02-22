@@ -16,8 +16,13 @@ class TrackSubscription
 
         Log::info("Tracking subscription", ['requestData' => $requestData, 'tr' => $state->transactionFailed()]);
 
-        if ($requestData['is_tracking_disabled'] || $state->transactionFailed()) {
-            
+        if ($state->transactionFailed()) {
+            Log::info("Payment failed: Subscription is not tracked");
+            return $next($state);
+        }
+
+        if ($requestData['is_tracking_disabled']) {
+            Log::info("Tracking disabled: Subscription is not tracked");
             return $next($state);
         }
 

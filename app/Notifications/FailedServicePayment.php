@@ -7,9 +7,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class FailedServicePayment extends Notification
+class FailedServicePayment extends Notification implements ShouldQueue
 {
     use Queueable;
+    use ShouldQueue;
 
     /**
      * Create a new notification instance.
