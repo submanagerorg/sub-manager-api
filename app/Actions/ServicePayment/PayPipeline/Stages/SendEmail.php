@@ -3,6 +3,7 @@
 namespace App\Actions\ServicePayment\PayPipeline\Stages;
 
 use App\Actions\ServicePayment\PayPipeline\HandlePaymentState;
+use App\Jobs\HandleServicePaymentEmail;
 use App\Models\User;
 use App\Notifications\FailedServicePayment;
 use App\Notifications\SuccessfulServicePaymentEmail;
@@ -17,11 +18,15 @@ class SendEmail
         try {
             $requestData = $state->getRequestData();
 
+            
+
             $user = User::find($requestData['user_id']);
 
             if (!$user) {
                 return $next($state);
             }
+
+            Log::info("Sending email for service payment");
 
             $this->sendMail($state, $user, $requestData['service_name']);
 
@@ -31,19 +36,7 @@ class SendEmail
         }
     }
 
-    private function sendSuccessEmail(User $user, string $serviceName) {
-        $user->notify(new SuccessfulServicePaymentEmail($serviceName));
-    }
-
-    private function sendFailueEmail(User $user, string $serviceName) {
-        $user->notify(new FailedServicePayment($serviceName));
-    }
-
     private function sendMail(HandlePaymentState $state, User $user, string $serviceName) {
-        if ($state->transactionSuccessful()) {
-            $this->sendSuccessEmail($user, $serviceName);
-        } else {
-            $this->sendFailueEmail($user, $serviceName);
-        }
+        HandleServicePaymentEmail::dispatch($state->transactionSuccessful(), $user, $serviceName);
     }
 }
