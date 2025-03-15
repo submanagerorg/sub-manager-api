@@ -190,6 +190,10 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isSubscriptionLimitReached(): bool
     {
+        if($this->email == config('subscription.exempt_mail')) {
+            return false;
+        }
+        
         if ($this->pricingPlan) {
             $query = $this->subscriptions()->whereNull('parent_id');
 
@@ -223,6 +227,10 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isRenewalLimitReached(): bool
     {
+        if($this->email == config('subscription.exempt_mail')) {
+            return false;
+        }
+
         if ($this->pricingPlan) {
 
             $query = $this->subscriptions()->whereNotNull('parent_id');
@@ -235,9 +243,6 @@ class User extends Authenticatable implements MustVerifyEmail
             }
     
             $renewalCount = $query->count();
-
-            logger($renewalCount);
-            logger($this->pricingPlan->renewal_limit);
 
             if (is_null($this->pricingPlan->renewal_limit)) {
                 return false;
