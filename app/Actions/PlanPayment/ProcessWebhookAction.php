@@ -243,9 +243,12 @@ class ProcessWebhookAction
 
         $this->user->addUserPricingPlan($pricingPlan);
 
-        $this->createTransaction($pricingPlan, $verifyPayment['amount'], $verifyPayment['reference']);
+        $fee = $verifyPayment['metadata']->fee ?? 0;
+        $amount = $verifyPayment['amount'] - $fee;
 
-        $this->addSubscription($pricingPlan, $verifyPayment['amount']);
+        $this->createTransaction($pricingPlan, $amount, $verifyPayment['reference']);
+
+        $this->addSubscription($pricingPlan, $amount);
     }
 
     /**
