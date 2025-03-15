@@ -55,7 +55,7 @@ class GetCategoriesAction
 
         $this->cacheTheMatch($service, $serviceId, $categoryId);
 
-        return [$serviceId, $categoryId];
+        return $categoryId;
     }
 
     /**

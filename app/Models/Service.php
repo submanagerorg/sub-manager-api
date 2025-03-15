@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Services\ServicePayment\SubSyncService;
+use App\Services\ServicePayment\TvSubscriptionService\DstvService;
+use App\Services\ServicePayment\TvSubscriptionService\GotvService;
+use App\Services\ServicePayment\TvSubscriptionService\ShowmaxService;
+use App\Services\ServicePayment\TvSubscriptionService\StartimesService;
 use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +18,10 @@ class Service extends Model
     use HasFactory, Filterable;
 
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'is_payment_supported' => 'boolean',
+    ];
 
     const DEFAULT_SERVICE = 'SubSync';
     
@@ -56,5 +65,29 @@ class Service extends Model
         ]);
 
         return $category;
+    }
+
+    public static function getServiceClass(string $service)
+    {
+        $service = strtolower($service);
+         
+        $services = [
+            'dstv' => DstvService::class,
+            'showmax' => ShowmaxService::class,
+            'gotv' => GotvService::class,
+            'startimes' => StartimesService::class,
+            'subsync' =>  SubSyncService::class,
+        ];
+
+        if (!array_key_exists($service, $services)) {
+            throw new \Exception('Invalid service specified');
+        }
+
+        return new $services[$service]();
+    }
+
+    public static function getByName(string $name)
+    {
+        return self::where('name', $name)->first();
     }
 }

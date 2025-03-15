@@ -20,6 +20,8 @@ class Subscription extends Model
         'EXPIRED' => 'expired',
     ];
 
+    public const LABEL = "SUB";
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -116,13 +118,13 @@ class Subscription extends Model
         }
 
         if(!isset($data['category_id'])){
-            [$data['service_id'], $data['category_id']] = (new GetCategoriesAction)->autoCategorize($data['name']);
+            $data['category_id'] = (new GetCategoriesAction)->autoCategorize($data['name']);
         }
 
         $subscription = self::create([
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
-            'name' => ucfirst($data['name']), 
+            'name' => ucwords($data['name']), 
             'url' => $data['url'] ?? ($data['service_id'] ? Service::where('id', $data['service_id'])->first()->url : null),
             'currency_id' => $data['currency_id'],
             'category_id' => $data['category_id'],

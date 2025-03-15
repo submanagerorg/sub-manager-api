@@ -1,53 +1,59 @@
 <?php
+
 namespace App\Actions\PlanPayment;
 
 use App\Models\PricingPlan;
-use App\Models\Transaction;
+use App\Models\Subscription;
 use App\Traits\FormatApiResponse;
+use App\Traits\TransactionTrait;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class InitiatePaymentAction
 {
-    use FormatApiResponse;
+    use FormatApiResponse, TransactionTrait;
 
-   /**
-    * Initiate payment
-    *
-    * @param array $data
-    * @return JsonResponse
-    */
+    /**
+     * Initiate payment
+     *
+     * @param array $data
+     * @return JsonResponse
+     */
     public function execute(array $data): JsonResponse
     {
-        $paymentProvider = Transaction::getPaymentProvider();
+        $paymentProvider = $this->getPaymentProvider();
 
-        try{
+        try {
 
             $plan = PricingPlan::where('uid', $data['pricing_plan_uid'])->first();
 
             $paymentData = [
-                'reference' => Transaction::generateReference(),
-                'plan' => $plan,
+                'reference' => $this->generateReference(Subscription::LABEL),
+                'amount' => $plan->amount,
                 'email' => $data['email'],
-                'currency' => Transaction::DEFAULT_CURRENCY['CODE']
+                'currency' => $this->getDefaultCurrency()['CODE'],
+                'metadata' => [
+                    'type' => 'subscription',
+                    'pricing_plan_uid' => $plan->uid,
+                ],
+                'callback_url' => config('app.website_url') . "/payment/callback?planuid={$plan->uid}&email={$data['email']}"
             ];
 
-            $response = (new $paymentProvider())->initiatePayment($paymentData); 
+            $response = (new $paymentProvider())->initiatePayment($paymentData);
 
-            if($response['status'] !== true){
+            if ($response['status'] !== true) {
                 return $this->formatApiResponse(500, 'Unable to initiate payment.');
             }
-    
+
             $data = [
                 'payment_url' => $response['payment_url'],
                 'reference' => $response['reference']
             ];
-    
-            return $this->formatApiResponse(200, 'Payment successfully initiated.', $data);      
-        } catch(Throwable $e) {
+
+            return $this->formatApiResponse(200, 'Payment successfully initiated.', $data);
+        } catch (Throwable $e) {
             report($e);
             return $this->formatApiResponse(500, 'Error occured', [], $e->getMessage());
         }
-       
     }
 }
