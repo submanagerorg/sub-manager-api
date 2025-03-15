@@ -103,14 +103,7 @@ class Paystack
      */
     public function validateWebhook(Request $request): array
     {
-        logger($request);
-
         $data = @file_get_contents("php://input");
-
-        logger($data);
-
-        logger($request->header('x-paystack-signature'));
-        logger(hash_hmac('sha512', $data, $this->secret_key));
 
         if ($request->header('x-paystack-signature') !== hash_hmac('sha512', $data, $this->secret_key)) {
             $errorMessage = 'Failed to validate webhook';
