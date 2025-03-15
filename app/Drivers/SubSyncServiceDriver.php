@@ -4,6 +4,7 @@ namespace App\Drivers;
 
 use App\Interfaces\PayForServiceInterface;
 use App\Models\PricingPlan;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Client\Response;
@@ -16,6 +17,13 @@ class SubSyncServiceDriver
 {
     public function paySubSync(array $paymentData): mixed
     {
+        $user =  User::where('id', $paymentData['user_id'])->first();
+        
+        [$name, $period] = explode('-', $paymentData['variation_code']);
+        $pricingPlan = PricingPlan::where('name', $name)->where('period', $period)->first();
+
+        $user->addUserPricingPlan($pricingPlan);
+        
         $paymentResponse = [
             'content' => [
                 'transactions' => [
