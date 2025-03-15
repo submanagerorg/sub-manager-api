@@ -42,7 +42,23 @@ trait TransactionTrait
      */
     public function getTransactionFee($amount)
     {
-        $fee = (1.5 / 100) * $amount;
+        $maxFeeCap = 2200;
+        $minFeeCap = 50;
+        $extraFeeWaivedMaxAmount = 2500;
+
+        $fee = (1.7 / 100) * $amount;
+
+        if($fee < $minFeeCap) {
+            return $minFeeCap;
+        }
+
+        if($amount > $extraFeeWaivedMaxAmount){
+            $fee += 100;
+        }
+
+        if($fee > $maxFeeCap) {
+            return $maxFeeCap;
+        }
 
         return $fee;
     }

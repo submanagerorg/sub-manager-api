@@ -26,15 +26,17 @@ class InitiatePaymentAction
         try {
 
             $plan = PricingPlan::where('uid', $data['pricing_plan_uid'])->first();
+            $fee = $this->getTransactionFee($plan->amount);
 
             $paymentData = [
                 'reference' => $this->generateReference(Subscription::LABEL),
-                'amount' => $plan->amount,
+                'amount' => $plan->amount + $fee,
                 'email' => $data['email'],
                 'currency' => $this->getDefaultCurrency()['CODE'],
                 'metadata' => [
                     'type' => 'subscription',
                     'pricing_plan_uid' => $plan->uid,
+                    'fee' => $fee
                 ],
                 'callback_url' => config('app.website_url') . "/payment/callback?planuid={$plan->uid}&email={$data['email']}"
             ];
