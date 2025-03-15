@@ -21,6 +21,7 @@ class DateParser
             str_contains($name, "1 week") => ['weekly', 1],
             str_contains($name, "1 month") => ['monthly', 1],
             str_contains($name, "3 month") => ['monthly', 3],
+            str_contains($name, "6 month") => ['monthly', 6],
             str_contains($name, "monthly") => ['monthly', 1],
             str_contains($name, "yearly") => ['yearly', 1],
             default => ['monthly', 1],

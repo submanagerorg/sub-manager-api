@@ -1,37 +1,67 @@
 [
     {
-        "name":"Basic",
-        "details":["Track 3 subscriptions at a time", "View basic report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "name": "Basic",
+        "details": [
+            "Track 3 subscriptions",
+            "No renewals",
+            "View basic report about subscriptions",
+            "Access to chrome extension, mobile application, and web application"
+        ],
         "subscription_limit": 3,
-        "amount":0,
+        "renewal_limit": 0,
+        "amount": 0,
         "period": "lifetime"
     },
     {
-        "name":"Standard",
-        "details":["Track 10 subscriptions at a time", "View basic report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "name": "Standard",
+        "details": [
+            "Track 10 subscriptions per month",
+            "Track 10 renewals per month.",
+            "View basic report about subscriptions",
+            "Access to chrome extension, mobile application, and web application"
+        ],
         "subscription_limit": 10,
-        "amount":750,
+        "renewal_limit": 10,
+        "amount": 1200,
         "period": "monthly"
     },
     {
-        "name":"Standard",
-        "details":["Track 10 subscriptions at a time", "View basic report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "name": "Standard",
+        "details": [
+            "Track 10 subscriptions per month",
+            "Track 10 renewals per month.",
+            "View basic report about subscriptions",
+            "Access to chrome extension, mobile application, and web application"
+        ],
         "subscription_limit": 10,
-        "amount":7800,
+        "renewal_limit": 10,
+        "amount": 13200,
         "period": "yearly"
     },
     {
-        "name":"Premium",
-        "details":["Track unlimited subscriptions at a time", "View detailed report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "name": "Premium",
+        "details": [
+            "Track unlimited subscriptions",
+            "Track unlimited renewals",
+            "View detailed report about subscriptions",
+            "Access to chrome extension, mobile application, and web application"
+        ],
         "subscription_limit": null,
-        "amount":1500,
+        "renewal_limit": null,
+        "amount": 1500,
         "period": "monthly"
     },
     {
-        "name":"Premium",
-        "details":["Track unlimited subscriptions at a time", "View detailed report about subscriptions", "Access to chrome extension, mobile application, and web application"],
+        "name": "Premium",
+        "details": [
+            "Track unlimited subscriptions",
+            "Track unlimited renewals",
+            "View detailed report about subscriptions",
+            "Access to chrome extension, mobile application, and web application"
+        ],
         "subscription_limit": null,
-        "amount":15600,
+        "renewal_limit": null,
+        "amount": 15600,
         "period": "yearly"
     }
 ]
