@@ -125,7 +125,7 @@ class Subscription extends Model
             'uid' => Str::orderedUuid(),
             'user_id' => $data['user_id'],
             'name' => ucwords($data['name']), 
-            'url' => $data['url'] ?? ($data['service_id'] ? Service::where('id', $data['service_id'])->first()->url : null),
+            'url' => $data['url'] ?? (isset($data['service_id']) ? Service::where('id', $data['service_id'])->first()->url : null),
             'currency_id' => $data['currency_id'],
             'category_id' => $data['category_id'],
             'amount' => $data['amount'],
