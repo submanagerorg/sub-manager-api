@@ -235,17 +235,20 @@ class ProcessWebhookAction
     {
         $this->user = User::where('email', $verifyPayment['email'])->first();
 
+        $fee = $verifyPayment['metadata']->fee ?? 0;
+        $amount = $verifyPayment['amount'] - $fee;
+
         if (!$this->user) {
-            $this->createUser($verifyPayment['email'], $pricingPlan, $verifyPayment['amount']);
+            $this->createUser($verifyPayment['email'], $pricingPlan, $amount);
 
             $this->user = User::where('email', $verifyPayment['email'])->first();
         }
 
         $this->user->addUserPricingPlan($pricingPlan);
 
-        $this->createTransaction($pricingPlan, $verifyPayment['amount'], $verifyPayment['reference']);
+        $this->createTransaction($pricingPlan, $amount, $verifyPayment['reference']);
 
-        $this->addSubscription($pricingPlan, $verifyPayment['amount']);
+        $this->addSubscription($pricingPlan, $amount);
     }
 
     /**

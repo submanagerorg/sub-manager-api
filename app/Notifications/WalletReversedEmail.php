@@ -8,10 +8,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class WalletReversedEmail extends Notification
+class WalletReversedEmail extends Notification implements ShouldQueue
 {
     use Queueable;
-
+    
     /**
      * Create a new notification instance.
      *
