@@ -10,8 +10,6 @@ use Illuminate\Notifications\Notification;
 
 class WalletReversedEmail extends Notification
 {
-    use Queueable;
-
     /**
      * Create a new notification instance.
      *
