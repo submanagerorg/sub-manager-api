@@ -104,7 +104,7 @@ class DashboardRepository {
     public function getGraphData(string|null $period = null, string|null $currency) {
         $currentYear = now()->year;
         $data = [];
-        $months = ['January', 'February', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         $currencyId = optional(Currency::whereCode($currency)->first())->id;
 
         if ($period === 'month') {
