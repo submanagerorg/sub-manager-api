@@ -25,11 +25,11 @@ class ServiceImageSeeder extends Seeder
     private function getImageUrl()
     {
         return [
-            'dstv' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1742655390/subsyncassets/DSTV_dqhkj5.png',
-            'startimes' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1742655390/subsyncassets/startimes-logo-png_seeklogo-527209_n3tdwz.png',
-            'gotv' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1742655390/subsyncassets/gotv-satellite-africa-logo-png_seeklogo-556435_x0cloj.png',
-            'showmax' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1742655390/subsyncassets/Showmax_Logo_divzsi.png',
-            'subsync' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1715429003/subsyncassets/email_assets/gy0mypzxprenm9qily0b.png',
+            'Dstv' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1742655390/subsyncassets/DSTV_dqhkj5.png',
+            'Startimes' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1742655390/subsyncassets/startimes-logo-png_seeklogo-527209_n3tdwz.png',
+            'Gotv' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1742655390/subsyncassets/gotv-satellite-africa-logo-png_seeklogo-556435_x0cloj.png',
+            'Showmax' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1742655390/subsyncassets/Showmax_Logo_divzsi.png',
+            'SubSync' => 'https://res.cloudinary.com/dwn7phnpa/image/upload/v1715429003/subsyncassets/email_assets/gy0mypzxprenm9qily0b.png',
         ];
     }
 }
