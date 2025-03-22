@@ -24,7 +24,17 @@ class FundWalletRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => ['required', 'numeric', 'min:1'],
+            'amount' => ['required', 'numeric', 'min:1000'],
+        ];
+    }
+
+    /**
+     * Custom validation messages.
+     */
+    public function messages(): array
+    {
+        return [
+            'amount.min' => 'The amount must be at least 1000 (Naira)',
         ];
     }
 }
