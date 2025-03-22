@@ -27,7 +27,7 @@ class RenewSubscriptionRequest extends FormRequest
 
         return [
             'currency' => ['required', 'string', 'exists:currencies,code'],
-            'amount' => ['required', 'numeric', 'min:1', 'max:100000'],
+            'amount' => ['required', 'numeric', 'min:0', 'max:100000'],
             'start_date' => ['required', 'date', 'date_format:Y-m-d'],
             'end_date' => ['required', 'date', 'date_format:Y-m-d', 'after:start_date',  "after_or_equal:{$currentDate}"],
             'description' => ['nullable', 'string', 'max:100'],
