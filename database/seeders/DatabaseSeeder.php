@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PricingPlanSeeder::class);
         $this->call(FeatureSeeder::class);
         $this->call(PricingPlanFeatureSeeder::class);
+        $this->call(ServiceImageSeeder::class);
     }
 }
